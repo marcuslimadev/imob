@@ -163,5 +163,35 @@
     "user_created": null,
     "date_updated": "2025-05-07T01:25:11.192Z",
     "user_updated": null
+  },
+  {
+    "id": "374b746c-183b-42b2-a525-b61599adf966",
+    "sort": 1,
+    "type": "page",
+    "page": "9821199f-4b05-49fb-8407-fbfe9b866ef0",
+    "post": null,
+    "label": "Falar com o sucesso do cliente",
+    "variant": "default",
+    "button_group": "ee9b76e2-e2cf-4e7c-91a5-c56a47a2faa4",
+    "url": null,
+    "date_created": "2025-05-15T12:00:00.000Z",
+    "user_created": null,
+    "date_updated": "2025-05-15T12:00:00.000Z",
+    "user_updated": null
+  },
+  {
+    "id": "c120851d-c422-4653-ba15-d4a1d52734bc",
+    "sort": 2,
+    "type": "url",
+    "page": null,
+    "post": null,
+    "label": "Ver vitrine exclusiva",
+    "variant": "secondary",
+    "button_group": "ee9b76e2-e2cf-4e7c-91a5-c56a47a2faa4",
+    "url": "/imoveis",
+    "date_created": "2025-05-15T12:00:00.000Z",
+    "user_created": null,
+    "date_updated": "2025-05-15T12:00:00.000Z",
+    "user_updated": null
   }
 ]
