@@ -96,6 +96,7 @@ Acessar http://localhost:8055 e:
 - Busca e filtros
 - Detalhes do imóvel
 - Formulário de contato (cria lead)
+- Catálogo com 20 templates disponíveis para o site de vendas/aluguel
 
 #### 5. Customização de Domínio (CNAME)
 - Configurar NGINX ou Caddy

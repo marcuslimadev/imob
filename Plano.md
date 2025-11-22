@@ -78,6 +78,8 @@ Cadastro de leads
 
 Vitrine pública de imóveis
 
+Escolha entre 20 templates prontos para o site de vendas/aluguel
+
 Customização de domínio (CNAME)
 
 Integração com Mercado Pago (assinaturas)

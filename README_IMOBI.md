@@ -93,6 +93,7 @@ O MVP inclui:
 - [x] Cadastro de imóveis
 - [x] Cadastro de leads
 - [x] Vitrine pública de imóveis
+- [ ] Escolha entre 20 templates prontos para o site de vendas/aluguel
 - [x] Customização de domínio (CNAME)
 - [ ] Integração com Mercado Pago (assinaturas)
 - [ ] Cobrança recorrente automática
