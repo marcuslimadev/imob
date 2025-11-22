@@ -113,5 +113,21 @@
     "date_updated": null,
     "user_updated": null,
     "children": []
+  },
+  {
+    "id": "7c1cacdd-46b6-4595-bb04-54da60c90bd6",
+    "navigation": "main",
+    "page": "e2061a2f-c988-4e96-b492-0ef4c298126b",
+    "parent": null,
+    "sort": 3,
+    "title": "Imobili\u00e1ria Exclusiva",
+    "type": "page",
+    "url": null,
+    "post": null,
+    "date_created": "2025-05-15T12:00:00.000Z",
+    "user_created": null,
+    "date_updated": "2025-05-15T12:00:00.000Z",
+    "user_updated": null,
+    "children": []
   }
 ]

@@ -101,5 +101,27 @@
     "blocks": [
       "bc826e30-4988-4035-98bd-5ffc4799e5fc"
     ]
+  },
+  {
+    "id": "e2061a2f-c988-4e96-b492-0ef4c298126b",
+    "sort": 6,
+    "title": "Imobili\u00e1ria Exclusiva",
+    "permalink": "/imobiliaria-exclusiva",
+    "status": "published",
+    "published_at": "2025-05-15T12:00:00.000Z",
+    "seo": {
+      "title": "Imobili\u00e1ria Exclusiva | Projeto SaaS",
+      "meta_description": "Projeto dedicado para a imobili\u00e1ria exclusiva, com onboarding guiado, vitrine premium e automa\u00e7\u00f5es prontas para aluguel e venda.",
+      "no_index": false,
+      "no_follow": false
+    },
+    "date_created": "2025-05-15T12:00:00.000Z",
+    "user_created": null,
+    "date_updated": "2025-05-15T12:00:00.000Z",
+    "user_updated": null,
+    "blocks": [
+      "35a49a8e-9b08-4091-ab61-21c6ff399698",
+      "1c144cf1-d009-4b1b-ba5b-749a1b5d4b21"
+    ]
   }
 ]

@@ -128,5 +128,31 @@
     "user_created": null,
     "date_updated": "2025-05-09T18:16:12.823Z",
     "user_updated": "d56956bf-6ed0-465e-bb4a-ec9bde65c5f0"
+  },
+  {
+    "id": "35a49a8e-9b08-4091-ab61-21c6ff399698",
+    "sort": 1,
+    "page": "e2061a2f-c988-4e96-b492-0ef4c298126b",
+    "item": "e70a9e15-48f4-4317-88c9-ea53fb883330",
+    "collection": "block_hero",
+    "hide_block": false,
+    "background": "light",
+    "date_created": "2025-05-15T12:00:00.000Z",
+    "user_created": null,
+    "date_updated": "2025-05-15T12:00:00.000Z",
+    "user_updated": null
+  },
+  {
+    "id": "1c144cf1-d009-4b1b-ba5b-749a1b5d4b21",
+    "sort": 2,
+    "page": "e2061a2f-c988-4e96-b492-0ef4c298126b",
+    "item": "cd807083-b99d-4b7d-b09e-f885d1adc70b",
+    "collection": "block_richtext",
+    "hide_block": false,
+    "background": "light",
+    "date_created": "2025-05-15T12:00:00.000Z",
+    "user_created": null,
+    "date_updated": "2025-05-15T12:00:00.000Z",
+    "user_updated": null
   }
 ]
