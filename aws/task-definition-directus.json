@@ -1,0 +1,108 @@
+{
+  "family": "imobi-directus",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/imobi-task-role",
+  "containerDefinitions": [
+    {
+      "name": "directus",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/imobi-directus:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8055,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "DB_CLIENT",
+          "value": "pg"
+        },
+        {
+          "name": "CACHE_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "CACHE_STORE",
+          "value": "redis"
+        },
+        {
+          "name": "WEBSOCKETS_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "CORS_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "info"
+        },
+        {
+          "name": "LOG_STYLE",
+          "value": "json"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "SECRET",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/directus/secret"
+        },
+        {
+          "name": "DB_HOST",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/rds/endpoint"
+        },
+        {
+          "name": "DB_PORT",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/rds/port"
+        },
+        {
+          "name": "DB_DATABASE",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/rds/database"
+        },
+        {
+          "name": "DB_USER",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/rds/username"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/rds/password"
+        },
+        {
+          "name": "REDIS",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/elasticache/endpoint"
+        },
+        {
+          "name": "ADMIN_EMAIL",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/admin/email"
+        },
+        {
+          "name": "ADMIN_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/admin/password"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/imobi-directus",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "directus"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "node -e \"require('http').get('http://localhost:8055/server/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})\""
+        ],
+        "interval": 30,
+        "timeout": 10,
+        "retries": 3,
+        "startPeriod": 40
+      }
+    }
+  ]
+}
