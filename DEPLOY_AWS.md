@@ -119,6 +119,18 @@ chmod +x deploy.sh
 ./deploy.sh production us-east-1
 ```
 
+**⚠️ Importante:** O script verifica se há alterações não confirmadas no Git antes de fazer o deploy. Se houver mudanças não commitadas, você verá:
+
+```
+❌ Erro: Alterações não confirmadas detectadas!
+```
+
+Para prosseguir com o deploy mesmo com alterações não confirmadas, use a flag `--force`:
+
+```bash
+./deploy.sh production us-east-1 --force
+```
+
 ### Opção 2: PowerShell (Windows)
 
 ```powershell
@@ -127,11 +139,12 @@ cd aws
 ```
 
 O script executará automaticamente:
-1. ✅ Criar infraestrutura (VPC, RDS, Redis, S3, ALB)
-2. ✅ Build e push de imagens Docker
-3. ✅ Registrar task definitions
-4. ✅ Criar serviços ECS
-5. ✅ Configurar health checks
+1. ✅ Verificar alterações não confirmadas (pode ser ignorado com --force)
+2. ✅ Criar infraestrutura (VPC, RDS, Redis, S3, ALB)
+3. ✅ Build e push de imagens Docker
+4. ✅ Registrar task definitions
+5. ✅ Criar serviços ECS
+6. ✅ Configurar health checks
 
 **Tempo total:** ~20-30 minutos
 
