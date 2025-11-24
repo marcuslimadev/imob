@@ -6,6 +6,11 @@ import { readItems } from '@directus/sdk';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
+  // Redirect root to /home
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL('/home', request.url));
+  }
+  
   // Ignorar arquivos estáticos e API routes
   if (
     pathname.startsWith('/_next') ||
@@ -81,8 +86,8 @@ export async function middleware(request: NextRequest) {
     response.headers.set('x-company-slug', companySlug);
   }
   
-  // 6. Redirecionar para página de erro se não encontrou company (exceto homepage)
-  if (!companyId && pathname !== '/' && !pathname.startsWith('/admin')) {
+  // 6. Redirecionar para página de erro se não encontrou company (exceto homepage e páginas estáticas)
+  if (!companyId && pathname !== '/' && pathname !== '/home' && !pathname.startsWith('/admin')) {
     return NextResponse.redirect(new URL('/', request.url));
   }
   
