@@ -11,14 +11,19 @@ FORCE_DEPLOY=${3:-}
 
 # Check for uncommitted changes
 if [ "$FORCE_DEPLOY" != "--force" ]; then
-  if ! git diff-index --quiet HEAD -- 2>/dev/null; then
-    echo "❌ Erro: Alterações não confirmadas detectadas!"
-    echo ""
-    echo "Por favor, confirme (commit) todas as suas alterações antes de fazer o deploy."
-    echo "Ou use --force como terceiro argumento para ignorar esta verificação:"
-    echo "  ./deploy.sh $ENVIRONMENT $AWS_REGION --force"
-    echo ""
-    exit 1
+  # Check if we're in a git repository with commits
+  if git rev-parse --verify HEAD >/dev/null 2>&1; then
+    if ! git diff-index --quiet HEAD -- 2>/dev/null; then
+      echo "❌ Erro: Alterações não confirmadas detectadas!"
+      echo ""
+      echo "Por favor, confirme (commit) todas as suas alterações antes de fazer o deploy."
+      echo "Ou use --force como terceiro argumento para ignorar esta verificação:"
+      echo "  ./deploy.sh $ENVIRONMENT $AWS_REGION --force"
+      echo ""
+      exit 1
+    fi
+  else
+    echo "⚠️  Aviso: Não foi possível verificar o status do Git. Continuando..."
   fi
 fi
 
