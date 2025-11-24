@@ -111,7 +111,8 @@ FORMATO DE RESPOSTA (use Markdown):
       };
     } catch (error: any) {
       console.error('Erro ao gerar diagnóstico IA:', error);
-      return {
+      
+return {
         success: false,
         error: error.message || 'Erro desconhecido',
       };
@@ -140,7 +141,8 @@ FORMATO DE RESPOSTA (use Markdown):
       return transcription.text;
     } catch (error: any) {
       console.error('Erro ao transcrever áudio:', error);
-      return null;
+      
+return null;
     }
   }
 
@@ -175,7 +177,8 @@ FORMATO DE RESPOSTA (use Markdown):
       };
     } catch (error: any) {
       console.error('Erro no chat IA:', error);
-      return {
+      
+return {
         success: false,
         error: error.message || 'Erro desconhecido',
       };
@@ -230,10 +233,12 @@ Exemplo:
 
       // Parsear JSON
       const data = JSON.parse(content);
-      return data;
+      
+return data;
     } catch (error: any) {
       console.error('Erro ao extrair dados:', error);
-      return {};
+      
+return {};
     }
   }
 }

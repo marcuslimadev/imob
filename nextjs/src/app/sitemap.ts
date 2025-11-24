@@ -45,6 +45,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		return [...pageUrls, ...postUrls];
 	} catch (error) {
 		console.error('Error generating sitemap:', error);
-		throw new Error('Failed to generate sitemap');
+		// Return empty sitemap on error (e.g., when Directus is not available during build)
+
+		return [];
 	}
 }

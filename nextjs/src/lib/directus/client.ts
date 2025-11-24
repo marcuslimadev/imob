@@ -28,7 +28,8 @@ export function createDirectusClient(token?: string) {
       .with(staticToken(token))
       .with(rest());
   }
-  return directusClient;
+  
+return directusClient;
 }
 
 export { directusUrl };
