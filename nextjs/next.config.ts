@@ -1,6 +1,5 @@
 import type { NextConfig } from 'next';
 import initializeBundleAnalyzer from '@next/bundle-analyzer';
-import { generateRedirects } from './src/lib/redirects';
 
 const withBundleAnalyzer = initializeBundleAnalyzer({
 	enabled: process.env.BUNDLE_ANALYZER_ENABLED === 'true',
@@ -41,9 +40,7 @@ const nextConfig: NextConfig = {
 		],
 	},
 	env: {
-		DIRECTUS_PUBLIC_TOKEN: process.env.DIRECTUS_PUBLIC_TOKEN,
-		DIRECTUS_FORM_TOKEN: process.env.DIRECTUS_FORM_TOKEN,
-		DRAFT_MODE_SECRET: process.env.DRAFT_MODE_SECRET,
+		DIRECTUS_ADMIN_TOKEN: process.env.DIRECTUS_ADMIN_TOKEN,
 	},
 	async headers() {
 		return [
@@ -57,11 +54,6 @@ const nextConfig: NextConfig = {
 				],
 			},
 		];
-	},
-	async redirects() {
-		const redirects = await generateRedirects();
-
-		return redirects;
 	},
 };
 

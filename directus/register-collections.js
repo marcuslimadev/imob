@@ -34,18 +34,28 @@ async function createCollection(collectionName, schema) {
             `${DIRECTUS_URL}/collections`,
             {
                 collection: collectionName,
-                meta: schema.meta,
-                schema: schema.schema
+                meta: schema.meta
             },
             {
                 headers: { Authorization: `Bearer ${accessToken}` }
             }
         );
-        console.log(`✅ Collection '${collectionName}' criada/atualizada`);
+        console.log(`✅ Collection '${collectionName}' registrada no Directus`);
         return response.data;
     } catch (error) {
-        if (error.response?.status === 403) {
-            console.log(`ℹ️  Collection '${collectionName}' já existe`);
+        if (error.response?.data?.errors?.[0]?.message?.includes('already exists')) {
+            console.log(`ℹ️  Collection '${collectionName}' já existe, atualizando metadata...`);
+            // Tentar atualizar a metadata
+            try {
+                await axios.patch(
+                    `${DIRECTUS_URL}/collections/${collectionName}`,
+                    { meta: schema.meta },
+                    { headers: { Authorization: `Bearer ${accessToken}` } }
+                );
+                console.log(`✅ Metadata da collection '${collectionName}' atualizada`);
+            } catch (updateError) {
+                console.error(`❌ Erro ao atualizar metadata:`, updateError.response?.data || updateError.message);
+            }
         } else {
             console.error(`❌ Erro ao criar collection '${collectionName}':`, error.response?.data || error.message);
         }
@@ -76,6 +86,78 @@ async function createFields(collectionName, fields) {
 
 // Definições das collections
 const collections = {
+    companies: {
+        meta: {
+            collection: 'companies',
+            icon: 'business',
+            note: 'Empresas imobiliárias (Multi-tenant)',
+            display_template: '{{nome_fantasia}} - {{slug}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#3B82F6',
+            sort: 1
+        }
+    },
+    properties: {
+        meta: {
+            collection: 'properties',
+            icon: 'home',
+            note: 'Imóveis cadastrados',
+            display_template: '{{tipo}} - {{cidade}}/{{estado}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#10B981',
+            sort: 2
+        }
+    },
+    property_media: {
+        meta: {
+            collection: 'property_media',
+            icon: 'photo_library',
+            note: 'Fotos e vídeos dos imóveis',
+            display_template: '{{tipo}}: {{url}}',
+            hidden: true,
+            singleton: false,
+            sort: 3
+        }
+    },
+    leads: {
+        meta: {
+            collection: 'leads',
+            icon: 'person',
+            note: 'Leads e clientes',
+            display_template: '{{nome}} - {{telefone}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#F59E0B',
+            sort: 4
+        }
+    },
+    lead_activities: {
+        meta: {
+            collection: 'lead_activities',
+            icon: 'event_note',
+            note: 'Atividades e interações com leads',
+            display_template: '{{tipo}}: {{descricao}}',
+            hidden: true,
+            singleton: false,
+            sort: 5
+        }
+    },
+    property_views: {
+        meta: {
+            collection: 'property_views',
+            icon: 'visibility',
+            note: 'Visualizações de imóveis',
+            display_template: 'Lead {{lead_id}} viu {{property_id}}',
+            hidden: true,
+            singleton: false,
+            sort: 6
+        }
+    },
     conversas: {
         meta: {
             collection: 'conversas',
@@ -87,9 +169,6 @@ const collections = {
             accountability: 'all',
             color: '#8B5CF6',
             sort: 7
-        },
-        schema: {
-            name: 'conversas'
         }
     },
     mensagens: {
@@ -101,9 +180,6 @@ const collections = {
             hidden: true,
             singleton: false,
             sort: 8
-        },
-        schema: {
-            name: 'mensagens'
         }
     },
     lead_property_matches: {
@@ -117,9 +193,6 @@ const collections = {
             accountability: 'all',
             color: '#EC4899',
             sort: 9
-        },
-        schema: {
-            name: 'lead_property_matches'
         }
     },
     atividades: {
@@ -133,9 +206,6 @@ const collections = {
             accountability: 'all',
             color: '#6366F1',
             sort: 10
-        },
-        schema: {
-            name: 'atividades'
         }
     },
     webhooks_log: {
@@ -149,9 +219,6 @@ const collections = {
             accountability: 'all',
             color: '#14B8A6',
             sort: 11
-        },
-        schema: {
-            name: 'webhooks_log'
         }
     },
     app_settings: {
@@ -165,9 +232,6 @@ const collections = {
             accountability: 'all',
             color: '#64748B',
             sort: 12
-        },
-        schema: {
-            name: 'app_settings'
         }
     }
 };

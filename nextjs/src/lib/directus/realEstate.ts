@@ -25,11 +25,33 @@ const propertyFields = [
         {
                 media: ['id', 'is_cover', { directus_file: ['id'] }],
         },
-];
+] as const;
+
+// Helper to get cover image ID
+export const getCoverImageId = (property: any): string | null => {
+	if (!property.media || !Array.isArray(property.media)) return null;
+	
+	const coverMedia = property.media.find((m: any) => m.is_cover === true);
+	if (coverMedia?.directus_file) {
+		return typeof coverMedia.directus_file === 'string' 
+			? coverMedia.directus_file 
+			: coverMedia.directus_file.id;
+	}
+	
+	const firstMedia = property.media[0];
+	if (firstMedia?.directus_file) {
+		return typeof firstMedia.directus_file === 'string'
+			? firstMedia.directus_file
+			: firstMedia.directus_file.id;
+	}
+	
+	return null;
+};
 
 interface FetchPropertiesOptions {
         companySlug?: string;
         featuredOnly?: boolean;
+        limit?: number;
 }
 
 const buildCompanyFilter = (companySlug?: string) =>
@@ -51,7 +73,7 @@ export async function fetchCompanyBySlug(slug: string): Promise<Company | null> 
         return companies?.[0] ?? null;
 }
 
-export async function fetchProperties({ companySlug, featuredOnly }: FetchPropertiesOptions = {}): Promise<Property[]> {
+export async function fetchProperties({ companySlug, featuredOnly, limit }: FetchPropertiesOptions = {}): Promise<Property[]> {
         const { directus } = useDirectus();
 
         const filters: QueryFilter<Property> = {
@@ -67,6 +89,7 @@ export async function fetchProperties({ companySlug, featuredOnly }: FetchProper
                         fields: propertyFields as any,
                         filter: filters,
                         sort: ['-featured', '-id'],
+                        limit,
                 }),
         );
 }
@@ -105,3 +128,84 @@ export const findCoverMedia = (property: Property): PropertyMedia | null => {
 
         return firstItem || null;
 };
+
+// Dashboard functions
+export async function fetchDashboardStats(companySlug: string) {
+	const { directus } = useDirectus();
+
+	const [properties, leads, views] = await Promise.all([
+		directus.request(
+			readItems('properties', {
+				filter: buildCompanyFilter(companySlug),
+				aggregate: { count: '*' },
+			}),
+		),
+		directus.request(
+			readItems('leads', {
+				filter: {
+					company_id: { slug: { _eq: companySlug } },
+					stage: { _eq: 'new' },
+				} as any,
+				aggregate: { count: '*' },
+			}),
+		),
+		directus.request(
+			readItems('property_views', {
+				filter: {
+					date_created: {
+						_gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+					},
+				} as any,
+				aggregate: { count: '*' },
+			}),
+		),
+	]);
+
+	return {
+		totalProperties: (properties as any)[0]?.count || 0,
+		newLeads: (leads as any)[0]?.count || 0,
+		monthlyViews: (views as any)[0]?.count || 0,
+		activeProposals: 0, // TODO: implementar quando tiver collection de propostas
+	};
+}
+
+export async function fetchLeadsByStage(companySlug: string) {
+	const { directus } = useDirectus();
+
+	const leads = await directus.request(
+		readItems('leads', {
+			filter: { company_id: { slug: { _eq: companySlug } } } as any,
+			fields: ['stage'],
+		}),
+	);
+
+	const stageCount: Record<string, number> = {};
+	leads.forEach((lead: any) => {
+		const stage = lead.stage || 'Sem estágio';
+		stageCount[stage] = (stageCount[stage] || 0) + 1;
+	});
+
+	return Object.entries(stageCount).map(([stage, count]) => ({
+		stage,
+		count,
+	}));
+}
+
+export async function fetchRecentActivities(companySlug: string, limit: number = 10) {
+	const { directus } = useDirectus();
+
+	const activities = await directus.request(
+		readItems('lead_activities', {
+			fields: ['id', 'activity_type', 'subject', 'description', 'date_created', { lead_id: ['company_id'] }],
+			filter: {
+				lead_id: {
+					company_id: { slug: { _eq: companySlug } },
+				},
+			} as any,
+			sort: ['-date_created'],
+			limit,
+		}),
+	);
+
+	return activities;
+}
