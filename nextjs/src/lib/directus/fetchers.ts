@@ -381,7 +381,13 @@ export const fetchSiteData = async () => {
 		return { globals, headerNavigation, footerNavigation };
 	} catch (error) {
 		console.error('Error fetching site data:', error);
-		throw new Error('Failed to fetch site data');
+		// Return default values when Directus is not available
+
+		return {
+			globals: null,
+			headerNavigation: null,
+			footerNavigation: null,
+		};
 	}
 };
 

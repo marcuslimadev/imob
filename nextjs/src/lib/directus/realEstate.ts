@@ -1,4 +1,4 @@
-import { QueryFilter, readItems } from '@directus/sdk';
+import { readItems } from '@directus/sdk';
 import { useDirectus } from './directus';
 import { Company, Property, PropertyMedia } from '@/types/directus-schema';
 
@@ -55,9 +55,7 @@ interface FetchPropertiesOptions {
 }
 
 const buildCompanyFilter = (companySlug?: string) =>
-        companySlug
-                ? ({ company_id: { slug: { _eq: companySlug } } } satisfies QueryFilter<Property>)
-                : undefined;
+	companySlug ? { company_id: { slug: { _eq: companySlug } } } : undefined;
 
 export async function fetchCompanyBySlug(slug: string): Promise<Company | null> {
         const { directus } = useDirectus();
@@ -74,45 +72,45 @@ export async function fetchCompanyBySlug(slug: string): Promise<Company | null> 
 }
 
 export async function fetchProperties({ companySlug, featuredOnly, limit }: FetchPropertiesOptions = {}): Promise<Property[]> {
-        const { directus } = useDirectus();
+	const { directus } = useDirectus();
 
-        const filters: QueryFilter<Property> = {
-                ...(buildCompanyFilter(companySlug) || {}),
-        };
+	const filters: any = {
+		...(buildCompanyFilter(companySlug) || {}),
+	};
 
-        if (featuredOnly) {
-                filters.featured = { _eq: true } as QueryFilter<Property>['featured'];
-        }
+	if (featuredOnly) {
+		filters.featured = { _eq: true };
+	}
 
-        return directus.request(
-                readItems('properties', {
-                        fields: propertyFields as any,
-                        filter: filters,
-                        sort: ['-featured', '-id'],
-                        limit,
-                }),
-        );
+	return directus.request(
+		readItems('properties', {
+			fields: propertyFields as any,
+			filter: filters,
+			sort: ['-featured', '-id'],
+			limit,
+		}),
+	) as unknown as Promise<Property[]>;
 }
 
 export async function fetchPropertyById(
-        id: string,
-        { companySlug }: { companySlug?: string } = {},
+	id: string,
+	{ companySlug }: { companySlug?: string } = {},
 ): Promise<Property | null> {
-        const { directus } = useDirectus();
+	const { directus } = useDirectus();
 
-        const baseFilter: QueryFilter<Property> = { id: { _eq: id } };
-        const companyFilter = buildCompanyFilter(companySlug);
-        const filter = companyFilter ? { _and: [baseFilter, companyFilter] } : baseFilter;
+	const baseFilter: any = { id: { _eq: id } };
+	const companyFilter = buildCompanyFilter(companySlug);
+	const filter = companyFilter ? { _and: [baseFilter, companyFilter] } : baseFilter;
 
-        const result = await directus.request(
-                readItems('properties', {
-                        fields: [...propertyFields, 'address', 'amenities', 'price_condo', 'price_iptu'] as any,
-                        filter,
-                        limit: 1,
-                }),
-        );
+	const result = (await directus.request(
+		readItems('properties', {
+			fields: [...propertyFields, 'address', 'amenities', 'price_condo', 'price_iptu'] as any,
+			filter,
+			limit: 1,
+		}),
+	)) as unknown as Property[];
 
-        return result?.[0] ?? null;
+	return result?.[0] ?? null;
 }
 
 export const findCoverMedia = (property: Property): PropertyMedia | null => {
@@ -141,6 +139,7 @@ export async function fetchDashboardStats(companySlug: string) {
 			}),
 		),
 		directus.request(
+			// @ts-expect-error - Collection not in generated schema yet
 			readItems('leads', {
 				filter: {
 					company_id: { slug: { _eq: companySlug } },
@@ -150,6 +149,7 @@ export async function fetchDashboardStats(companySlug: string) {
 			}),
 		),
 		directus.request(
+			// @ts-expect-error - Collection not in generated schema yet
 			readItems('property_views', {
 				filter: {
 					date_created: {
@@ -173,6 +173,7 @@ export async function fetchLeadsByStage(companySlug: string) {
 	const { directus } = useDirectus();
 
 	const leads = await directus.request(
+		// @ts-expect-error - Collection not in generated schema yet
 		readItems('leads', {
 			filter: { company_id: { slug: { _eq: companySlug } } } as any,
 			fields: ['stage'],
@@ -195,6 +196,7 @@ export async function fetchRecentActivities(companySlug: string, limit: number =
 	const { directus } = useDirectus();
 
 	const activities = await directus.request(
+		// @ts-expect-error - Collection not in generated schema yet
 		readItems('lead_activities', {
 			fields: ['id', 'activity_type', 'subject', 'description', 'date_created', { lead_id: ['company_id'] }],
 			filter: {

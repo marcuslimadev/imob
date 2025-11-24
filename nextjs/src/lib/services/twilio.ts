@@ -36,7 +36,8 @@ export class TwilioService {
       };
     } catch (error: any) {
       console.error('Erro ao enviar mensagem Twilio:', error);
-      return {
+      
+return {
         success: false,
         error: error.message || 'Erro desconhecido',
       };
@@ -74,7 +75,8 @@ export class TwilioService {
       };
     } catch (error: any) {
       console.error('Erro ao enviar mensagem com mídia:', error);
-      return {
+      
+return {
         success: false,
         error: error.message || 'Erro desconhecido',
       };
@@ -112,7 +114,8 @@ export class TwilioService {
       };
     } catch (error: any) {
       console.error('Erro ao enviar template message:', error);
-      return {
+      
+return {
         success: false,
         error: error.message || 'Erro desconhecido',
       };
@@ -136,7 +139,8 @@ export class TwilioService {
       };
     } catch (error: any) {
       console.error('Erro ao buscar status da mensagem:', error);
-      return {
+      
+return {
         success: false,
         error: error.message || 'Erro desconhecido',
       };
