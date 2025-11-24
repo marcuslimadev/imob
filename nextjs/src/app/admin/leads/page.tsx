@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Plus, Search, Filter } from 'lucide-react';
+import type { LeadStageCount } from '@/types/crm';
 
 export default async function LeadsPage({
 	searchParams,
@@ -10,7 +11,7 @@ export default async function LeadsPage({
 	const companySlug = params.company || 'exclusiva';
 
 	// TODO: Implement fetchLeadsByStage in realEstate.ts and fetch real data
-	const leadsByStage = [
+	const leadsByStage: LeadStageCount[] = [
 		{ stage: 'Novo', count: 5 },
 		{ stage: 'Contatado', count: 3 },
 		{ stage: 'Qualificado', count: 2 },
@@ -64,7 +65,7 @@ export default async function LeadsPage({
 			<div className="overflow-x-auto pb-4">
 				<div className="inline-flex min-w-full gap-4">
 					{stages.map((stage) => {
-						const stageData = leadsByStage.find((s: any) => s.stage === stage);
+						const stageData = leadsByStage.find((s: LeadStageCount) => s.stage === stage);
 						const count = stageData?.count || 0;
 
 						return (

@@ -2,6 +2,7 @@ import { fetchRecentActivities } from '@/lib/directus/realEstate';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Phone, Mail, Calendar, MessageSquare } from 'lucide-react';
+import type { LeadActivity } from '@/types/crm';
 
 const activityIcons = {
 	call: Phone,
@@ -19,9 +20,9 @@ export async function RecentActivities({ companySlug }: { companySlug: string })
 				<h3 className="text-lg font-semibold text-gray-900">Atividades Recentes</h3>
 			</div>
 			<div className="divide-y divide-gray-200">
-				{activities.map((activity: any) => {
+				{activities.map((activity: LeadActivity) => {
 					const Icon = activityIcons[activity.activity_type as keyof typeof activityIcons] || MessageSquare;
-					const timeAgo = formatDistanceToNow(new Date(activity.date_created), {
+					const timeAgo = formatDistanceToNow(new Date(activity.date_created || new Date()), {
 						addSuffix: true,
 						locale: ptBR,
 					});

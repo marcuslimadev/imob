@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Plus, Search, Filter } from 'lucide-react';
 import { fetchProperties } from '@/lib/directus/realEstate';
 import DirectusImage from '@/components/shared/DirectusImage';
+import type { Property } from '@/types/directus-schema';
 
 export default async function PropertiesPage({
 	searchParams,
@@ -17,7 +18,7 @@ export default async function PropertiesPage({
 	// Filter properties by search query
 	const filteredProperties = searchQuery
 		? properties.filter(
-				(p: any) =>
+				(p: Property) =>
 					p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					p.neighborhood?.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					p.city?.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -96,7 +97,7 @@ export default async function PropertiesPage({
 									</td>
 								</tr>
 							) : (
-								filteredProperties.map((property: any) => {
+								filteredProperties.map((property: Property) => {
 									const price =
 										property.transaction_type === 'rent' ? property.price_rent : property.price_sale;
 									const priceFormatted = price

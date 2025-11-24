@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import DirectusImage from '@/components/shared/DirectusImage';
 import { fetchProperties, getCoverImageId } from '@/lib/directus/realEstate';
+import type { Property } from '@/types/directus-schema';
 
 export async function FeaturedProperties({ companySlug }: { companySlug: string }) {
 	const properties = await fetchProperties({ companySlug, featuredOnly: true, limit: 6 });
@@ -14,7 +15,7 @@ export async function FeaturedProperties({ companySlug }: { companySlug: string 
 				</Link>
 			</div>
 			<div className="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-3">
-				{properties.map((property: any) => {
+				{properties.map((property: Property) => {
 					const price = property.transaction_type === 'rent' ? property.price_rent : property.price_sale;
 					const coverImageId = getCoverImageId(property);
 
