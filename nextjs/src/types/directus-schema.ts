@@ -900,12 +900,69 @@ export interface DirectusVersion {
 }
 
 export interface DirectusExtension {
-	enabled?: boolean;
-	/** @primaryKey */
-	id: string;
-	folder?: string;
-	source?: string;
-	bundle?: string | null;
+        enabled?: boolean;
+        /** @primaryKey */
+        id: string;
+        folder?: string;
+        source?: string;
+        bundle?: string | null;
+}
+
+export interface Company {
+        /** @primaryKey */
+        id: string;
+        name: string;
+        slug?: string | null;
+        cnpj?: string | null;
+        email?: string | null;
+        phone?: string | null;
+        logo?: string | DirectusFile | null;
+        primary_color?: string | null;
+        secondary_color?: string | null;
+        custom_domain?: string | null;
+        subscription_status?: string | null;
+        subscription_plan?: string | null;
+        subscription_expires_at?: string | null;
+}
+
+export interface PropertyMedia {
+        /** @primaryKey */
+        id: string;
+        property_id?: Property | string | null;
+        directus_file?: string | DirectusFile | null;
+        is_cover?: boolean | null;
+        caption?: string | null;
+}
+
+export interface Property {
+        /** @primaryKey */
+        id: string;
+        company_id: Company | string;
+        title: string;
+        description?: string | null;
+        property_type?: string | null;
+        transaction_type?: string | null;
+        address?: string | null;
+        neighborhood?: string | null;
+        city?: string | null;
+        state?: string | null;
+        zip_code?: string | null;
+        latitude?: number | null;
+        longitude?: number | null;
+        bedrooms?: number | null;
+        bathrooms?: number | null;
+        suites?: number | null;
+        parking_spaces?: number | null;
+        area_total?: number | null;
+        area_built?: number | null;
+        price_sale?: number | null;
+        price_rent?: number | null;
+        price_condo?: number | null;
+        price_iptu?: number | null;
+        amenities?: Record<string, unknown> | null;
+        featured?: boolean | null;
+        views_count?: number | null;
+        media?: PropertyMedia[] | string[] | null;
 }
 
 export interface Schema {
@@ -924,18 +981,21 @@ export interface Schema {
 	forms: Form[];
 	form_submissions: FormSubmission[];
 	form_submission_values: FormSubmissionValue[];
-	globals: Globals;
-	navigation: Navigation[];
-	navigation_items: NavigationItem[];
-	page_blocks: PageBlock[];
-	pages: Page[];
-	posts: Post[];
-	redirects: Redirect[];
-	directus_access: DirectusAccess[];
-	directus_activity: DirectusActivity[];
-	directus_collections: DirectusCollection[];
-	directus_comments: DirectusComment[];
-	directus_fields: DirectusField[];
+        globals: Globals;
+        navigation: Navigation[];
+        navigation_items: NavigationItem[];
+        page_blocks: PageBlock[];
+        pages: Page[];
+        posts: Post[];
+        redirects: Redirect[];
+        companies: Company[];
+        properties: Property[];
+        property_media: PropertyMedia[];
+        directus_access: DirectusAccess[];
+        directus_activity: DirectusActivity[];
+        directus_collections: DirectusCollection[];
+        directus_comments: DirectusComment[];
+        directus_fields: DirectusField[];
 	directus_files: DirectusFile[];
 	directus_folders: DirectusFolder[];
 	directus_migrations: DirectusMigration[];
@@ -977,17 +1037,20 @@ export enum CollectionNames {
 	form_submissions = 'form_submissions',
 	form_submission_values = 'form_submission_values',
 	globals = 'globals',
-	navigation = 'navigation',
-	navigation_items = 'navigation_items',
-	page_blocks = 'page_blocks',
-	pages = 'pages',
-	posts = 'posts',
-	redirects = 'redirects',
-	directus_access = 'directus_access',
-	directus_activity = 'directus_activity',
-	directus_collections = 'directus_collections',
-	directus_comments = 'directus_comments',
-	directus_fields = 'directus_fields',
+        navigation = 'navigation',
+        navigation_items = 'navigation_items',
+        page_blocks = 'page_blocks',
+        pages = 'pages',
+        posts = 'posts',
+        redirects = 'redirects',
+        companies = 'companies',
+        properties = 'properties',
+        property_media = 'property_media',
+        directus_access = 'directus_access',
+        directus_activity = 'directus_activity',
+        directus_collections = 'directus_collections',
+        directus_comments = 'directus_comments',
+        directus_fields = 'directus_fields',
 	directus_files = 'directus_files',
 	directus_folders = 'directus_folders',
 	directus_migrations = 'directus_migrations',
