@@ -2,6 +2,7 @@ import { directusServer } from '@/lib/directus/client';
 import { readItems, readItem } from '@directus/sdk';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import FormularioContato from '@/components/forms/FormularioContato';
 
 interface PropertyPageProps {
   params: {
