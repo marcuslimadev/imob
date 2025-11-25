@@ -49,6 +49,9 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
     notFound();
   }
 
+  // @ts-ignore - Using custom schema with properties table
+  const prop: any = property;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -105,11 +108,11 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
             <div className="bg-white rounded-lg shadow-md p-6">
               <div className="mb-4">
                 <span className="text-sm font-semibold text-blue-600 uppercase">
-                  {getPropertyTypeLabel(property.property_type)}
+                  {getPropertyTypeLabel(prop.property_type)}
                 </span>
               </div>
 
-              <h1 className="text-3xl font-bold mb-4">{property.title}</h1>
+              <h1 className="text-3xl font-bold mb-4">{prop.title}</h1>
 
               <div className="flex items-center gap-2 text-gray-600 mb-6">
                 <svg

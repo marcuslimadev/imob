@@ -4,11 +4,19 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { directusClient } from '@/lib/directus/client';
 import { createItem } from '@directus/sdk';
+import ImageUpload from '@/components/forms/ImageUpload';
+
+interface UploadedImage {
+  id: string;
+  url: string;
+  filename: string;
+}
 
 export default function NovoImovelPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -60,9 +68,28 @@ export default function NovoImovelPage() {
         views_count: 0
       };
 
-      await directusClient.request(
+      // @ts-ignore - Custom schema
+      const createdProperty = await directusClient.request(
+        // @ts-ignore
         createItem('properties', propertyData)
       );
+
+      // Create property_media entries if images were uploaded
+      if (uploadedImages.length > 0) {
+        for (let i = 0; i < uploadedImages.length; i++) {
+          // @ts-ignore - Custom schema
+          await directusClient.request(
+            // @ts-ignore
+            createItem('property_media', {
+              property_id: (createdProperty as any).id,
+              directus_files_id: uploadedImages[i].id,
+              type: 'image',
+              sort: i,
+              is_cover: i === 0
+            })
+          );
+        }
+      }
 
       router.push('/empresa/imoveis');
     } catch (err: any) {
@@ -437,6 +464,18 @@ export default function NovoImovelPage() {
                 </select>
               </div>
             </div>
+          </div>
+
+          {/* Upload de Fotos */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Fotos</h2>
+            <ImageUpload 
+              onImagesUploaded={setUploadedImages}
+              maxFiles={20}
+            />
+            <p className="text-sm text-gray-500 mt-2">
+              A primeira foto será a capa do anúncio. Você pode reordenar arrastando as imagens.
+            </p>
           </div>
 
           {/* Actions */}
