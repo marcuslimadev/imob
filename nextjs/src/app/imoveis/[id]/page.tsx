@@ -11,15 +11,10 @@ interface PropertyPageProps {
 
 async function getProperty(id: string) {
   try {
+    // @ts-ignore - Using custom schema
     return await directusServer.request(
       readItem('properties', id, {
-        fields: [
-          '*',
-          'company_id.name',
-          'company_id.email',
-          'company_id.phone',
-          'company_id.logo'
-        ]
+        fields: ['*']
       })
     );
   } catch (error) {

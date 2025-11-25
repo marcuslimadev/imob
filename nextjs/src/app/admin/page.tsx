@@ -70,11 +70,11 @@ async function getDashboardStats(): Promise<DashboardStats> {
 
 async function getRecentCompanies() {
   try {
+    // @ts-ignore - Using custom schema
     return await directusServer.request(
       readItems('companies', {
         limit: 5,
-        sort: ['-created_at'],
-        fields: ['id', 'name', 'email', 'subscription_status', 'created_at']
+        fields: ['*']
       })
     );
   } catch (error) {
