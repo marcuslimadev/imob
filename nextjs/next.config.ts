@@ -26,20 +26,25 @@ const nextConfig: NextConfig = {
 	},
 	images: {
 		dangerouslyAllowSVG: true,
-		remotePatterns: [
-			{
-				protocol: 'https',
-				hostname: process.env.NEXT_PUBLIC_DIRECTUS_URL?.split('//')[1] || '',
-				pathname: '/assets/**',
-			},
-			{
-				protocol: 'http',
-				hostname: 'localhost',
-				port: '8055',
-				pathname: '/assets/**',
-			},
-		],
-	},
+                remotePatterns: [
+                        {
+                                protocol: 'https',
+                                hostname: process.env.NEXT_PUBLIC_DIRECTUS_URL?.split('//')[1] || '',
+                                pathname: '/assets/**',
+                        },
+                        {
+                                protocol: 'http',
+                                hostname: 'localhost',
+                                port: '8055',
+                                pathname: '/assets/**',
+                        },
+                        {
+                                protocol: 'https',
+                                hostname: 'images.unsplash.com',
+                                pathname: '/**',
+                        },
+                ],
+        },
 	env: {
 		DIRECTUS_PUBLIC_TOKEN: process.env.DIRECTUS_PUBLIC_TOKEN,
 		DIRECTUS_FORM_TOKEN: process.env.DIRECTUS_FORM_TOKEN,

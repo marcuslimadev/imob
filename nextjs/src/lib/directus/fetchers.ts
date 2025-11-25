@@ -332,9 +332,9 @@ export const fetchPostByIdAndVersion = async (
 export const fetchSiteData = async () => {
 	const { directus } = useDirectus();
 
-	try {
-		const [globals, headerNavigation, footerNavigation] = await Promise.all([
-			directus.request(
+        try {
+                const [globals, headerNavigation, footerNavigation] = await Promise.all([
+                        directus.request(
 				readSingleton('globals', {
 					fields: ['id', 'title', 'description', 'logo', 'logo_dark_mode', 'social_links', 'accent_color', 'favicon'],
 				}),
@@ -378,11 +378,23 @@ export const fetchSiteData = async () => {
 			),
 		]);
 
-		return { globals, headerNavigation, footerNavigation };
-	} catch (error) {
-		console.error('Error fetching site data:', error);
-		throw new Error('Failed to fetch site data');
-	}
+                return { globals, headerNavigation, footerNavigation };
+        } catch (error) {
+                console.error('Error fetching site data:', error);
+
+                const fallbackNavigation = { id: 'static', title: 'Navegação', items: [] };
+                const fallbackGlobals = {
+                        title: 'IMOBI',
+                        description: 'Frontend desacoplado para a vitrine e marketing da IMOBI.',
+                        accent_color: '#2563eb',
+                };
+
+                return {
+                        globals: fallbackGlobals,
+                        headerNavigation: fallbackNavigation,
+                        footerNavigation: fallbackNavigation,
+                };
+        }
 };
 
 /**

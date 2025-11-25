@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			}),
 		);
 
-		const [pages, posts] = await Promise.all([pagesPromise, postsPromise]);
+                const [pages, posts] = await Promise.all([pagesPromise, postsPromise]);
 
 		const pageUrls = pages
 			.filter((page: { permalink: string; published_at: string | null | undefined }) => page.permalink)
@@ -42,8 +42,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 				lastModified: post.published_at || new Date().toISOString(),
 			}));
 
-		return [...pageUrls, ...postUrls];
-	} catch (error) {
+                const staticUrls: MetadataRoute.Sitemap = [
+                        {
+                                url: `${siteUrl}/properties`,
+                                lastModified: new Date().toISOString(),
+                        },
+                ];
+
+                return [...pageUrls, ...postUrls, ...staticUrls];
+        } catch (error) {
 		console.error('Error generating sitemap:', error);
 		throw new Error('Failed to generate sitemap');
 	}
