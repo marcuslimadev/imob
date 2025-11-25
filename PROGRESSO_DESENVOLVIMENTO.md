@@ -2,11 +2,22 @@
 
 **Data:** 24 de Novembro de 2025  
 **Desenvolvedor:** Assistant  
-**Status:** Em Andamento (70% MVP Completo)
+**Status:** Em Andamento (80% MVP Completo)
 
 ---
 
 ## ✅ O QUE FOI DESENVOLVIDO
+
+### 0. Estrutura visual do painel administrativo (Next.js)
+
+**Novas telas e componentes criados:**
+- **Layout** (`nextjs/src/app/admin/layout.tsx`): adiciona sidebar fixa, header e área de conteúdo com scroll.
+- **Página de Dashboard** (`nextjs/src/app/admin/dashboard/page.tsx`): usa `Suspense` e skeletons para carregar cards, gráfico, lista de atividades e imóveis em destaque com `company` via `searchParams`.
+- **Componentes compartilhados**
+  - `AdminSidebar` e `AdminHeader` com navegação e busca.
+  - Widgets do dashboard: `DashboardStats`, `LeadsByStage`, `RecentActivities` e `FeaturedProperties` consumindo os fetchers Directus já existentes.
+
+**Resultados:** dashboard pronto para uso em `/admin/dashboard?company=exclusiva`, com cards, gráfico de estágios, linha do tempo de atividades e grid de imóveis em destaque.
 
 ### 1. Funções do Dashboard (realEstate.ts)
 
@@ -33,9 +44,9 @@ Helper function para extrair o ID da imagem de capa de um imóvel
 
 ---
 
-## 📁 ESTRUTURA DO PAINEL ADMINISTRATIVO (Arquivos Preparados)
+## 📁 ESTRUTURA DO PAINEL ADMINISTRATIVO (Arquivos Criados)
 
-Os seguintes arquivos foram preparados no script `setup-admin.js` e estão prontos para serem criados:
+Os arquivos abaixo já estão versionados na pasta `nextjs/src` e carregam dados Directus em tempo real:
 
 ```
 nextjs/src/app/admin/
@@ -100,30 +111,15 @@ Menu de navegação com 7 itens:
 
 ---
 
-## 🔧 COMO CRIAR A ESTRUTURA
+## 🔧 COMO (RE)CRIAR A ESTRUTURA
 
-### Opção 1: Executar o Script (Requer Node.js)
+A estrutura já está no repositório. Se precisar recriar a partir do script (ex.: ambiente limpo), execute:
+
 ```bash
-cd c:\iMOBI\imobi
 node setup-admin.js
 ```
 
-### Opção 2: Manual (Se o script não funcionar)
-
-#### Criar Diretórios:
-```bash
-mkdir nextjs\src\app\admin
-mkdir nextjs\src\app\admin\dashboard
-mkdir nextjs\src\components\admin
-mkdir nextjs\src\components\admin\dashboard
-```
-
-#### Copiar Código:
-Os arquivos estão completos no script `setup-admin.js`.
-Você pode:
-1. Abrir `setup-admin.js`
-2. Copiar o conteúdo de cada arquivo
-3. Criar manualmente cada arquivo com o conteúdo correspondente
+O script sobrescreve os arquivos em `nextjs/src/app/admin` e `nextjs/src/components/admin` com o mesmo conteúdo versionado.
 
 ---
 
@@ -175,10 +171,7 @@ Todos os dados são automaticamente filtrados por `company_id.slug` para garanti
 
 ## 🚀 PRÓXIMOS PASSOS
 
-### 1. Criar Estrutura de Arquivos ✅ (Preparado)
-Execute o script `setup-admin.js` para criar todos os arquivos.
-
-### 2. CRUD de Imóveis (Próxima Prioridade)
+### 1. CRUD de Imóveis (Próxima Prioridade)
 ```
 /admin/properties
 ├── page.tsx              # Lista de imóveis com filtros
@@ -188,14 +181,14 @@ Execute o script `setup-admin.js` para criar todos os arquivos.
     └── edit/page.tsx     # Formulário de edição
 ```
 
-### 3. Gestão de Leads (Kanban)
+### 2. Gestão de Leads (Kanban)
 ```
 /admin/leads
 ├── page.tsx              # Kanban visual com drag & drop
 └── [id]/page.tsx         # Detalhes do lead + histórico
 ```
 
-### 4. Sistema de Autenticação
+### 3. Sistema de Autenticação
 ```
 /login/page.tsx           # Página de login
 /api/auth/[...].ts        # API de autenticação
