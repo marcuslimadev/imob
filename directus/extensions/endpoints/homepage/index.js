@@ -1,222 +1,312 @@
 export default (router) => {
 	router.get('/', (req, res) => {
+		const lastUpdate = new Date().toLocaleDateString('pt-BR', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric',
+		});
+
+		const heroStats = [
+			{ label: 'Módulos migrados', value: '3 / 11', detail: 'Infra + Imóveis + Uploads' },
+			{ label: 'Dados importados', value: '6.412', detail: 'imóveis aguardando ingestão' },
+			{ label: 'Automação WhatsApp', value: '0%', detail: 'a migrar do Lumen' },
+			{ label: 'Templates públicos', value: '0 / 20', detail: 'biblioteca em produção' },
+		];
+
+		const progressModules = [
+			{
+				title: 'Infraestrutura Directus + PostgreSQL',
+				percent: 35,
+				badge: 'Em curso',
+				color: 'from-emerald-50 to-emerald-100 border-emerald-200',
+				highlights: [
+					'Containers Docker revisados',
+					'Schema do Lumen catalogado (imo_properties, leads, matches)',
+					'Collections base registradas no Directus',
+				],
+			},
+			{
+				title: 'Importador de Imóveis + Assets',
+				percent: 20,
+				badge: 'Leitura API Exclusiva',
+				color: 'from-blue-50 to-blue-100 border-blue-200',
+				highlights: [
+					'Planejamento do worker 2 fases (lista + detalhes)',
+					'Map de campos (características, imagens, pricing)',
+					'Download e upload para Directus Files aprovado',
+				],
+			},
+			{
+				title: 'Portal Público + Templates',
+				percent: 15,
+				badge: 'Design System',
+				color: 'from-amber-50 to-amber-100 border-amber-200',
+				highlights: [
+					'Componentes herdados do Exclusiva (hero, mapa, cards)',
+					'Dados conectados via Directus SDK',
+					'Pranchetas com 20 layouts previstas',
+				],
+			},
+			{
+				title: 'CRM + WhatsApp Automations',
+				percent: 10,
+				badge: 'Planejamento',
+				color: 'from-purple-50 to-purple-100 border-purple-200',
+				highlights: [
+					'Kanban Leads (Next.js) espelhado do Lumen/Vue',
+					'Serviço WhatsAppService mapeado para Directus Flows',
+					'Integração Twilio/OpenAI validada com credenciais reais',
+				],
+			},
+			{
+				title: 'IA + Diagnósticos + Matching',
+				percent: 5,
+				badge: 'Descobrimento',
+				color: 'from-slate-50 to-slate-100 border-slate-200',
+				highlights: [
+					'Portar prompts do OpenAIService para flows serverless',
+					'LeadPropertyMatch e recomendações replicadas',
+					'Logs e telemetria definidos',
+				],
+			},
+			{
+				title: 'Billing + Multi-Tenancy completo',
+				percent: 0,
+				badge: 'A iniciar',
+				color: 'from-gray-50 to-gray-100 border-gray-200',
+				highlights: [
+					'Mercado Pago / Assinaturas',
+					'Permissões por tenant (Company Admin, Corretor, Público)',
+					'Health-check e monitoramento de jobs',
+				],
+			},
+		];
+
+		const roadmapPhases = [
+			{
+				label: 'Fase 1 · Migração Técnica',
+				percent: 40,
+				items: [
+					'Portar schema Lumen para Directus (imo_properties, leads, conversas)',
+					'Reescrever endpoints públicos em Node/Directus',
+					'Preparar importadores e armazenamento de fotos',
+				],
+			},
+			{
+				label: 'Fase 2 · Experiência do Cliente',
+				percent: 25,
+				items: [
+					'Biblioteca de 20 templates + seleção por empresa',
+					'Dashboard Next.js 15 com métricas do Directus',
+					'Módulo de leads refeito com drag & drop e histórico completo',
+				],
+			},
+			{
+				label: 'Fase 3 · Automação + Monetização',
+				percent: 10,
+				items: [
+					'Fluxos WhatsApp + IA (diagnósticos, perguntas guiadas)',
+					'Sync OLX / Viva Real e workers programados',
+					'Checkout recorrente (R$ 759/mês) com bloqueio de acesso',
+				],
+			},
+		];
+
+		const deliverables = [
+			{
+				title: 'Worker de importação 2 fases',
+				eta: 'Rodando até 28/11',
+				detail: 'Sincroniza /lista e /dados da API Exclusiva direto no Directus',
+			},
+			{
+				title: 'Upload de imagens para Directus Files',
+				eta: 'Em andamento',
+				detail: 'Mirror automático das fotos hospedadas no CDN original',
+			},
+			{
+				title: 'Painel de Progresso Público (esta página)',
+				eta: 'Hoje',
+				detail: 'Usado para acompanhar as entregas do plano',
+			},
+		];
+
 		const html = `
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iMOBI - Sistema de Gestão Imobiliária</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iMOBI · Migração Exclusiva</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-bg { background: linear-gradient(135deg, #1f355d 0%, #764ba2 100%); }
     </style>
 </head>
-<body class="antialiased">
-    <!-- Header -->
-    <header class="bg-white/90 backdrop-blur-sm border-b sticky top-0 z-50 shadow-sm">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-600 text-white font-bold text-2xl px-3 py-2 rounded-lg">iMOBI</div>
-                    <span class="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">MVP 90%</span>
-                </div>
-                <a href="/admin" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors">
-                    Acessar Sistema
-                </a>
+<body class="antialiased bg-slate-50 text-slate-900">
+    <header class="bg-white/80 backdrop-blur border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white font-bold text-xl px-3 py-2 rounded-lg">iMOBI</div>
+                <span class="text-xs uppercase tracking-wider text-slate-500">Portal de Acompanhamento</span>
             </div>
+            <a href="/admin" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold transition-colors">
+                Abrir Directus
+            </a>
         </div>
     </header>
 
-    <!-- Hero -->
-    <section class="gradient-bg text-white py-20">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-5xl md:text-6xl font-bold mb-6">
-                Sua Imobiliária <br/>
-                <span class="text-yellow-300">100% Digital</span>
-            </h1>
-            <p class="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-                Sistema completo de gestão imobiliária com CRM de leads, gerenciamento de imóveis e muito mais. 
-                Tudo por apenas R$ 759/mês.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/admin" class="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-bold text-lg transition-colors shadow-lg">
-                    Começar Agora - 7 Dias Grátis
-                </a>
-                <a href="#tutorial" class="bg-blue-800 hover:bg-blue-900 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors">
-                    Ver Tutorial
-                </a>
-            </div>
-            <p class="text-sm mt-4 opacity-75">✅ Sem cartão • ✅ Cancele quando quiser • ✅ Suporte incluído</p>
-        </div>
-    </section>
-
-    <!-- Status -->
-    <section id="status" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full font-semibold text-sm">🚀 MVP em Desenvolvimento</span>
-                <h2 class="text-4xl font-bold text-gray-900 mt-6 mb-4">Status do Desenvolvimento</h2>
-                <p class="text-gray-600">Última atualização: ${new Date().toLocaleDateString('pt-BR')}</p>
-            </div>
-
-            <div class="max-w-4xl mx-auto grid gap-6">
-                <div class="bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-6">
-                    <div class="flex justify-between mb-4">
-                        <h3 class="text-xl font-bold">✅ Gestão de Imóveis</h3>
-                        <span class="bg-green-600 text-white px-4 py-1 rounded-full font-semibold text-sm">100%</span>
+    <main>
+        <section class="gradient-bg text-white py-16">
+            <div class="max-w-6xl mx-auto px-4 grid gap-10 md:grid-cols-[1.2fr_0.8fr] items-center">
+                <div>
+                    <p class="text-sm uppercase tracking-[0.3em] text-white/70">Migração Exclusiva ➜ Directus</p>
+                    <h1 class="text-4xl md:text-5xl font-bold mt-4 mb-6">
+                        Replicando backend + frontend <span class="text-amber-200">Exclusiva Lar</span> dentro do iMOBI
+                    </h1>
+                    <p class="text-lg text-white/90 max-w-2xl">
+                        Todo o histórico (imóveis, leads, conversas, automações e templates) será migrado do projeto Lumen/Vue
+                        <strong>para Directus + Next.js</strong>. Esta página mostra o plano detalhado, percentuais e próximos passos.
+                    </p>
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <a href="/admin" class="inline-flex items-center gap-2 bg-white text-blue-700 font-semibold px-6 py-3 rounded-lg shadow-lg hover:bg-slate-100 transition">
+                            Entrar no painel
+                        </a>
+                        <a href="/files/plans/Plano.md" class="inline-flex items-center gap-2 border border-white/40 px-6 py-3 rounded-lg font-semibold text-white hover:bg-white/10 transition">
+                            Plano completo
+                        </a>
                     </div>
-                    <ul class="space-y-2 text-gray-700">
-                        <li>✓ CRUD completo de imóveis</li>
-                        <li>✓ Upload de até 20 fotos</li>
-                        <li>✓ Vitrine pública</li>
-                    </ul>
+                    <p class="text-sm mt-6 text-white/70">Última atualização: ${lastUpdate}</p>
                 </div>
-
-                <div class="bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl p-6">
-                    <div class="flex justify-between mb-4">
-                        <h3 class="text-xl font-bold">🔵 CRM de Leads</h3>
-                        <span class="bg-blue-600 text-white px-4 py-1 rounded-full font-semibold text-sm">90%</span>
-                    </div>
-                    <ul class="space-y-2 text-gray-700">
-                        <li>✓ Gestão completa de leads</li>
-                        <li>✓ Histórico de atividades</li>
-                        <li>✓ Integração WhatsApp</li>
-                    </ul>
-                </div>
-
-                <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-xl p-6">
-                    <div class="flex justify-between mb-4">
-                        <h3 class="text-xl font-bold">🟡 Multi-Tenancy</h3>
-                        <span class="bg-yellow-600 text-white px-4 py-1 rounded-full font-semibold text-sm">60%</span>
-                    </div>
-                    <ul class="space-y-2 text-gray-700">
-                        <li>✓ Roles criadas</li>
-                        <li>✓ Isolamento de dados</li>
-                        <li>⏳ Permissões finais</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-4xl mx-auto">
-                <h4 class="font-bold text-gray-900 mb-4 text-center">📊 Estatísticas do Projeto</h4>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                    <div><p class="text-3xl font-bold text-blue-600">2.500+</p><p class="text-sm text-gray-600">Linhas</p></div>
-                    <div><p class="text-3xl font-bold text-blue-600">10+</p><p class="text-sm text-gray-600">Páginas</p></div>
-                    <div><p class="text-3xl font-bold text-blue-600">90%</p><p class="text-sm text-gray-600">MVP</p></div>
-                    <div><p class="text-3xl font-bold text-blue-600">8</p><p class="text-sm text-gray-600">Commits</p></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-12">Funcionalidades</h2>
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div class="text-center p-6">
-                    <div class="text-5xl mb-4">🏠</div>
-                    <h3 class="font-bold text-xl mb-2">Gestão de Imóveis</h3>
-                    <p class="text-gray-600">CRUD completo com fotos</p>
-                </div>
-                <div class="text-center p-6">
-                    <div class="text-5xl mb-4">📊</div>
-                    <h3 class="font-bold text-xl mb-2">CRM de Leads</h3>
-                    <p class="text-gray-600">Gerencie leads e atividades</p>
-                </div>
-                <div class="text-center p-6">
-                    <div class="text-5xl mb-4">💬</div>
-                    <h3 class="font-bold text-xl mb-2">WhatsApp</h3>
-                    <p class="text-gray-600">Integração direta</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing -->
-    <section class="py-16 bg-gray-900 text-white">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-4xl font-bold mb-4">Preço Simples</h2>
-            <div class="max-w-md mx-auto bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 mt-8">
-                <h3 class="text-2xl font-bold mb-2">Plano Completo</h3>
-                <div class="text-5xl font-bold my-4">R$ 759<span class="text-xl">/mês</span></div>
-                <p class="mb-6 opacity-90">7 dias grátis</p>
-                <ul class="text-left space-y-3 mb-6">
-                    <li>✓ Imóveis ilimitados</li>
-                    <li>✓ CRM completo</li>
-                    <li>✓ Upload ilimitado</li>
-                    <li>✓ Suporte WhatsApp</li>
-                </ul>
-                <a href="/admin" class="block w-full bg-white text-blue-600 font-bold py-3 rounded-lg hover:bg-gray-100 transition-colors">
-                    Começar Teste Gratuito
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Tutorial -->
-    <section id="tutorial" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-12">Tutorial Rápido</h2>
-            <div class="max-w-3xl mx-auto space-y-6">
-                <div class="bg-white rounded-xl p-6 shadow">
-                    <div class="flex gap-4">
-                        <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
-                        <div>
-                            <h3 class="font-bold text-xl mb-2">Acesse o Sistema</h3>
-                            <p class="text-gray-600 mb-2">Clique em "Acessar Sistema" e faça login:</p>
-                            <div class="bg-gray-100 p-3 rounded font-mono text-sm">
-                                Email: admin@exclusivalar.com<br/>
-                                Senha: Teste@123
+                <div class="bg-white/10 rounded-2xl border border-white/20 p-6">
+                    <h3 class="text-sm uppercase tracking-[0.3em] text-white/70 mb-4">Métricas do Momento</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        ${heroStats.map((stat) => `
+                            <div class="bg-white/15 rounded-xl p-4">
+                                <p class="text-sm text-white/70">${stat.label}</p>
+                                <p class="text-2xl font-bold">${stat.value}</p>
+                                <p class="text-xs text-white/70">${stat.detail}</p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow">
-                    <div class="flex gap-4">
-                        <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
-                        <div>
-                            <h3 class="font-bold text-xl mb-2">Cadastre Imóveis</h3>
-                            <p class="text-gray-600">Use o menu "Properties" para adicionar seus imóveis com fotos</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow">
-                    <div class="flex gap-4">
-                        <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
-                        <div>
-                            <h3 class="font-bold text-xl mb-2">Gerencie Leads</h3>
-                            <p class="text-gray-600">Acesse "Leads" para ver contatos e gerenciar atividades</p>
-                        </div>
+                        `).join('')}
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- CTA Final -->
-    <section class="gradient-bg text-white py-16 text-center">
-        <h2 class="text-4xl font-bold mb-4">Pronto para começar?</h2>
-        <a href="/admin" class="inline-block bg-white text-blue-600 px-10 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors mt-4">
-            Acessar Sistema Agora
-        </a>
-    </section>
+        <section class="py-16" id="progresso">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <span class="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-sm font-semibold">📈 Progresso por Macro-área</span>
+                    <h2 class="text-4xl font-bold mt-4">Status do desenvolvimento</h2>
+                    <p class="text-slate-600 max-w-3xl mx-auto mt-4">
+                        Cada cartão representa um bloco funcional do antigo sistema (backend Lumen + frontend Vue) sendo recriado no novo stack.
+                        Atualize os percentuais sempre que concluir um lote de tarefas.
+                    </p>
+                </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-8 text-center">
-        <p class="mb-2"><strong class="text-white">iMOBI</strong> - Sistema de Gestão Imobiliária</p>
-        <p class="text-sm">Tudo integrado no Directus • MVP 90% completo</p>
-        <p class="text-sm mt-2">
-            <a href="https://github.com/marcuslimadev/imob" class="text-blue-400 hover:text-blue-300">GitHub</a>
-        </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    ${progressModules.map((module) => `
+                        <article class="bg-white border ${module.color} rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <p class="text-sm text-slate-500">${module.badge}</p>
+                                    <h3 class="text-2xl font-bold text-slate-900">${module.title}</h3>
+                                </div>
+                                <span class="text-xl font-bold text-blue-600">${module.percent}%</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-100 rounded-full mb-4">
+                                <div class="h-2 bg-blue-600 rounded-full" style="width:${module.percent}%"></div>
+                            </div>
+                            <ul class="space-y-2 text-sm text-slate-600">
+                                ${module.highlights.map((item) => `<li>• ${item}</li>`).join('')}
+                            </ul>
+                        </article>
+                    `).join('')}
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 bg-white" id="roadmap">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
+                    <div>
+                        <p class="text-sm uppercase tracking-[0.3em] text-blue-500">Plano de desenvolvimento</p>
+                        <h2 class="text-3xl font-bold mt-2">Roadmap alinhado ao projeto original</h2>
+                    </div>
+                    <div class="text-sm text-slate-500">
+                        Consulte também <a class="text-blue-600 underline" href="/files/plans/Plano.md">Plano.md</a> e <a class="text-blue-600 underline" href="/files/plans/MVP_PROGRESS.md">MVP_PROGRESS.md</a> para detalhes linha a linha.
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    ${roadmapPhases.map((phase) => `
+                        <article class="bg-slate-900 text-white rounded-2xl p-6">
+                            <p class="text-emerald-200 text-sm mb-2">${phase.label}</p>
+                            <div class="flex items-end justify-between mb-4">
+                                <h3 class="text-3xl font-bold">${phase.percent}%</h3>
+                                <span class="text-white/70 text-sm">Progresso</span>
+                            </div>
+                            <div class="w-full h-2 bg-white/20 rounded-full mb-4">
+                                <div class="h-2 bg-emerald-300 rounded-full" style="width:${phase.percent}%"></div>
+                            </div>
+                            <ul class="space-y-2 text-white/80 text-sm">
+                                ${phase.items.map((item) => `<li>• ${item}</li>`).join('')}
+                            </ul>
+                        </article>
+                    `).join('')}
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 bg-slate-900 text-white" id="entregaveis">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="flex flex-col gap-4 mb-10">
+                    <h2 class="text-3xl font-bold">Próximos entregáveis</h2>
+                    <p class="text-white/70 max-w-3xl">
+                        Atualize a lista abaixo a cada ciclo. Os itens refletem diretamente o que estava em produção no projeto Exclusiva (sync_worker,
+                        WhatsAppService, templates Vue) e que agora ganharão versões em Directus/Next.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    ${deliverables.map((item) => `
+                        <article class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                            <p class="text-emerald-300 text-sm">${item.eta}</p>
+                            <h3 class="text-xl font-bold mt-2 mb-3">${item.title}</h3>
+                            <p class="text-white/70 text-sm">${item.detail}</p>
+                        </article>
+                    `).join('')}
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 bg-white" id="tutorial">
+            <div class="max-w-5xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-10">Checklist para seguir acompanhando</h2>
+                <div class="grid gap-6 md:grid-cols-3">
+                    ${[
+				{ step: 1, title: 'Rodar importadores', detail: 'Executar scripts no diretório directus/sync para validar ingestão de dados reais.' },
+				{ step: 2, title: 'Validar no Next.js', detail: 'Acessar http://localhost:3000 para garantir que o front consome o novo Directus.' },
+				{ step: 3, title: 'Atualizar percentuais', detail: 'Editar este endpoint sempre que concluir um bloco (vide progressModules).' },
+			].map((item) => `
+                        <article class="bg-slate-100 rounded-2xl p-6 shadow-sm">
+                            <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold mb-4">${item.step}</div>
+                            <h3 class="text-xl font-semibold mb-2">${item.title}</h3>
+                            <p class="text-slate-600 text-sm">${item.detail}</p>
+                        </article>
+                    `).join('')}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-950 text-slate-400 text-center py-8">
+        <p class="text-sm">Construindo o sucessor do <a class="text-blue-400 underline" href="https://github.com/marcuslimadev/exclusiva" target="_blank" rel="noreferrer">marcuslimadev/exclusiva</a> diretamente no Directus.</p>
+        <p class="text-xs mt-2">Documentos de referência: Plano.md · MVP_PROGRESS.md · PROGRESSO_DESENVOLVIMENTO.md</p>
     </footer>
 </body>
 </html>
 		`;
-		
+
 		res.setHeader('Content-Type', 'text/html');
 		res.send(html);
 	});

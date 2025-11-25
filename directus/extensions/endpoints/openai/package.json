@@ -1,0 +1,23 @@
+{
+	"name": "directus-extension-openai-service",
+	"version": "1.0.0",
+	"description": "OpenAI Service integration for Directus (GPT-4o-mini + Whisper)",
+	"keywords": [
+		"directus",
+		"directus-extension",
+		"directus-custom-endpoint",
+		"openai",
+		"whisper",
+		"gpt"
+	],
+	"directus:extension": {
+		"type": "endpoint",
+		"path": "dist/index.js",
+		"source": "index.js",
+		"host": "^11.0.0"
+	},
+	"dependencies": {
+		"form-data": "^4.0.0",
+		"node-fetch": "^2.7.0"
+	}
+}

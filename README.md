@@ -1,52 +1,277 @@
-# IMOBI - CRM Multi-tenant para Imobiliárias
+# iMOBI - CRM Imobiliário Inteligente com WhatsApp + IA
 
-Sistema SaaS completo para gestão de imobiliárias com WhatsApp, IA e automação.
+Sistema SaaS completo para gestão de imobiliárias com atendimento WhatsApp automatizado, inteligência artificial (GPT-4o-mini + Whisper) e funil de vendas de 17 stages.
 
-## 🏗️ Arquitetura Atual
+## 🎯 Sobre o Projeto
 
-**TUDO roda no Directus (porta 8055) - Sem Next.js separado!**
+Este projeto é uma **migração e modernização completa** do sistema [Exclusiva](https://github.com/marcuslimadev/exclusiva) (Lumen + Vue.js) para uma stack moderna:
+
+- **Backend:** Directus 11 (Headless CMS + API)
+- **Frontend:** Next.js 15 + Tailwind CSS
+- **IA:** OpenAI GPT-4o-mini + Whisper
+- **WhatsApp:** Twilio API
+- **Database:** PostgreSQL + PostGIS + Redis
+
+**Status:** 🚧 **Migração em andamento** (25% concluído)
+
+---
+
+## 🏗️ Arquitetura
 
 ```
-┌─────────────────────────────────────────┐
-│      Directus (localhost:8055)          │
-├─────────────────────────────────────────┤
-│ ✅ Admin Nativo (/admin)                │
-│ ✅ Módulo CRM Customizado (/crm)        │
-│ ✅ 12 Collections (multi-tenant)        │
-│ ✅ API REST completa                    │
-│ ✅ PostgreSQL + PostGIS + Redis         │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                    Directus (Backend)                    │
+│                   localhost:8055                         │
+├─────────────────────────────────────────────────────────┤
+│ ✅ 14 Collections (multi-tenant)                        │
+│ ✅ 3 Custom Extensions (OpenAI, Twilio, WhatsApp)       │
+│ ✅ PostgreSQL + PostGIS + Redis                         │
+│ ✅ API REST + GraphQL                                   │
+└─────────────────────────────────────────────────────────┘
+                            ↕
+┌─────────────────────────────────────────────────────────┐
+│                    Next.js (Frontend)                    │
+│                   localhost:3000                         │
+├─────────────────────────────────────────────────────────┤
+│ ✅ Landing Page (/home)                                 │
+│ ⏳ Dashboard CRM (em desenvolvimento)                    │
+│ ⏳ Chat WhatsApp (em desenvolvimento)                    │
+│ ⏳ Gerenciamento de Leads (em desenvolvimento)           │
+└─────────────────────────────────────────────────────────┘
+                            ↕
+┌─────────────────────────────────────────────────────────┐
+│              Integrações Externas                        │
+├─────────────────────────────────────────────────────────┤
+│ 🤖 OpenAI API (GPT-4o-mini + Whisper)                  │
+│ 📱 Twilio WhatsApp API                                  │
+│ 🏠 API Externa de Imóveis                               │
+└─────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 Como Usar
+---
 
-### 1. Iniciar o sistema
+## ✨ Funcionalidades
+
+### ✅ Implementado
+
+- [x] Collections Directus (14 tabelas)
+- [x] Extension: OpenAI Service (5 endpoints)
+- [x] Extension: Twilio Client (4 endpoints)
+- [x] Extension: WhatsApp Webhook (2 endpoints)
+- [x] Landing Page Next.js
+- [x] Suporte para Twilio e Evolution API
+
+### ⏳ Em Desenvolvimento
+
+- [ ] Lógica completa de processamento WhatsApp
+- [ ] Sistema de 17 stages do funil
+- [ ] Transcrição de áudio (Whisper)
+- [ ] Extração automática de dados via IA
+- [ ] Matching automático de imóveis
+- [ ] Dashboard CRM (Next.js)
+- [ ] Chat WhatsApp em tempo real (Next.js)
+- [ ] Gerenciamento de Leads (Next.js)
+- [ ] Worker de sincronização de imóveis
+
+### 📋 Planejado
+
+- [ ] Sistema multi-tenant completo
+- [ ] Automações via Directus Flows
+- [ ] Testes E2E
+- [ ] Deploy em produção
+
+---
+
+## 🚀 Quick Start
+
+### 1. Iniciar Directus (Backend)
 
 ```powershell
 cd directus
 docker compose up -d
 ```
 
-### 2. Acessar
+**Acesso:** http://localhost:8055
+- **Login:** marcus@admin.com
+- **Senha:** Teste@123
 
-- **URL**: http://localhost:8055
-- **Login**: marcus@admin.com
-- **Senha**: Teste@123
+### 2. Iniciar Next.js (Frontend)
 
-### 3. Usar o CRM
+```powershell
+cd nextjs
+npm install
+npm run dev
+```
 
-1. Clique no menu **"CRM"** (ícone 🏢)
-2. Selecione a empresa no dropdown superior
-3. Navegue entre:
-   - **Dashboard**: Estatísticas + Funil de vendas
-   - **Conversas**: Chat WhatsApp (em desenvolvimento)
-   - **Leads**: Kanban drag-and-drop (em desenvolvimento)
-   - **Imóveis**: Gerenciamento de propriedades (em desenvolvimento)
+**Acesso:** http://localhost:3000/home
 
-## Local Setup (with CLI)
+---
 
-Run this in your terminal:
+## 📦 Extensões Directus
+
+### 1. OpenAI Service (`/openai`)
 
 ```bash
-npx directus-template-cli@latest init
+POST /openai/transcribe        # Transcrever áudio (Whisper)
+POST /openai/chat               # Chat completion (GPT)
+POST /openai/extract            # Extrair dados estruturados
+POST /openai/diagnostic         # Gerar diagnóstico de lead
+POST /openai/process-message    # Processar mensagem completa
 ```
+
+### 2. Twilio Client (`/twilio`)
+
+```bash
+POST /twilio/send-message       # Enviar mensagem WhatsApp
+POST /twilio/send-image         # Enviar imagem
+POST /twilio/download-media     # Baixar mídia (áudio/imagem)
+GET  /twilio/message-status/:sid # Consultar status
+```
+
+### 3. WhatsApp Webhook (`/whatsapp`)
+
+```bash
+POST /whatsapp                  # Receber webhooks (Twilio/Evolution)
+POST /whatsapp/status           # Status callbacks
+```
+
+---
+
+## 🗄️ Collections (Directus)
+
+| Collection | Descrição |
+|-----------|-----------|
+| `companies` | Empresas (multi-tenant) |
+| `properties` | Imóveis |
+| `leads` | Leads/Clientes |
+| `conversas` | Conversas WhatsApp |
+| `mensagens` | Mensagens (incoming/outgoing) |
+| `lead_property_matches` | Matching lead ↔ imóvel |
+| `atividades` | Timeline de atividades |
+| `webhooks_log` | Logs de webhooks |
+| `logs` | Logs gerais do sistema |
+| `job_status` | Status de jobs/workers |
+
+---
+
+## 🔧 Configuração
+
+### Variáveis de Ambiente
+
+Copie `.env.example` para `.env` e configure:
+
+```env
+# OpenAI
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o-mini
+AI_ASSISTANT_NAME=Teresa
+
+# Twilio
+TWILIO_ACCOUNT_SID=AC...
+TWILIO_AUTH_TOKEN=...
+TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
+
+# Directus
+PUBLIC_URL=http://localhost:8055
+```
+
+---
+
+## 📖 Documentação
+
+- [Plano de Migração Completo](PLANO_MIGRACAO_EXCLUSIVA.md)
+- [Extensões Directus](directus/extensions/README_EXTENSOES.md)
+- [Mapeamento Lumen → Directus](MAPPING.md)
+
+---
+
+## 🧪 Testes
+
+### Testar OpenAI Service
+
+```bash
+curl -X POST http://localhost:8055/openai/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "systemPrompt": "Você é um assistente virtual.",
+    "userPrompt": "Olá!"
+  }'
+```
+
+### Testar Twilio
+
+```bash
+curl -X POST http://localhost:8055/twilio/send-message \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": "whatsapp:+5511999999999",
+    "message": "Teste"
+  }'
+```
+
+### Testar Webhook WhatsApp
+
+```bash
+curl -X POST http://localhost:8055/whatsapp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "From": "whatsapp:+5511999999999",
+    "Body": "Olá, teste",
+    "MessageSid": "SM123",
+    "ProfileName": "João"
+  }'
+```
+
+---
+
+## 🗺️ Roadmap
+
+### Semana 1 (25/11 - 01/12) - Backend Core ✅
+- [x] Criar collections Directus
+- [x] Extension: OpenAI Service
+- [x] Extension: Twilio Client
+- [x] Extension: WhatsApp Webhook
+
+### Semana 2 (02/12 - 08/12) - Lógica de Negócio
+- [ ] WhatsApp Service completo
+- [ ] Sistema de 17 stages
+- [ ] Worker de sync de imóveis
+- [ ] Testes integrados
+
+### Semana 3 (09/12 - 15/12) - Frontend
+- [ ] Dashboard CRM
+- [ ] Chat WhatsApp
+- [ ] Gerenciamento de Leads
+- [ ] Vitrine pública
+
+### Semana 4 (16/12 - 22/12) - Deploy
+- [ ] Automações (Flows)
+- [ ] Testes E2E
+- [ ] Deploy produção
+- [ ] Documentação final
+
+---
+
+## 🤝 Contribuindo
+
+Este é um projeto privado em desenvolvimento ativo. Contribuições serão aceitas após a versão 1.0.
+
+---
+
+## 📄 Licença
+
+Proprietary - Todos os direitos reservados
+
+---
+
+## 🔗 Links
+
+- **Repositório:** https://github.com/marcuslimadev/imob
+- **Exclusiva (Original):** https://github.com/marcuslimadev/exclusiva
+- **Directus:** https://directus.io
+- **Next.js:** https://nextjs.org
+
+---
+
+**Última atualização:** 25/11/2025  
+**Status:** 🚧 Migração em andamento (25% concluído)

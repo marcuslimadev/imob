@@ -1,0 +1,20 @@
+{
+	"name": "directus-extension-whatsapp-webhook",
+	"version": "1.0.0",
+	"description": "WhatsApp Webhook handler for Directus (Twilio + Evolution API)",
+	"keywords": [
+		"directus",
+		"directus-extension",
+		"directus-custom-endpoint",
+		"whatsapp",
+		"webhook",
+		"twilio"
+	],
+	"directus:extension": {
+		"type": "endpoint",
+		"path": "dist/index.js",
+		"source": "index.js",
+		"host": "^11.0.0"
+	},
+	"dependencies": {}
+}

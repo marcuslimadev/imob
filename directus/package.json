@@ -1,0 +1,19 @@
+{
+  "name": "directus",
+  "version": "1.0.0",
+  "main": "import-tables.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "register": "node register-collections.js && node register-fields.js",
+    "import:properties": "node workers/import-properties.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "p-queue": "^9.0.1"
+  }
+}

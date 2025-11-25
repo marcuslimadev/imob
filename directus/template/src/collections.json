@@ -988,5 +988,65 @@
       "versioning": false
     },
     "schema": null
+  },
+  {
+    "collection": "logs",
+    "meta": {
+      "collection": "logs",
+      "icon": "bug_report",
+      "note": "System logs",
+      "display_template": "{{timestamp}} - {{level}} - {{message}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": "timestamp",
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 99,
+      "group": null,
+      "collapse": "open",
+      "preview_url": null,
+      "versioning": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "logs",
+      "comment": null
+    }
+  },
+  {
+    "collection": "job_status",
+    "meta": {
+      "collection": "job_status",
+      "icon": "pending_actions",
+      "note": "Background job status tracking",
+      "display_template": "{{job_id}} - {{status}}",
+      "hidden": false,
+      "singleton": false,
+      "translations": null,
+      "archive_field": null,
+      "archive_app_filter": true,
+      "archive_value": null,
+      "unarchive_value": null,
+      "sort_field": "created_at",
+      "accountability": "all",
+      "color": null,
+      "item_duplication_fields": null,
+      "sort": 100,
+      "group": null,
+      "collapse": "open",
+      "preview_url": null,
+      "versioning": false
+    },
+    "schema": {
+      "schema": "public",
+      "name": "job_status",
+      "comment": null
+    }
   }
 ]

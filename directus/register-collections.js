@@ -233,6 +233,32 @@ const collections = {
             color: '#64748B',
             sort: 12
         }
+    },
+    logs: {
+        meta: {
+            collection: 'logs',
+            icon: 'bug_report',
+            note: 'System logs',
+            display_template: '{{timestamp}} - {{level}} - {{message}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#EF4444',
+            sort: 99
+        }
+    },
+    job_status: {
+        meta: {
+            collection: 'job_status',
+            icon: 'pending_actions',
+            note: 'Background job status tracking',
+            display_template: '{{job_id}} - {{status}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#F59E0B',
+            sort: 100
+        }
     }
 };
 

@@ -1,6 +1,6 @@
 import { fetchPageData, fetchPageDataById, getPageIdByPermalink } from '@/lib/directus/fetchers';
 import { PageBlock, type Page } from '@/types/directus-schema';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import PageClient from './PageClient';
 
 export async function generateMetadata({
@@ -14,6 +14,11 @@ export async function generateMetadata({
 	const searchParamsResolved = await searchParams;
 	const permalinkSegments = permalink || [];
 	const resolvedPermalink = `/${permalinkSegments.join('/')}`.replace(/\/$/, '') || '/';
+	
+	// Redirect root to /home
+	if (resolvedPermalink === '/') {
+		return;
+	}
 
 	const preview = searchParamsResolved.preview === 'true';
 	const version = typeof searchParamsResolved.version === 'string' ? searchParamsResolved.version : '';
@@ -59,6 +64,11 @@ export default async function Page({
 	const searchParamsResolved = await searchParams;
 	const permalinkSegments = permalink || [];
 	const resolvedPermalink = `/${permalinkSegments.join('/')}`.replace(/\/$/, '') || '/';
+
+	// Redirect root to /home
+	if (resolvedPermalink === '/') {
+		redirect('/home');
+	}
 
 	const id = typeof searchParamsResolved.id === 'string' ? searchParamsResolved.id : '';
 	const version = typeof searchParamsResolved.version === 'string' ? searchParamsResolved.version : '';

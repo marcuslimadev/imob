@@ -293,6 +293,25 @@ const fieldsDefinitions = {
         ] } } },
         { field: 'descricao', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
     ],
+    
+    logs: [
+        { field: 'timestamp', type: 'timestamp', meta: { interface: 'datetime', width: 'half', readonly: true } },
+        { field: 'level', type: 'string', meta: { interface: 'select-dropdown', width: 'half', options: { choices: [ { text: 'Info', value: 'info' }, { text: 'Warn', value: 'warn' }, { text: 'Error', value: 'error' } ] } } },
+        { field: 'message', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
+        { field: 'context', type: 'json', meta: { interface: 'input-code', width: 'full', options: { language: 'json' } } },
+        { field: 'source', type: 'string', meta: { interface: 'input', width: 'half' } },
+    ],
+
+    job_status: [
+        { field: 'job_id', type: 'string', meta: { interface: 'input', width: 'half' } },
+        { field: 'status', type: 'string', meta: { interface: 'select-dropdown', width: 'half', options: { choices: [ { text: 'Pending', value: 'pending' }, { text: 'Processing', value: 'processing' }, { text: 'Completed', value: 'completed' }, { text: 'Failed', value: 'failed' } ] } } },
+        { field: 'progress', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'total', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'result', type: 'json', meta: { interface: 'input-code', width: 'full', options: { language: 'json' } } },
+        { field: 'error', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
+        { field: 'created_at', type: 'timestamp', meta: { interface: 'datetime', width: 'half', readonly: true } },
+        { field: 'updated_at', type: 'timestamp', meta: { interface: 'datetime', width: 'half', readonly: true } },
+    ],
 };
 
 async function main() {

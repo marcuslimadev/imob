@@ -13826,5 +13826,110 @@
       "validation": null,
       "validation_message": null
     }
+  },
+  {
+    "collection": "logs",
+    "field": "id",
+    "type": "uuid",
+    "schema": { "name": "id", "table": "logs", "data_type": "uuid", "is_primary_key": true },
+    "meta": { "collection": "logs", "field": "id", "special": ["uuid"], "interface": "input", "readonly": true, "hidden": true }
+  },
+  {
+    "collection": "logs",
+    "field": "timestamp",
+    "type": "timestamp",
+    "schema": { "name": "timestamp", "table": "logs", "data_type": "timestamp with time zone", "default_value": "now()" },
+    "meta": { "collection": "logs", "field": "timestamp", "interface": "datetime", "readonly": true, "width": "half" }
+  },
+  {
+    "collection": "logs",
+    "field": "level",
+    "type": "string",
+    "schema": { "name": "level", "table": "logs", "data_type": "character varying" },
+    "meta": { "collection": "logs", "field": "level", "interface": "select-dropdown", "options": { "choices": [ { "text": "Info", "value": "info" }, { "text": "Warn", "value": "warn" }, { "text": "Error", "value": "error" } ] }, "width": "half" }
+  },
+  {
+    "collection": "logs",
+    "field": "message",
+    "type": "text",
+    "schema": { "name": "message", "table": "logs", "data_type": "text" },
+    "meta": { "collection": "logs", "field": "message", "interface": "input-multiline", "width": "full" }
+  },
+  {
+    "collection": "logs",
+    "field": "context",
+    "type": "json",
+    "schema": { "name": "context", "table": "logs", "data_type": "json" },
+    "meta": { "collection": "logs", "field": "context", "interface": "input-code", "options": { "language": "json" }, "width": "full" }
+  },
+  {
+    "collection": "logs",
+    "field": "source",
+    "type": "string",
+    "schema": { "name": "source", "table": "logs", "data_type": "character varying" },
+    "meta": { "collection": "logs", "field": "source", "interface": "input", "width": "half" }
+  },
+  {
+    "collection": "job_status",
+    "field": "id",
+    "type": "uuid",
+    "schema": { "name": "id", "table": "job_status", "data_type": "uuid", "is_primary_key": true },
+    "meta": { "collection": "job_status", "field": "id", "special": ["uuid"], "interface": "input", "readonly": true, "hidden": true }
+  },
+  {
+    "collection": "job_status",
+    "field": "job_id",
+    "type": "string",
+    "schema": { "name": "job_id", "table": "job_status", "data_type": "character varying" },
+    "meta": { "collection": "job_status", "field": "job_id", "interface": "input", "width": "half" }
+  },
+  {
+    "collection": "job_status",
+    "field": "status",
+    "type": "string",
+    "schema": { "name": "status", "table": "job_status", "data_type": "character varying" },
+    "meta": { "collection": "job_status", "field": "status", "interface": "select-dropdown", "options": { "choices": [ { "text": "Pending", "value": "pending" }, { "text": "Processing", "value": "processing" }, { "text": "Completed", "value": "completed" }, { "text": "Failed", "value": "failed" } ] }, "width": "half" }
+  },
+  {
+    "collection": "job_status",
+    "field": "progress",
+    "type": "integer",
+    "schema": { "name": "progress", "table": "job_status", "data_type": "integer" },
+    "meta": { "collection": "job_status", "field": "progress", "interface": "input", "width": "half" }
+  },
+  {
+    "collection": "job_status",
+    "field": "total",
+    "type": "integer",
+    "schema": { "name": "total", "table": "job_status", "data_type": "integer" },
+    "meta": { "collection": "job_status", "field": "total", "interface": "input", "width": "half" }
+  },
+  {
+    "collection": "job_status",
+    "field": "result",
+    "type": "json",
+    "schema": { "name": "result", "table": "job_status", "data_type": "json" },
+    "meta": { "collection": "job_status", "field": "result", "interface": "input-code", "options": { "language": "json" }, "width": "full" }
+  },
+  {
+    "collection": "job_status",
+    "field": "error",
+    "type": "text",
+    "schema": { "name": "error", "table": "job_status", "data_type": "text" },
+    "meta": { "collection": "job_status", "field": "error", "interface": "input-multiline", "width": "full" }
+  },
+  {
+    "collection": "job_status",
+    "field": "created_at",
+    "type": "timestamp",
+    "schema": { "name": "created_at", "table": "job_status", "data_type": "timestamp with time zone", "default_value": "now()" },
+    "meta": { "collection": "job_status", "field": "created_at", "interface": "datetime", "readonly": true, "width": "half", "special": ["date-created"] }
+  },
+  {
+    "collection": "job_status",
+    "field": "updated_at",
+    "type": "timestamp",
+    "schema": { "name": "updated_at", "table": "job_status", "data_type": "timestamp with time zone", "default_value": "now()" },
+    "meta": { "collection": "job_status", "field": "updated_at", "interface": "datetime", "readonly": true, "width": "half", "special": ["date-updated"] }
   }
 ]
