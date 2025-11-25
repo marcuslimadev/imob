@@ -33,8 +33,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function checkAuth() {
     try {
+      // @ts-ignore - Custom schema field company_id
       const currentUser = await directusClient.request(readMe({
-        fields: ['id', 'email', 'first_name', 'last_name', 'role', 'company_id']
+        fields: ['*']
       }));
       
       setUser(currentUser as User);
@@ -47,10 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     try {
+      // @ts-ignore - Directus SDK auth
       await directusClient.request(
-        directusLogin(email, password, {
-          mode: 'json'
-        })
+        directusLogin(email, password)
       );
 
       await checkAuth();

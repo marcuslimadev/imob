@@ -5,28 +5,15 @@ import Link from 'next/link';
 
 async function getCompanyProperties(companyId: string) {
   try {
+    // @ts-ignore - Custom schema
     return await directusServer.request(
       readItems('properties', {
         filter: {
           company_id: { _eq: companyId }
         },
+        // @ts-ignore
         sort: ['-created_at'],
-        fields: [
-          'id',
-          'title',
-          'property_type',
-          'transaction_type',
-          'city',
-          'state',
-          'bedrooms',
-          'bathrooms',
-          'price_sale',
-          'price_rent',
-          'status',
-          'featured',
-          'views_count',
-          'created_at'
-        ]
+        fields: ['*']
       })
     );
   } catch (error) {
