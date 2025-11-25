@@ -1,6 +1,7 @@
 import { readItems } from '@directus/sdk';
 import { useDirectus } from './directus';
 import { Company, Property, PropertyMedia } from '@/types/directus-schema';
+import type { LeadActivity, LeadStageCount } from '@/types/crm';
 
 const propertyFields = [
         'id',
@@ -169,7 +170,7 @@ export async function fetchDashboardStats(companySlug: string) {
 	};
 }
 
-export async function fetchLeadsByStage(companySlug: string) {
+export async function fetchLeadsByStage(companySlug: string): Promise<LeadStageCount[]> {
 	const { directus } = useDirectus();
 
 	const leads = await directus.request(
@@ -192,7 +193,7 @@ export async function fetchLeadsByStage(companySlug: string) {
 	}));
 }
 
-export async function fetchRecentActivities(companySlug: string, limit: number = 10) {
+export async function fetchRecentActivities(companySlug: string, limit: number = 10): Promise<LeadActivity[]> {
 	const { directus } = useDirectus();
 
 	const activities = await directus.request(
@@ -209,5 +210,5 @@ export async function fetchRecentActivities(companySlug: string, limit: number =
 		}),
 	);
 
-	return activities;
+	return activities as unknown as LeadActivity[];
 }
