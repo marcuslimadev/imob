@@ -1,24 +1,47 @@
-# Simple CMS Starter Templates
+# IMOBI - CRM Multi-tenant para Imobiliárias
 
-Welcome to the **Simple CMS Starter Templates**! This repository contains front-end templates for building a simple CMS
-in different frameworks and libraries. Each subfolder represents a specific framework, offering reusable, scalable, and
-easy-to-implement CMS solutions.
+Sistema SaaS completo para gestão de imobiliárias com WhatsApp, IA e automação.
 
-## **Templates**
+## 🏗️ Arquitetura Atual
 
-| Framework/Library | Description                                   | Links |
-| ----------------- | --------------------------------------------- |-------------- |
-| **Next.js**       | A CMS built using Next.js and its App Router. |[→ Go to Next.js Starter](./next) |
-| **Nuxt.js**       | A CMS template leveraging Nuxt.js features.   | [→ Go to Nuxt.js Starter](./nuxt) |
-| **Svelte**        | A CMS template using the Svelte framework.    | [→ Go to Svelte Starter](./svelte) |
-| **Astro**         | A CMS optimized for performance with Astro.   |[→ Go to Astro Starter](./astro) |
+**TUDO roda no Directus (porta 8055) - Sem Next.js separado!**
 
-## **Folder Structure**
+```
+┌─────────────────────────────────────────┐
+│      Directus (localhost:8055)          │
+├─────────────────────────────────────────┤
+│ ✅ Admin Nativo (/admin)                │
+│ ✅ Módulo CRM Customizado (/crm)        │
+│ ✅ 12 Collections (multi-tenant)        │
+│ ✅ API REST completa                    │
+│ ✅ PostgreSQL + PostGIS + Redis         │
+└─────────────────────────────────────────┘
+```
 
-Each subfolder contains:
+## 🚀 Como Usar
 
-- **Source Code**: Framework-specific implementation of the CMS.
-- **Documentation**: Instructions on how to set up, customize, and use the template.
+### 1. Iniciar o sistema
+
+```powershell
+cd directus
+docker compose up -d
+```
+
+### 2. Acessar
+
+- **URL**: http://localhost:8055
+- **Login**: marcus@admin.com
+- **Senha**: Teste@123
+
+### 3. Usar o CRM
+
+1. Clique no menu **"CRM"** (ícone 🏢)
+2. Selecione a empresa no dropdown superior
+3. Navegue entre:
+   - **Dashboard**: Estatísticas + Funil de vendas
+   - **Conversas**: Chat WhatsApp (em desenvolvimento)
+   - **Leads**: Kanban drag-and-drop (em desenvolvimento)
+   - **Imóveis**: Gerenciamento de propriedades (em desenvolvimento)
 
 ## Local Setup (with CLI)
 
