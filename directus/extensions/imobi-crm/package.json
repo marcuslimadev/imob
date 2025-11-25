@@ -1,0 +1,28 @@
+{
+  "name": "@imobi/crm-module",
+  "version": "1.0.0",
+  "description": "Módulo CRM para imobiliárias no Directus",
+  "type": "module",
+  "directus:extension": {
+    "type": "module",
+    "path": "dist/index.js",
+    "source": "src/index.ts",
+    "host": "^11.0.0"
+  },
+  "scripts": {
+    "build": "directus-extension build",
+    "dev": "directus-extension build -w --no-minify"
+  },
+  "dependencies": {
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@directus/extensions-sdk": "^12.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  },
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
