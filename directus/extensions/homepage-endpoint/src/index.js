@@ -1,7 +1,8 @@
-export default (router) => {
-	router.get('/', (req, res) => {
-		const html = `
-<!DOCTYPE html>
+export default {
+	id: 'homepage',
+	handler: (router) => {
+		router.get('/', (req, res) => {
+		const html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +14,6 @@ export default (router) => {
     </style>
 </head>
 <body class="antialiased">
-    <!-- Header -->
     <header class="bg-white/90 backdrop-blur-sm border-b sticky top-0 z-50 shadow-sm">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
@@ -28,7 +28,6 @@ export default (router) => {
         </div>
     </header>
 
-    <!-- Hero -->
     <section class="gradient-bg text-white py-20">
         <div class="container mx-auto px-4 text-center">
             <h1 class="text-5xl md:text-6xl font-bold mb-6">
@@ -51,13 +50,11 @@ export default (router) => {
         </div>
     </section>
 
-    <!-- Status -->
     <section id="status" class="py-16 bg-gray-50">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
                 <span class="bg-green-100 text-green-700 px-4 py-2 rounded-full font-semibold text-sm">🚀 MVP em Desenvolvimento</span>
                 <h2 class="text-4xl font-bold text-gray-900 mt-6 mb-4">Status do Desenvolvimento</h2>
-                <p class="text-gray-600">Última atualização: ${new Date().toLocaleDateString('pt-BR')}</p>
             </div>
 
             <div class="max-w-4xl mx-auto grid gap-6">
@@ -97,20 +94,9 @@ export default (router) => {
                     </ul>
                 </div>
             </div>
-
-            <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-4xl mx-auto">
-                <h4 class="font-bold text-gray-900 mb-4 text-center">📊 Estatísticas do Projeto</h4>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                    <div><p class="text-3xl font-bold text-blue-600">2.500+</p><p class="text-sm text-gray-600">Linhas</p></div>
-                    <div><p class="text-3xl font-bold text-blue-600">10+</p><p class="text-sm text-gray-600">Páginas</p></div>
-                    <div><p class="text-3xl font-bold text-blue-600">90%</p><p class="text-sm text-gray-600">MVP</p></div>
-                    <div><p class="text-3xl font-bold text-blue-600">8</p><p class="text-sm text-gray-600">Commits</p></div>
-                </div>
-            </div>
         </div>
     </section>
 
-    <!-- Features -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <h2 class="text-4xl font-bold text-center mb-12">Funcionalidades</h2>
@@ -134,7 +120,6 @@ export default (router) => {
         </div>
     </section>
 
-    <!-- Pricing -->
     <section class="py-16 bg-gray-900 text-white">
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-4xl font-bold mb-4">Preço Simples</h2>
@@ -155,7 +140,6 @@ export default (router) => {
         </div>
     </section>
 
-    <!-- Tutorial -->
     <section id="tutorial" class="py-16 bg-gray-50">
         <div class="container mx-auto px-4">
             <h2 class="text-4xl font-bold text-center mb-12">Tutorial Rápido</h2>
@@ -197,7 +181,6 @@ export default (router) => {
         </div>
     </section>
 
-    <!-- CTA Final -->
     <section class="gradient-bg text-white py-16 text-center">
         <h2 class="text-4xl font-bold mb-4">Pronto para começar?</h2>
         <a href="/admin" class="inline-block bg-white text-blue-600 px-10 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors mt-4">
@@ -205,7 +188,6 @@ export default (router) => {
         </a>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-gray-400 py-8 text-center">
         <p class="mb-2"><strong class="text-white">iMOBI</strong> - Sistema de Gestão Imobiliária</p>
         <p class="text-sm">Tudo integrado no Directus • MVP 90% completo</p>
@@ -214,10 +196,10 @@ export default (router) => {
         </p>
     </footer>
 </body>
-</html>
-		`;
+</html>`;
 		
-		res.setHeader('Content-Type', 'text/html');
+		res.setHeader('Content-Type', 'text/html; charset=utf-8');
 		res.send(html);
-	});
+		});
+	}
 };

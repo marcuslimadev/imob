@@ -1,0 +1,19 @@
+{
+  "name": "@imobi/homepage-endpoint",
+  "version": "1.0.0",
+  "description": "Landing page endpoint for iMOBI",
+  "type": "module",
+  "directus:extension": {
+    "type": "endpoint",
+    "path": "dist/index.js",
+    "source": "src/index.js",
+    "host": "^11.0.0"
+  },
+  "scripts": {
+    "build": "directus-extension build",
+    "dev": "directus-extension build -w --no-minify"
+  },
+  "devDependencies": {
+    "@directus/extensions-sdk": "^12.0.0"
+  }
+}
