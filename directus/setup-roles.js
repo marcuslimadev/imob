@@ -517,7 +517,7 @@ const corretorPermissions = (roleId) => [
 		fields: ['*'],
 	},
 
-	// directus_users - Ver apenas si mesmo
+	// directus_users - Ver apenas a si mesmo
 	{
 		role: roleId,
 		collection: 'directus_users',
