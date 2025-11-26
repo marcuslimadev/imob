@@ -7,9 +7,15 @@ if (typeof window !== 'undefined') {
   // Suppress console.error messages
   const originalError = console.error;
   const originalWarn = console.warn;
+  const originalLog = console.log;
   
   console.error = (...args: any[]) => {
-    const argsStr = String(args[0] || '');
+    const argsStr = args.map((arg: any) => {
+      if (typeof arg === 'object' && arg !== null) {
+        return JSON.stringify(arg);
+      }
+      return String(arg || '');
+    }).join(' ');
     
     // Suppress specific error messages
     if (
@@ -18,7 +24,8 @@ if (typeof window !== 'undefined') {
       argsStr.includes('403') ||
       argsStr.includes('Unauthorized') ||
       argsStr.includes('Forbidden') ||
-      argsStr.includes('users/me')
+      argsStr.includes('users/me') ||
+      argsStr.includes('GET http://localhost:8055/users/me')
     ) {
       return;
     }
@@ -35,6 +42,21 @@ if (typeof window !== 'undefined') {
     }
     
     originalWarn.apply(console, args);
+  };
+
+  // Suppress console.log for specific messages
+  console.log = (...args: any[]) => {
+    const argsStr = String(args[0] || '');
+    
+    // Suppress specific log messages that look like errors
+    if (
+      argsStr.includes('GET http://localhost:8055/users/me') ||
+      argsStr.includes('401 (Unauthorized)')
+    ) {
+      return;
+    }
+    
+    originalLog.apply(console, args);
   };
 
   // Override window.addEventListener to suppress network error events

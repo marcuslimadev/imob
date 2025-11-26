@@ -40,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       setUser(currentUser as User);
     } catch (error) {
+      // Silently handle unauthenticated state - this is expected behavior
       setUser(null);
     } finally {
       setLoading(false);
@@ -65,7 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await directusClient.request(directusLogout());
       setUser(null);
     } catch (error) {
-      console.error('Logout error:', error);
+      // Silently handle logout errors
+      setUser(null);
     }
   }
 

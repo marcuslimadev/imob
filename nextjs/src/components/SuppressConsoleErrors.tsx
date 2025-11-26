@@ -13,10 +13,21 @@ export default function SuppressConsoleErrors() {
     // Store original console methods
     const originalError = console.error;
     const originalWarn = console.warn;
+    const originalLog = console.log;
 
     // Override console.error
     console.error = (...args: any[]) => {
-      const message = String(args[0] || '');
+      // Convert all arguments to searchable string
+      const message = args.map((arg: any) => {
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch {
+            return String(arg);
+          }
+        }
+        return String(arg || '');
+      }).join(' ');
       
       // Filter out known non-critical errors
       if (
@@ -26,7 +37,8 @@ export default function SuppressConsoleErrors() {
         message.includes('Forbidden') ||
         message.includes('users/me') ||
         message.includes('Error fetching site data') ||
-        message.includes('localhost:8055')
+        message.includes('localhost:8055') ||
+        message.includes('GET http://localhost:8055/users/me')
       ) {
         return; // Suppress
       }
@@ -46,10 +58,26 @@ export default function SuppressConsoleErrors() {
       originalWarn.apply(console, args);
     };
 
+    // Override console.log to suppress specific network logs
+    console.log = (...args: any[]) => {
+      const message = String(args[0] || '');
+      
+      // Suppress specific log messages that look like errors
+      if (
+        message.includes('GET http://localhost:8055/users/me') ||
+        message.includes('401 (Unauthorized)')
+      ) {
+        return; // Suppress
+      }
+      
+      originalLog.apply(console, args);
+    };
+
     // Cleanup on unmount
     return () => {
       console.error = originalError;
       console.warn = originalWarn;
+      console.log = originalLog;
     };
   }, []);
 
