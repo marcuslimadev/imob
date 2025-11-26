@@ -155,10 +155,10 @@ npm run test:report
   timeout: 30000,
   retries: 2, // Em CI
   workers: 1, // Em CI
-  baseURL: 'http://localhost:3000',
+  baseURL: 'http://localhost:4000',
   webServer: {
     command: 'npm run dev',
-    url: 'http://localhost:3000',
+    url: 'http://localhost:4000',
     reuseExistingServer: true,
   },
 }
@@ -167,7 +167,7 @@ npm run test:report
 ### Variáveis de Ambiente
 ```bash
 # Base URL do app
-PLAYWRIGHT_BASE_URL=http://localhost:3000
+PLAYWRIGHT_BASE_URL=http://localhost:4000
 
 # Base URL do Directus
 NEXT_PUBLIC_DIRECTUS_URL=http://localhost:8055
@@ -250,7 +250,7 @@ test.describe('Minha Feature', () => {
 1. **Verificar que Next.js está rodando**:
    ```bash
    npm run dev
-   # Aguardar: ✓ Ready on http://localhost:3000
+   # Aguardar: ✓ Ready on http://localhost:4000
    ```
 
 2. **Verificar que Directus está rodando**:

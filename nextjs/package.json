@@ -4,9 +4,9 @@
 	"website": "starters-simple-cms-nextjs.vercel.app",
 	"license": "MIT",
 	"scripts": {
-		"dev": "next dev --turbopack",
+		"dev": "next dev --turbopack -p 4000",
 		"build": "next build",
-		"start": "next start",
+		"start": "next start -p 4000",
 		"generate:types": "tsx ./src/lib/directus/generateDirectusTypes.ts",
 		"lint": "next lint",
 		"lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",

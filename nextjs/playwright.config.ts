@@ -37,7 +37,7 @@ export default defineConfig({
   /* Configurações compartilhadas para todos os projetos */
   use: {
     /* URL base */
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4000',
     
     /* Coletar traces em falhas */
     trace: 'on-first-retry',
@@ -77,7 +77,7 @@ export default defineConfig({
   /* Servidor de desenvolvimento */
   webServer: {
     command: 'npm run dev',
-    url: 'http://localhost:3000',
+    url: 'http://localhost:4000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },

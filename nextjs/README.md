@@ -114,7 +114,7 @@ To get started, you need to configure environment variables. Follow these steps:
    pnpm run dev
    ```
 
-3. Visit [http://localhost:3000](http://localhost:3000).
+3. Visit [http://localhost:4000](http://localhost:4000).
 
 ## Generate Directus Types
 
