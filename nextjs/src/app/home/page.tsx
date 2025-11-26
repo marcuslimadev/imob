@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -29,9 +30,13 @@ export default function HomePage() {
           <header className="border-b border-white/10 backdrop-blur-sm">
             <div className="container mx-auto px-4 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
-                  <MessageSquare className="h-6 w-6 text-white" />
-                </div>
+                <Image 
+                  src="/logo.png" 
+                  alt="iMOBI Logo" 
+                  width={40} 
+                  height={40}
+                  className="rounded-lg"
+                />
                 <div>
                   <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     iMOBI CRM
@@ -338,9 +343,13 @@ export default function HomePage() {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
-                  <MessageSquare className="h-6 w-6 text-white" />
-                </div>
+                <Image 
+                  src="/logo.png" 
+                  alt="iMOBI Logo" 
+                  width={40} 
+                  height={40}
+                  className="rounded-lg"
+                />
                 <div>
                   <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     iMOBI CRM
