@@ -1,25 +1,72 @@
 /**
- * Directus Extension: Twilio Client
+ * Directus Extension: Twilio Client (Multi-Tenant)
  * Migrado de: backend/app/Services/TwilioService.php
  * 
  * Endpoints disponíveis:
  * - POST /twilio/send-message - Enviar mensagem WhatsApp
  * - POST /twilio/send-image - Enviar imagem WhatsApp
  * - POST /twilio/download-media - Baixar mídia do Twilio
+ * 
+ * Multi-Tenant:
+ * - Todos endpoints recebem company_id
+ * - Usa credenciais Twilio específicas da empresa
+ * - Usa número WhatsApp configurado pela empresa
  */
 
 import fetch from 'node-fetch';
+import { getCompanySettings } from '../../shared/company-settings.js';
 
-export default (router, { env, logger }) => {
-	const TWILIO_ACCOUNT_SID = env.TWILIO_ACCOUNT_SID;
-	const TWILIO_AUTH_TOKEN = env.TWILIO_AUTH_TOKEN;
-	const TWILIO_WHATSAPP_NUMBER = env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
+export default (router, { env, logger, database }) => {
+	// Fallback para variáveis de ambiente (desenvolvimento)
+	const DEFAULT_TWILIO_ACCOUNT_SID = env.TWILIO_ACCOUNT_SID;
+	const DEFAULT_TWILIO_AUTH_TOKEN = env.TWILIO_AUTH_TOKEN;
+	const DEFAULT_TWILIO_WHATSAPP_NUMBER = env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
+
+	/**
+	 * Buscar configurações Twilio da empresa
+	 * @param {number} companyId - ID da empresa
+	 * @returns {Object} - { accountSid, authToken, whatsappNumber }
+	 */
+	async function getCompanyTwilioConfig(companyId) {
+		try {
+			if (!companyId) {
+				logger.warn('⚠️  company_id não fornecido, usando configurações padrão');
+				return {
+					accountSid: DEFAULT_TWILIO_ACCOUNT_SID,
+					authToken: DEFAULT_TWILIO_AUTH_TOKEN,
+					whatsappNumber: DEFAULT_TWILIO_WHATSAPP_NUMBER
+				};
+			}
+
+			const settings = await getCompanySettings({ database }, companyId);
+			
+			logger.info('🏢 Usando configurações Twilio da empresa', {
+				company_id: companyId,
+				whatsapp_number: settings.twilio_whatsapp_number
+			});
+
+			return {
+				accountSid: settings.twilio_account_sid,
+				authToken: settings.twilio_auth_token,
+				whatsappNumber: settings.twilio_whatsapp_number
+			};
+		} catch (error) {
+			logger.error('❌ Erro ao buscar configurações da empresa:', error.message);
+			logger.warn('⚠️  Usando configurações padrão (fallback)');
+			
+			return {
+				accountSid: DEFAULT_TWILIO_ACCOUNT_SID,
+				authToken: DEFAULT_TWILIO_AUTH_TOKEN,
+				whatsappNumber: DEFAULT_TWILIO_WHATSAPP_NUMBER
+			};
+		}
+	}
 
 	/**
 	 * Enviar credenciais Base64 para autenticação
 	 */
-	const getAuthHeader = () => {
-		const credentials = Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString('base64');
+	const getAuthHeader = (accountSid, authToken) => {
+		const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
 		return `Basic ${credentials}`;
 	};
 
@@ -28,13 +75,14 @@ export default (router, { env, logger }) => {
 	 * Enviar mensagem de texto WhatsApp
 	 * 
 	 * Body: {
+	 *   company_id: number,
 	 *   to: string (formato: whatsapp:+5511999999999),
 	 *   message: string
 	 * }
 	 */
 	router.post('/send-message', async (req, res) => {
 		try {
-			const { to, message } = req.body;
+			const { company_id, to, message } = req.body;
 
 			if (!to || !message) {
 				return res.status(400).json({
@@ -43,27 +91,32 @@ export default (router, { env, logger }) => {
 				});
 			}
 
+			// Buscar configurações da empresa
+			const config = await getCompanyTwilioConfig(company_id);
+
 			// Garantir formato whatsapp:+55...
 			const formattedTo = to.startsWith('whatsapp:') ? to : `whatsapp:${to}`;
 
 			logger.info('📤 Enviando mensagem WhatsApp', {
+				company_id,
+				from: config.whatsappNumber,
 				to: formattedTo,
 				messageLength: message.length
 			});
 
 			const urlEncodedData = new URLSearchParams({
-				From: TWILIO_WHATSAPP_NUMBER,
+				From: config.whatsappNumber,  // ✅ Número da empresa
 				To: formattedTo,
 				Body: message
 			});
 
 			const response = await fetch(
-				`https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
+				`https://api.twilio.com/2010-04-01/Accounts/${config.accountSid}/Messages.json`,
 				{
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded',
-						'Authorization': getAuthHeader()
+						'Authorization': getAuthHeader(config.accountSid, config.authToken)  // ✅ Credenciais da empresa
 					},
 					body: urlEncodedData
 				}
@@ -73,6 +126,7 @@ export default (router, { env, logger }) => {
 
 			if (response.status === 201) {
 				logger.info('✅ Mensagem enviada com sucesso', {
+					company_id,
 					messageSid: data.sid,
 					status: data.status
 				});
@@ -87,6 +141,7 @@ export default (router, { env, logger }) => {
 			}
 
 			logger.error('❌ Falha ao enviar mensagem', {
+				company_id,
 				status: response.status,
 				error: data
 			});
