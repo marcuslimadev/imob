@@ -1,0 +1,160 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+      region:
+        description: 'AWS region'
+        required: true
+        default: 'us-east-1'
+
+env:
+  AWS_REGION: ${{ github.event.inputs.region || 'us-east-1' }}
+  ENVIRONMENT: ${{ github.event.inputs.environment || 'production' }}
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Directus image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/imobi-directus:$IMAGE_TAG -f directus/Dockerfile directus/
+          docker tag $ECR_REGISTRY/imobi-directus:$IMAGE_TAG $ECR_REGISTRY/imobi-directus:latest
+          docker push $ECR_REGISTRY/imobi-directus:$IMAGE_TAG
+          docker push $ECR_REGISTRY/imobi-directus:latest
+
+      - name: Build and push Frontend image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/imobi-frontend:$IMAGE_TAG -f nextjs/Dockerfile nextjs/
+          docker tag $ECR_REGISTRY/imobi-frontend:$IMAGE_TAG $ECR_REGISTRY/imobi-frontend:latest
+          docker push $ECR_REGISTRY/imobi-frontend:$IMAGE_TAG
+          docker push $ECR_REGISTRY/imobi-frontend:latest
+
+  deploy:
+    name: Deploy to ECS
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get AWS Account ID
+        id: aws-account
+        run: echo "account_id=$(aws sts get-caller-identity --query Account --output text)" >> $GITHUB_OUTPUT
+
+      - name: Update Directus task definition
+        id: task-def-directus
+        run: |
+          sed -e "s/\${AWS_ACCOUNT_ID}/${{ steps.aws-account.outputs.account_id }}/g" \
+              -e "s/\${AWS_REGION}/${{ env.AWS_REGION }}/g" \
+              aws/task-definition-directus.json > /tmp/task-definition-directus.json
+
+      - name: Update Frontend task definition
+        id: task-def-frontend
+        run: |
+          sed -e "s/\${AWS_ACCOUNT_ID}/${{ steps.aws-account.outputs.account_id }}/g" \
+              -e "s/\${AWS_REGION}/${{ env.AWS_REGION }}/g" \
+              aws/task-definition-frontend.json > /tmp/task-definition-frontend.json
+
+      - name: Register Directus task definition
+        run: |
+          aws ecs register-task-definition \
+            --cli-input-json file:///tmp/task-definition-directus.json
+
+      - name: Register Frontend task definition
+        run: |
+          aws ecs register-task-definition \
+            --cli-input-json file:///tmp/task-definition-frontend.json
+
+      - name: Deploy Directus to ECS
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ENVIRONMENT }}-imobi-cluster \
+            --service directus \
+            --task-definition imobi-directus \
+            --force-new-deployment
+
+      - name: Deploy Frontend to ECS
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ENVIRONMENT }}-imobi-cluster \
+            --service frontend \
+            --task-definition imobi-frontend \
+            --force-new-deployment
+
+      - name: Wait for Directus service stability
+        run: |
+          aws ecs wait services-stable \
+            --cluster ${{ env.ENVIRONMENT }}-imobi-cluster \
+            --services directus
+
+      - name: Wait for Frontend service stability
+        run: |
+          aws ecs wait services-stable \
+            --cluster ${{ env.ENVIRONMENT }}-imobi-cluster \
+            --services frontend
+
+      - name: Get ALB DNS name
+        id: alb-dns
+        run: |
+          ALB_DNS=$(aws cloudformation describe-stacks \
+            --stack-name imobi-${{ env.ENVIRONMENT }}-infrastructure \
+            --query "Stacks[0].Outputs[?OutputKey=='ALBDNSName'].OutputValue" \
+            --output text)
+          echo "alb_dns=$ALB_DNS" >> $GITHUB_OUTPUT
+
+      - name: Deployment summary
+        run: |
+          echo "### 🚀 Deployment Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ env.ENVIRONMENT }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Region:** ${{ env.AWS_REGION }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**URLs:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: http://${{ steps.alb-dns.outputs.alb_dns }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Directus Admin: http://${{ steps.alb-dns.outputs.alb_dns }}/admin" >> $GITHUB_STEP_SUMMARY
+          echo "- API: http://${{ steps.alb-dns.outputs.alb_dns }}/api" >> $GITHUB_STEP_SUMMARY
