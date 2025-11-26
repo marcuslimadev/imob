@@ -3,6 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, LogIn } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -21,7 +29,7 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/empresa/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login');
+      setError(err.message || 'Email ou senha inválidos');
     } finally {
       setLoading(false);
     }
