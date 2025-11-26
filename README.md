@@ -1,30 +1,49 @@
-# iMOBI - CRM Imobiliário Inteligente com WhatsApp + IA
+# iMOBI - CRM Imobiliário Inteligente Multi-Tenant com WhatsApp + IA
 
-Sistema SaaS completo para gestão de imobiliárias com atendimento WhatsApp automatizado, inteligência artificial (GPT-4o-mini + Whisper) e funil de vendas de 17 stages.
+Sistema **SaaS multi-tenant** completo para gestão de imobiliárias com atendimento WhatsApp automatizado, inteligência artificial (GPT-4o-mini + Whisper) e funil de vendas de 17 stages.
 
 ## 🎯 Sobre o Projeto
 
-Este projeto é uma **migração e modernização completa** do sistema [Exclusiva](https://github.com/marcuslimadev/exclusiva) (Lumen + Vue.js) para uma stack moderna:
+Este projeto é uma **migração e modernização completa** do sistema [Exclusiva](https://github.com/marcuslimadev/exclusiva) (Lumen + Vue.js) para uma stack moderna com **arquitetura multi-tenant**:
 
 - **Backend:** Directus 11 (Headless CMS + API)
 - **Frontend:** Next.js 15 + Tailwind CSS
 - **IA:** OpenAI GPT-4o-mini + Whisper
 - **WhatsApp:** Twilio API
 - **Database:** PostgreSQL + PostGIS + Redis
+- **Multi-Tenancy:** Isolamento completo de dados por empresa
 
-**Status:** 🚧 **Migração em andamento** (25% concluído)
+**Status:** 🚧 **Migração em andamento** (30% concluído)
 
 ---
 
-## 🏗️ Arquitetura
+## 🏢 Arquitetura Multi-Tenant
+
+> **"Quando pronto, eu apenas tenho que criar um acesso para a empresa cliente e tudo funcione de acordo com o login e configurações dela"**
+
+Cada empresa cliente tem:
+- ✅ Configurações isoladas (API keys, credenciais)
+- ✅ Dados isolados (leads, conversas, propriedades)
+- ✅ Usuários vinculados à empresa
+- ✅ WhatsApp próprio com assistente AI personalizado
+
+**Documentação completa:** [ARQUITETURA_MULTI_TENANT.md](./ARQUITETURA_MULTI_TENANT.md)
+
+---
+
+## 🏗️ Arquitetura do Sistema
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    Directus (Backend)                    │
 │                   localhost:8055                         │
 ├─────────────────────────────────────────────────────────┤
-│ ✅ 14 Collections (multi-tenant)                        │
+│ ✅ 16 Collections (multi-tenant)                        │
+│    - companies (empresas clientes)                      │
+│    - app_settings (configs por empresa)                 │
+│    - leads, conversas, mensagens, properties...         │
 │ ✅ 3 Custom Extensions (OpenAI, Twilio, WhatsApp)       │
+│ ✅ Helper multi-tenant (company-settings.js)            │
 │ ✅ PostgreSQL + PostGIS + Redis                         │
 │ ✅ API REST + GraphQL                                   │
 └─────────────────────────────────────────────────────────┘
@@ -34,7 +53,7 @@ Este projeto é uma **migração e modernização completa** do sistema [Exclusi
 │                   localhost:3000                         │
 ├─────────────────────────────────────────────────────────┤
 │ ✅ Landing Page (/home)                                 │
-│ ⏳ Dashboard CRM (em desenvolvimento)                    │
+│ ⏳ Dashboard CRM (filtrado por empresa)                 │
 │ ⏳ Chat WhatsApp (em desenvolvimento)                    │
 │ ⏳ Gerenciamento de Leads (em desenvolvimento)           │
 └─────────────────────────────────────────────────────────┘
@@ -54,15 +73,22 @@ Este projeto é uma **migração e modernização completa** do sistema [Exclusi
 
 ### ✅ Implementado
 
-- [x] Collections Directus (14 tabelas)
+- [x] Collections Directus (16 tabelas incluindo multi-tenant)
+- [x] Collection: `companies` (empresas clientes)
+- [x] Collection: `app_settings` (configurações por empresa)
 - [x] Extension: OpenAI Service (5 endpoints)
 - [x] Extension: Twilio Client (4 endpoints)
 - [x] Extension: WhatsApp Webhook (2 endpoints)
+- [x] Helper: company-settings.js (6 funções multi-tenant)
 - [x] Landing Page Next.js
 - [x] Suporte para Twilio e Evolution API
+- [x] Documentação arquitetura multi-tenant
 
 ### ⏳ Em Desenvolvimento
 
+- [ ] Adicionar company_id em directus_users
+- [ ] Configurar Roles e Permissions por empresa
+- [ ] Atualizar extensões para usar helper multi-tenant
 - [ ] Lógica completa de processamento WhatsApp
 - [ ] Sistema de 17 stages do funil
 - [ ] Transcrição de áudio (Whisper)
