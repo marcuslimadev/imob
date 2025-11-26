@@ -1,11 +1,18 @@
 /**
- * Directus Extension: WhatsApp Webhook Endpoint
+ * Directus Extension: WhatsApp Webhook Endpoint (Multi-Tenant)
  * Migrado de: backend/app/Http/Controllers/WebhookController.php
  * 
  * Endpoints disponíveis:
  * - POST /whatsapp - Receber webhooks do Twilio/Evolution API
  * - POST /whatsapp/status - Status callbacks do Twilio
+ * 
+ * Multi-Tenant:
+ * - Identifica empresa pelo campo 'To' (número WhatsApp da empresa)
+ * - Busca configurações em app_settings
+ * - Isola dados por company_id
  */
+
+import { getCompanySettingsByWhatsApp } from '../../shared/company-settings.js';
 
 export default (router, { services, logger, database }) => {
 	const { ItemsService } = services;
@@ -29,15 +36,31 @@ export default (router, { services, logger, database }) => {
 			const normalizedData = normalizeWebhookData(webhookData, source);
 
 			logger.info('📱 De:', normalizedData.from || 'N/A');
+			logger.info('📱 Para:', normalizedData.to || 'N/A');
 			logger.info('👤 Nome:', normalizedData.profile_name || 'N/A');
 			logger.info('💬 Mensagem:', normalizedData.message || '[mídia]');
 			logger.info('🆔 Message ID:', normalizedData.message_id || 'N/A');
 			logger.info('🔖 Origem:', source);
-			logger.info('📦 Payload completo:', webhookData);
 			logger.info('─────────────────────────────────────────────────────────────────');
 
+			// 🏢 MULTI-TENANT: Identificar empresa pelo número WhatsApp
+			let companySettings = null;
+			if (normalizedData.to) {
+				try {
+					companySettings = await getCompanySettingsByWhatsApp({ database }, normalizedData.to);
+					logger.info('🏢 Empresa identificada:', {
+						company_id: companySettings.company_id,
+						ai_assistant: companySettings.ai_assistant_name
+					});
+				} catch (error) {
+					logger.warn('⚠️  Empresa não encontrada para número:', normalizedData.to);
+					logger.warn('💡 Configure app_settings para este número WhatsApp');
+					// Continua sem empresa (modo fallback)
+				}
+			}
+
 			// Processar mensagem via WhatsApp Service
-			const result = await processIncomingMessage(normalizedData, { services, logger, database });
+			const result = await processIncomingMessage(normalizedData, companySettings, { services, logger, database, req });
 
 			logger.info('╔════════════════════════════════════════════════════════════════╗');
 			logger.info('║           ✅ WEBHOOK PROCESSADO COM SUCESSO                   ║');
@@ -195,10 +218,12 @@ export default (router, { services, logger, database }) => {
 	}
 
 	/**
-	 * Processar mensagem recebida
-	 * (Simplificação da lógica do WhatsAppService)
+	 * Processar mensagem recebida (Multi-Tenant)
+	 * @param {Object} webhookData - Dados normalizados do webhook
+	 * @param {Object} companySettings - Configurações da empresa (app_settings)
+	 * @param {Object} context - { services, logger, database, req }
 	 */
-	async function processIncomingMessage(webhookData, { services, logger, database }) {
+	async function processIncomingMessage(webhookData, companySettings, { services, logger, database, req }) {
 		const { ItemsService } = services;
 
 		try {
@@ -212,6 +237,7 @@ export default (router, { services, logger, database }) => {
 			const mediaType = webhookData.media_type;
 			const profileName = webhookData.profile_name;
 			const location = webhookData.location || {};
+			const companyId = companySettings?.company_id || null;
 
 			if (!from) {
 				return { success: false, error: 'Número de origem não identificado' };
@@ -220,29 +246,47 @@ export default (router, { services, logger, database }) => {
 			// Limpar telefone
 			const telefone = from.replace('whatsapp:', '');
 
-			// 1. Obter ou criar conversa
+			// 1. Obter ou criar conversa (COM FILTRO POR EMPRESA)
 			const conversasService = new ItemsService('conversas', { schema: req.schema });
 			
+			const conversaFilter = {
+				telefone: { _eq: telefone },
+				status: { _neq: 'finalizada' }
+			};
+			
+			// Se temos empresa, filtrar por ela
+			if (companyId) {
+				conversaFilter.company_id = { _eq: companyId };
+			}
+			
 			let conversa = await conversasService.readByQuery({
-				filter: {
-					telefone: { _eq: telefone },
-					status: { _neq: 'finalizada' }
-				},
+				filter: conversaFilter,
 				limit: 1
 			});
 
 			if (!conversa || conversa.length === 0) {
-				// Criar nova conversa
-				const novaConversa = await conversasService.createOne({
+				// Criar nova conversa (COM company_id)
+				const conversaData = {
 					telefone,
 					whatsapp_name: profileName,
 					status: 'ativa',
 					stage: 'boas_vindas',
 					iniciada_em: new Date()
-				});
+				};
+				
+				// Adicionar company_id se disponível
+				if (companyId) {
+					conversaData.company_id = companyId;
+				}
+				
+				const novaConversa = await conversasService.createOne(conversaData);
 
 				conversa = [novaConversa];
-				logger.info('Nova conversa criada', { id: novaConversa.id, telefone });
+				logger.info('✅ Nova conversa criada', { 
+					id: novaConversa.id, 
+					telefone,
+					company_id: companyId || 'sem empresa'
+				});
 			} else {
 				conversa = conversa[0];
 				

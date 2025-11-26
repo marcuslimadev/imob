@@ -1,5 +1,5 @@
 /**
- * Directus Extension: OpenAI Service
+ * Directus Extension: OpenAI Service (Multi-Tenant)
  * Migrado de: backend/app/Services/OpenAIService.php
  * 
  * Endpoints disponíveis:
@@ -7,26 +7,74 @@
  * - POST /openai/chat - Chat completion (GPT-4o-mini)
  * - POST /openai/extract - Extrair dados estruturados
  * - POST /openai/diagnostic - Gerar diagnóstico de lead
+ * 
+ * Multi-Tenant:
+ * - Todos endpoints recebem company_id
+ * - Usa chave OpenAI específica da empresa
+ * - Usa modelo e assistente configurados pela empresa
  */
 
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import fs from 'fs';
+import { getCompanySettings } from '../../shared/company-settings.js';
 
-export default (router, { env, logger }) => {
-	const OPENAI_API_KEY = env.OPENAI_API_KEY;
-	const OPENAI_MODEL = env.OPENAI_MODEL || 'gpt-4o-mini';
-	const AI_ASSISTANT_NAME = env.AI_ASSISTANT_NAME || 'Teresa';
+export default (router, { env, logger, database }) => {
+	// Fallback para variáveis de ambiente (desenvolvimento)
+	const DEFAULT_OPENAI_API_KEY = env.OPENAI_API_KEY;
+	const DEFAULT_OPENAI_MODEL = env.OPENAI_MODEL || 'gpt-4o-mini';
+	const DEFAULT_AI_ASSISTANT_NAME = env.AI_ASSISTANT_NAME || 'Teresa';
+
+	/**
+	 * Buscar configurações OpenAI da empresa
+	 * @param {number} companyId - ID da empresa
+	 * @returns {Object} - { apiKey, model, assistantName }
+	 */
+	async function getCompanyOpenAIConfig(companyId) {
+		try {
+			if (!companyId) {
+				logger.warn('⚠️  company_id não fornecido, usando configurações padrão');
+				return {
+					apiKey: DEFAULT_OPENAI_API_KEY,
+					model: DEFAULT_OPENAI_MODEL,
+					assistantName: DEFAULT_AI_ASSISTANT_NAME
+				};
+			}
+
+			const settings = await getCompanySettings({ database }, companyId);
+			
+			logger.info('🏢 Usando configurações da empresa', {
+				company_id: companyId,
+				model: settings.openai_model,
+				assistant: settings.ai_assistant_name
+			});
+
+			return {
+				apiKey: settings.openai_api_key,
+				model: settings.openai_model || DEFAULT_OPENAI_MODEL,
+				assistantName: settings.ai_assistant_name || DEFAULT_AI_ASSISTANT_NAME
+			};
+		} catch (error) {
+			logger.error('❌ Erro ao buscar configurações da empresa:', error.message);
+			logger.warn('⚠️  Usando configurações padrão (fallback)');
+			
+			return {
+				apiKey: DEFAULT_OPENAI_API_KEY,
+				model: DEFAULT_OPENAI_MODEL,
+				assistantName: DEFAULT_AI_ASSISTANT_NAME
+			};
+		}
+	}
 
 	/**
 	 * POST /openai/transcribe
 	 * Transcrever áudio usando Whisper API
 	 * 
-	 * Body: { audioPath: string } ou FormData com file
+	 * Body: { company_id: number, audioPath: string } ou FormData com file
 	 */
 	router.post('/transcribe', async (req, res) => {
 		try {
-			const { audioPath } = req.body;
+			const { company_id, audioPath } = req.body;
 
 			if (!audioPath && !req.files?.file) {
 				return res.status(400).json({
@@ -35,7 +83,13 @@ export default (router, { env, logger }) => {
 				});
 			}
 
-			logger.info('🎤 Iniciando transcrição Whisper', { audioPath });
+			logger.info('🎤 Iniciando transcrição Whisper', { 
+				audioPath,
+				company_id
+			});
+
+			// Buscar configurações da empresa
+			const config = await getCompanyOpenAIConfig(company_id);
 
 			const formData = new FormData();
 			
@@ -56,7 +110,7 @@ export default (router, { env, logger }) => {
 			const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
 				method: 'POST',
 				headers: {
-					'Authorization': `Bearer ${OPENAI_API_KEY}`,
+					'Authorization': `Bearer ${config.apiKey}`,  // ✅ Chave da empresa
 					...formData.getHeaders()
 				},
 				body: formData
@@ -66,6 +120,7 @@ export default (router, { env, logger }) => {
 
 			if (response.status === 200) {
 				logger.info('✅ Transcrição bem-sucedida', {
+					company_id,
 					text: data.text,
 					length: data.text.length
 				});
@@ -77,6 +132,7 @@ export default (router, { env, logger }) => {
 			}
 
 			logger.error('❌ Falha na transcrição', {
+				company_id,
 				status: response.status,
 				data
 			});
