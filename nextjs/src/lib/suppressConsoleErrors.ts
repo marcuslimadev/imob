@@ -6,47 +6,57 @@
 if (typeof window !== 'undefined') {
   // Suppress console.error messages
   const originalError = console.error;
+  const originalWarn = console.warn;
   
   console.error = (...args: any[]) => {
-    // Suppress "Error fetching site data" errors (403 Forbidden from Directus)
-    if (args[0]?.includes?.('Error fetching site data')) {
+    const argsStr = String(args[0] || '');
+    
+    // Suppress specific error messages
+    if (
+      argsStr.includes('Error fetching site data') ||
+      argsStr.includes('401') ||
+      argsStr.includes('403') ||
+      argsStr.includes('Unauthorized') ||
+      argsStr.includes('Forbidden') ||
+      argsStr.includes('users/me')
+    ) {
       return;
     }
     
-    // Suppress "Failed to load resource: 401" errors
-    const argsStr = JSON.stringify(args);
-    if (argsStr.includes('401') || argsStr.includes('Unauthorized')) {
-      return;
-    }
-    
-    // Call original console.error for other errors
     originalError.apply(console, args);
   };
 
-  // Suppress network errors in browser DevTools
-  // This prevents "Failed to load resource" messages from appearing
-  const originalFetch = window.fetch;
-  window.fetch = async (...args) => {
-    try {
-      const response = await originalFetch(...args);
-      
-      // Silently handle 401/403 from Directus without logging
-      if ((response.status === 401 || response.status === 403) && 
-          args[0]?.toString().includes('localhost:8055')) {
-        // Return the response without logging the error
-        return response;
-      }
-      
-      return response;
-    } catch (error) {
-      // Suppress network errors from Directus
-      const errorStr = error?.toString() || '';
-      if (errorStr.includes('401') || errorStr.includes('403') || errorStr.includes('8055')) {
-        // Create a mock failed response instead of throwing
-        return new Response(null, { status: 401, statusText: 'Unauthorized' });
-      }
-      throw error;
+  console.warn = (...args: any[]) => {
+    const argsStr = String(args[0] || '');
+    
+    // Suppress React DevTools download message
+    if (argsStr.includes('React DevTools')) {
+      return;
     }
+    
+    originalWarn.apply(console, args);
+  };
+
+  // Override window.addEventListener to suppress network error events
+  const originalAddEventListener = window.addEventListener;
+  window.addEventListener = function(type: string, listener: any, options?: any) {
+    // Don't log network errors for failed resource loads
+    if (type === 'error') {
+      const wrappedListener = function(event: Event) {
+        const target = event.target as HTMLElement;
+        if (target?.tagName === 'IMG' || target?.tagName === 'SCRIPT' || target?.tagName === 'LINK') {
+          const src = (target as any).src || (target as any).href;
+          if (src?.includes('8055') || src?.includes('401') || src?.includes('403')) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+          }
+        }
+        return listener(event);
+      };
+      return originalAddEventListener.call(this, type, wrappedListener, options);
+    }
+    return originalAddEventListener.call(this, type, listener, options);
   };
 }
 

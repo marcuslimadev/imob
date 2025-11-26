@@ -7,6 +7,7 @@ import { Metadata } from 'next';
 import VisualEditingLayout from '@/components/layout/VisualEditingLayout';
 import { ThemeProvider } from '@/components/ui/ThemeProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
+import SuppressConsoleErrors from '@/components/SuppressConsoleErrors';
 import { fetchSiteData } from '@/lib/directus/fetchers';
 import { getDirectusAssetURL } from '@/lib/directus/directus-utils';
 
@@ -62,6 +63,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 	return (
 		<html lang="pt-BR" style={{ '--accent-color': accentColor } as React.CSSProperties} suppressHydrationWarning>
 			<body className="antialiased font-sans flex flex-col min-h-screen">
+				<SuppressConsoleErrors />
 				<ThemeProvider>
 					<AuthProvider>
 						<VisualEditingLayout
