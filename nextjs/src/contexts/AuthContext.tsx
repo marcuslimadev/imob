@@ -49,9 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     try {
-      // @ts-ignore - Directus SDK auth
+      // Login com sintaxe correta do SDK - objeto com email e password
       await directusClient.request(
-        directusLogin(email, password)
+        directusLogin({ email, password })
       );
 
       await checkAuth();
