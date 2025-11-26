@@ -393,29 +393,54 @@ CORS_ORIGIN=http://localhost:3000,https://seu-dominio.com
 CORS_CREDENTIALS=true
 ```
 
+## Script de Setup Automatizado
+
+Para configurar todas as roles e permissões automaticamente, execute:
+
+```bash
+cd directus
+npm run setup:roles
+```
+
+Ou manualmente:
+
+```bash
+cd directus
+node setup-roles.js
+```
+
+O script irá:
+1. Criar o campo `company_id` em `directus_users` (se não existir)
+2. Criar a role "Company Admin" com todas as permissões multi-tenant
+3. Criar a role "Corretor" com permissões limitadas
+4. Configurar permissões públicas para a vitrine
+5. Criar usuários de teste:
+   - `admin@exclusiva.com` / `Teste@123` (Company Admin)
+   - `corretor@exclusiva.com` / `Teste@123` (Corretor)
+
 ## Checklist de Implementação
 
-- [ ] Criar role "Company Admin"
-- [ ] Configurar permissões de `properties` para Company Admin
-- [ ] Configurar permissões de `leads` para Company Admin
-- [ ] Configurar permissões de `property_media` para Company Admin
-- [ ] Configurar permissões de `directus_users` para Company Admin
-- [ ] Criar role "Corretor"
-- [ ] Configurar permissões de `properties` para Corretor (read-only)
-- [ ] Configurar permissões de `leads` para Corretor
-- [ ] Criar role "Public"
-- [ ] Configurar permissões de `properties` para Public (read-only, active)
-- [ ] Configurar permissões de `leads` para Public (create-only)
-- [ ] Adicionar campo `company_id` em `directus_users`
-- [ ] Atualizar usuário SuperAdmin com company_id
-- [ ] Criar usuário teste Company Admin
-- [ ] Criar usuário teste Corretor
+- [x] Criar role "Company Admin"
+- [x] Configurar permissões de `properties` para Company Admin
+- [x] Configurar permissões de `leads` para Company Admin
+- [x] Configurar permissões de `property_media` para Company Admin
+- [x] Configurar permissões de `directus_users` para Company Admin
+- [x] Criar role "Corretor"
+- [x] Configurar permissões de `properties` para Corretor (read-only)
+- [x] Configurar permissões de `leads` para Corretor
+- [x] Criar role "Public"
+- [x] Configurar permissões de `properties` para Public (read-only, active)
+- [x] Configurar permissões de `leads` para Public (create-only)
+- [x] Adicionar campo `company_id` em `directus_users`
+- [x] Atualizar usuário SuperAdmin com company_id
+- [x] Criar usuário teste Company Admin
+- [x] Criar usuário teste Corretor
 - [ ] Testar login como Company Admin
 - [ ] Testar login como Corretor
 - [ ] Testar criação de imóvel (Company Admin)
 - [ ] Testar criação de lead (Corretor)
 - [ ] Testar isolamento entre empresas
-- [ ] Documentar credenciais de teste
+- [x] Documentar credenciais de teste
 
 ## Próximos Passos
 

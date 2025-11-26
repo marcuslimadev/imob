@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "register": "node register-collections.js && node register-fields.js",
+    "setup:roles": "node setup-roles.js",
     "import:properties": "node workers/import-properties.js"
   },
   "keywords": [],
