@@ -371,10 +371,9 @@ export default (router, { services, logger, database }) => {
 			if (isFirstMessage) {
 				logger.info('👋 Primeira mensagem detectada, enviando boas-vindas...');
 				
-				const assistantName = process.env.AI_ASSISTANT_NAME || 'Teresa';
-				const welcomeMessage = `Olá! Sou ${assistantName}, atendente virtual da Exclusiva Lar Imóveis! 👋
-
-Como posso te ajudar hoje? 😊`;
+				const assistantName = companySettings.assistant_name || 'Teresa';
+				const preferredName = profileName?.split(' ')[0] || 'visitante';
+				const welcomeMessage = buildGenericWelcomeMessage(assistantName, preferredName);
 
 				// Enviar via Twilio
 				await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
@@ -399,6 +398,7 @@ Como posso te ajudar hoje? 😊`;
 				// Criar lead
 				const leadsService = new ItemsService('leads', { schema: req.schema });
 				const lead = await leadsService.createOne({
+					company_id: company.id,
 					nome: profileName || 'Visitante',
 					telefone,
 					whatsapp_name: profileName,
@@ -422,22 +422,171 @@ Como posso te ajudar hoje? 😊`;
 				};
 			}
 
-			// 6. Processar mensagem regular com IA
-			logger.info('📨 Processando mensagem regular com IA...');
+			// 6. Extrair dados do lead
+			logger.info('📊 Extraindo dados da mensagem...');
 			
-			// TODO: Implementar processamento completo com OpenAI
-			// Por enquanto, resposta simples
-			const simpleResponse = `Recebi sua mensagem: "${finalBody}". O processamento completo com IA está em desenvolvimento!`;
-
-			// Enviar via Twilio
-			await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					to: telefone,
-					message: simpleResponse
-				})
+			const leadsService = new ItemsService('leads', { schema: req.schema });
+			const conversaAtual = await conversasService.readOne(conversaId, {
+				fields: ['lead_id', 'stage']
 			});
+
+			if (conversaAtual?.lead_id) {
+				const leadAtual = await leadsService.readOne(conversaAtual.lead_id);
+				const updates = {};
+
+				// Extrair CPF
+				if (!leadAtual.cpf) {
+					const cpf = extractCpfFromMessage(finalBody);
+					if (cpf) updates.cpf = cpf;
+				}
+
+				// Extrair email
+				if (!leadAtual.email) {
+					const email = extractEmailFromMessage(finalBody);
+					if (email) updates.email = email;
+				}
+
+				// Extrair orçamento
+				if (!leadAtual.orcamento_min || !leadAtual.orcamento_max) {
+					const orcamento = extractOrcamentoFromMessage(finalBody);
+					if (orcamento) {
+						if (orcamento.min) updates.orcamento_min = orcamento.min;
+						if (orcamento.max) updates.orcamento_max = orcamento.max;
+					}
+				}
+
+				// Extrair renda mensal
+				if (!leadAtual.renda_mensal) {
+					const renda = extractRendaMensalFromMessage(finalBody);
+					if (renda) updates.renda_mensal = renda;
+				}
+
+				// Atualizar última interação
+				updates.ultima_interacao = new Date();
+
+				// Aplicar updates
+				if (Object.keys(updates).length > 1) {
+					await leadsService.updateOne(conversaAtual.lead_id, updates);
+					logger.info(`✅ Lead atualizado com ${Object.keys(updates).length} campos`);
+				}
+
+				// Recarregar lead com dados atualizados
+				const leadAtualizado = await leadsService.readOne(conversaAtual.lead_id);
+
+				// 7. Verificar se pode fazer matching de imóveis
+				if (hasEnoughDataForMatching(leadAtualizado)) {
+					logger.info('🏠 Critérios suficientes, buscando imóveis...');
+
+					const propertiesService = new ItemsService('properties', { schema: req.schema });
+					const matchQuery = buildPropertyMatchQuery(leadAtualizado);
+					
+					// Adicionar filtro de company_id
+					matchQuery._and.push({ company_id: { _eq: company.id } });
+
+					const properties = await propertiesService.readByQuery({
+						filter: matchQuery,
+						limit: 5,
+						fields: ['id', 'titulo', 'tipo', 'preco', 'quartos', 'banheiros', 'area_total', 'cidade', 'bairro', 'descricao']
+					});
+
+					if (properties.length > 0) {
+						// Calcular scores e ordenar
+						const scoredProperties = properties
+							.map(prop => ({
+								...prop,
+								score: calculateMatchScore(prop, leadAtualizado)
+							}))
+							.sort((a, b) => b.score - a.score);
+
+						// Enviar top 3
+						const topProperties = scoredProperties.slice(0, 3);
+						logger.info(`📤 Enviando ${topProperties.length} imóveis compatíveis`);
+
+						for (const property of topProperties) {
+							const propertyMessage = buildPropertyPreviewMessage(property);
+
+							await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({
+									to: telefone,
+									message: propertyMessage,
+									company_id: company.id
+								})
+							});
+
+							await mensagensService.createOne({
+								conversa_id: conversaId,
+								direction: 'outgoing',
+								message_type: 'text',
+								content: propertyMessage,
+								status: 'sent',
+								sent_at: new Date()
+							});
+
+							// Pequeno delay entre mensagens
+							await new Promise(resolve => setTimeout(resolve, 1000));
+						}
+
+						// Atualizar stage para apresentacao
+						await conversasService.updateOne(conversaId, {
+							stage: 'apresentacao'
+						});
+					} else {
+						// Nenhum imóvel encontrado
+						const noMatchMsg = buildNoMatchMessage(leadAtualizado);
+
+						await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({
+								to: telefone,
+								message: noMatchMsg,
+								company_id: company.id
+							})
+						});
+
+						await mensagensService.createOne({
+							conversa_id: conversaId,
+							direction: 'outgoing',
+							message_type: 'text',
+							content: noMatchMsg,
+							status: 'sent',
+							sent_at: new Date()
+						});
+
+						// Atualizar stage para sem_match
+						await conversasService.updateOne(conversaId, {
+							stage: 'sem_match'
+						});
+					}
+				} else {
+					// Ainda coletando dados
+					logger.info('📝 Ainda coletando informações do lead...');
+					
+					// TODO: Resposta com IA solicitando mais informações
+					const collectingResponse = `Entendi! Pode me contar mais sobre o que você procura? Por exemplo:\n\n• Qual o seu orçamento?\n• Prefere alguma região específica?\n• Quantos quartos precisa?`;
+
+					await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							to: telefone,
+							message: collectingResponse,
+							company_id: company.id
+						})
+					});
+
+					await mensagensService.createOne({
+						conversa_id: conversaId,
+						direction: 'outgoing',
+						message_type: 'text',
+						content: collectingResponse,
+						status: 'sent',
+						sent_at: new Date()
+					});
+				}
+			}
 
 			// Salvar resposta
 			await mensagensService.createOne({
