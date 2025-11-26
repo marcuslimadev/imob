@@ -380,7 +380,7 @@ export const fetchSiteData = async () => {
 
 		return { globals, headerNavigation, footerNavigation };
 	} catch (error) {
-		console.error('Error fetching site data:', error);
+		// Silently handle Directus unavailability - don't log to console
 		// Return default values when Directus is not available
 
 		return {
