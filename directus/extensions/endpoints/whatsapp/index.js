@@ -13,6 +13,12 @@
  */
 
 import { getCompanySettingsByWhatsApp } from '../../shared/company-settings.js';
+import {
+	calculateNextStage,
+	detectHumanRequestKeywords,
+	getStageMessage,
+	isValidTransition
+} from '../../shared/pipeline-stages.js';
 
 export default (router, { services, logger, database }) => {
 	const { ItemsService } = services;
@@ -586,17 +592,79 @@ export default (router, { services, logger, database }) => {
 						sent_at: new Date()
 					});
 				}
-			}
 
-			// Salvar resposta
-			await mensagensService.createOne({
-				conversa_id: conversaId,
-				direction: 'outgoing',
-				message_type: 'text',
-				content: simpleResponse,
-				status: 'sent',
-				sent_at: new Date()
-			});
+				// 8. Verificar se lead solicitou atendimento humano
+				if (detectHumanRequestKeywords(finalBody)) {
+					logger.info('👤 Lead solicitou atendimento humano!');
+
+					await conversasService.updateOne(conversaId, {
+						stage: 'atendimento_humano',
+						requires_human_attention: true
+					});
+
+					const humanRequestMsg = `Entendi! Vou transferir você para um de nossos corretores.\n\nEm breve alguém entrará em contato. 😊`;
+
+					await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							to: telefone,
+							message: humanRequestMsg,
+							company_id: company.id
+						})
+					});
+
+					await mensagensService.createOne({
+						conversa_id: conversaId,
+						direction: 'outgoing',
+						message_type: 'text',
+						content: humanRequestMsg,
+						status: 'sent',
+						sent_at: new Date()
+					});
+
+					// TODO: Notificar corretores via email/webhook
+					logger.info('📧 [TODO] Enviar notificação para corretores');
+				}
+
+				// 9. Progressão automática de stage
+				const conversaFinal = await conversasService.readOne(conversaId, {
+					fields: ['stage', 'lead_id']
+				});
+
+				if (conversaFinal.stage !== 'atendimento_humano') {
+					// Contar mensagens
+					const totalMsgs = await mensagensService.readByQuery({
+						filter: { conversa_id: { _eq: conversaId } },
+						aggregate: { count: '*' }
+					});
+					const msgCount = totalMsgs[0]?.count || 0;
+
+					// Obter última mensagem
+					const lastMsg = await mensagensService.readByQuery({
+						filter: { conversa_id: { _eq: conversaId } },
+						sort: ['-created_at'],
+						limit: 1
+					});
+
+					const nextStage = calculateNextStage(
+						conversaFinal.stage,
+						leadAtualizado || {},
+						lastMsg[0] || null,
+						msgCount,
+						null // matchedProperties já foram tratados acima
+					);
+
+					if (nextStage && nextStage !== conversaFinal.stage) {
+						await conversasService.updateOne(conversaId, {
+							stage: nextStage
+						});
+
+						logger.info(`🔄 Stage atualizado: ${conversaFinal.stage} → ${nextStage}`);
+						logger.info(`   ${getStageMessage(nextStage)}`);
+					}
+				}
+			}
 
 			return {
 				success: true,
