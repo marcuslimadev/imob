@@ -1,8 +1,8 @@
 const { createDirectus, authentication, rest, login, readMe } = require('@directus/sdk');
 
 const directus = createDirectus('http://localhost:8055')
-  .with(authentication('json'))
-  .with(rest());
+  .with(authentication('json', { credentials: 'include' }))
+  .with(rest({ credentials: 'include' }));
 
 async function testLogin() {
   console.log('🔐 Testando login...\n');
@@ -12,7 +12,7 @@ async function testLogin() {
     console.log('📧 Email: admin@imobi.com');
     console.log('🔑 Senha: admin123\n');
     
-    await directus.request(
+    const loginResult = await directus.request(
       login({
         email: 'admin@imobi.com',
         password: 'admin123'
@@ -20,15 +20,20 @@ async function testLogin() {
     );
     
     console.log('✅ Login bem-sucedido!');
+    console.log('🎫 Resultado:', JSON.stringify(loginResult, null, 2));
+    
+    // Aguardar um pouco para o token ser processado
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Buscar dados do usuário
+    console.log('\n👤 Buscando dados do usuário...');
     const me = await directus.request(
       readMe({
         fields: ['*']
       })
     );
     
-    console.log('\n👤 Dados do usuário:');
+    console.log('\n✅ Dados do usuário recebidos:');
     console.log('  - ID:', me.id);
     console.log('  - Email:', me.email);
     console.log('  - Nome:', me.first_name, me.last_name);
@@ -42,7 +47,7 @@ async function testLogin() {
     console.log('   Senha: admin123');
     
   } catch (error) {
-    console.error('\n❌ Erro no login:', error.errors?.[0]?.message || error.message);
+    console.error('\n❌ Erro:', error.errors?.[0]?.message || error.message);
     if (error.errors) {
       console.error('🔧 Detalhes:', JSON.stringify(error.errors, null, 2));
     }
