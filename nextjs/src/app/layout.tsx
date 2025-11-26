@@ -10,26 +10,52 @@ import { fetchSiteData } from '@/lib/directus/fetchers';
 import { getDirectusAssetURL } from '@/lib/directus/directus-utils';
 
 export async function generateMetadata(): Promise<Metadata> {
-	const { globals } = await fetchSiteData();
+	try {
+		const { globals } = await fetchSiteData();
 
-	const siteTitle = globals?.title || 'Simple CMS';
-	const siteDescription = globals?.description || 'A starter CMS template powered by Next.js and Directus.';
-	const faviconURL = globals?.favicon ? getDirectusAssetURL(globals.favicon) : '/favicon.ico';
+		const siteTitle = globals?.title || 'iMOBI - CRM Inteligente';
+		const siteDescription = globals?.description || 'CRM completo para imobiliárias com WhatsApp IA e automação de vendas.';
+		const faviconURL = globals?.favicon ? getDirectusAssetURL(globals.favicon) : '/favicon.ico';
 
-	return {
-		title: {
-			default: siteTitle,
-			template: `%s | ${siteTitle}`,
-		},
-		description: siteDescription,
-		icons: {
-			icon: faviconURL,
-		},
-	};
+		return {
+			title: {
+				default: siteTitle,
+				template: `%s | ${siteTitle}`,
+			},
+			description: siteDescription,
+			icons: {
+				icon: faviconURL,
+			},
+		};
+	} catch (error) {
+		// Fallback metadata when Directus is not available
+		return {
+			title: {
+				default: 'iMOBI - CRM Inteligente',
+				template: '%s | iMOBI',
+			},
+			description: 'CRM completo para imobiliárias com WhatsApp IA e automação de vendas.',
+			icons: {
+				icon: '/favicon.ico',
+			},
+		};
+	}
 }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-	const { globals, headerNavigation, footerNavigation } = await fetchSiteData();
+	let globals = null;
+	let headerNavigation = null;
+	let footerNavigation = null;
+
+	try {
+		const siteData = await fetchSiteData();
+		globals = siteData.globals;
+		headerNavigation = siteData.headerNavigation;
+		footerNavigation = siteData.footerNavigation;
+	} catch (error) {
+		console.log('Running in offline mode - Directus data unavailable');
+	}
+
 	const accentColor = globals?.accent_color || '#6644ff';
 
 	return (
