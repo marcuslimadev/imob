@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
 import '@/styles/fonts.css';
+import '@/lib/suppressConsoleErrors';
 import { ReactNode } from 'react';
 import { Metadata } from 'next';
 
