@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { directusServer } from '@/lib/directus/client';
-import { readItems } from '@directus/sdk';
+import { readItems, readMe } from '@directus/sdk';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -18,6 +18,30 @@ export async function middleware(request: NextRequest) {
     pathname.match(/\.(ico|png|jpg|jpeg|svg|css|js|woff|woff2|ttf)$/)
   ) {
     return NextResponse.next();
+  }
+
+  // Verificar autenticação para rotas protegidas
+  const protectedRoutes = ['/empresa', '/admin', '/leads', '/conversas'];
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
+  
+  if (isProtectedRoute && pathname !== '/login') {
+    const authToken = request.cookies.get('directus_session_token')?.value ||
+                     request.cookies.get('auth_token')?.value;
+    
+    if (!authToken) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    
+    // Verificar se token é válido
+    try {
+      await directusServer.request(readMe({ fields: ['id'] }));
+    } catch (error) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
   }
   
   // Detectar company por subdomínio ou custom domain

@@ -178,10 +178,9 @@ export default function FormularioContato({ propertyId, companyId, interestType 
     setSuccess(false);
 
     try {
-      // TODO: Get company_id from the current property being viewed or from subdomain
       const leadData = {
         ...formData,
-        company_id: '1', // This should be dynamic based on the context
+        company_id: companyId,
         lead_source: 'website',
         lead_score: 50,
         stage: 'new' as const

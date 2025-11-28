@@ -1,6 +1,7 @@
 import { directusServer } from '@/lib/directus/client';
 import { readItems, createItem } from '@directus/sdk';
 import { redirect } from 'next/navigation';
+import { getAuthenticatedCompanyId } from '@/lib/auth/server';
 import Link from 'next/link';
 
 async function getCompanyProperties(companyId: string) {
@@ -63,9 +64,7 @@ function getStatusLabel(status: string): string {
 }
 
 export default async function CompanyPropertiesPage() {
-  // TODO: Get company_id from authenticated user session
-  // For now, using a hardcoded company_id for demonstration
-  const companyId = '1'; // This should come from auth session
+  const companyId = await getAuthenticatedCompanyId();
   
   const properties = await getCompanyProperties(companyId);
 

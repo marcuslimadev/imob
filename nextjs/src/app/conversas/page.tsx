@@ -5,7 +5,11 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Send, Phone, MoreVertical, Archive, Check, CheckCheck } from 'lucide-react';
+import { Search, Send, Phone, MoreVertical, Archive, Check, CheckCheck, Loader2, X } from 'lucide-react';
+import { directusClient } from '@/lib/directus/client';
+import { readItems } from '@directus/sdk';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface Conversa {
 	id: string;
@@ -32,16 +36,28 @@ interface Mensagem {
 }
 
 export default function ConversasPage() {
+	const { user, loading: authLoading } = useAuth();
+	const router = useRouter();
 	const [conversas, setConversas] = useState<Conversa[]>([]);
 	const [selectedConversa, setSelectedConversa] = useState<Conversa | null>(null);
 	const [mensagens, setMensagens] = useState<Mensagem[]>([]);
 	const [newMessage, setNewMessage] = useState('');
 	const [searchTerm, setSearchTerm] = useState('');
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	// Redirect se não autenticado
+	useEffect(() => {
+		if (!authLoading && !user) {
+			router.push('/login?redirect=/conversas');
+		}
+	}, [user, authLoading, router]);
 
 	useEffect(() => {
-		fetchConversas();
-	}, []);
+		if (user?.company_id) {
+			fetchConversas();
+		}
+	}, [user]);
 
 	useEffect(() => {
 		if (selectedConversa) {
@@ -50,105 +66,140 @@ export default function ConversasPage() {
 	}, [selectedConversa]);
 
 	const fetchConversas = async () => {
-		try {
-			// TODO: Integrar com Directus SDK
-			// Mock data por enquanto
-			setConversas([
-				{
-					id: '1',
-					lead_id: {
-						nome: 'João Silva',
-						telefone: '+5511999998888'
-					},
-					stage: 'interesse',
-					last_message: 'Gostei muito do segundo imóvel!',
-					last_message_time: '10:45',
-					unread_count: 2,
-					archived: false
-				},
-				{
-					id: '2',
-					lead_id: {
-						nome: 'Maria Santos',
-						telefone: '+5511988887777'
-					},
-					stage: 'apresentacao',
-					last_message: 'Obrigada pelas sugestões',
-					last_message_time: '09:30',
-					unread_count: 0,
-					archived: false
-				},
-				{
-					id: '3',
-					lead_id: {
-						nome: 'Pedro Oliveira',
-						telefone: '+5511977776666'
-					},
-					stage: 'agendamento',
-					last_message: 'Podemos agendar para sábado?',
-					last_message_time: 'Ontem',
-					unread_count: 1,
-					archived: false
-				}
-			]);
+		if (!user?.company_id) return;
 
-			setLoading(false);
+		try {
+			setLoading(true);
+			setError(null);
+
+			// Buscar conversas da empresa
+			const conversasData = await directusClient.request(
+				readItems('conversas', {
+					filter: {
+						company_id: { _eq: user.company_id }
+					},
+					fields: [
+						'id',
+						'stage',
+						'whatsapp_name',
+						'telefone',
+						'archived',
+						'updated_at',
+						{ lead_id: ['id', 'name', 'phone'] }
+					],
+					sort: ['-updated_at'],
+					limit: -1
+				})
+			);
+
+			// Buscar última mensagem de cada conversa
+			const conversasComMensagens = await Promise.all(
+				conversasData.map(async (conv: any) => {
+					try {
+						const lastMessages = await directusClient.request(
+							readItems('mensagens', {
+								filter: {
+									conversa_id: { _eq: conv.id }
+								},
+								fields: ['content', 'created_at', 'direction', 'read_at'],
+								sort: ['-created_at'],
+								limit: 1
+							})
+						);
+
+						const lastMsg = lastMessages[0];
+						
+						// Contar mensagens não lidas (incoming e sem read_at)
+						const unreadMessages = await directusClient.request(
+							readItems('mensagens', {
+								filter: {
+									conversa_id: { _eq: conv.id },
+									direction: { _eq: 'incoming' },
+									read_at: { _null: true }
+								},
+								aggregate: { count: '*' }
+							})
+						);
+
+						return {
+							id: conv.id,
+							lead_id: {
+								nome: conv.lead_id?.name || conv.whatsapp_name || 'Sem nome',
+								telefone: conv.telefone
+							},
+							stage: conv.stage || 'novo',
+							last_message: lastMsg?.content || 'Sem mensagens',
+							last_message_time: formatTime(lastMsg?.created_at || conv.updated_at),
+							unread_count: unreadMessages.length > 0 ? unreadMessages[0].count.id : 0,
+							archived: conv.archived || false
+						};
+					} catch (err) {
+						console.error('Erro ao processar conversa:', err);
+						return null;
+					}
+				})
+			);
+
+			setConversas(conversasComMensagens.filter(c => c !== null) as Conversa[]);
 		} catch (error) {
 			console.error('Erro ao carregar conversas:', error);
+			setError('Erro ao carregar conversas. Tente novamente.');
+		} finally {
 			setLoading(false);
 		}
 	};
 
 	const fetchMensagens = async (conversaId: string) => {
 		try {
-			// TODO: Integrar com Directus SDK
-			// Mock data por enquanto
-			setMensagens([
-				{
-					id: '1',
-					direction: 'incoming',
-					content: 'Olá, estou procurando um apartamento de 2 quartos',
-					message_type: 'text',
-					status: 'delivered',
-					created_at: '2025-11-26T10:30:00'
-				},
-				{
-					id: '2',
-					direction: 'outgoing',
-					content: 'Olá! Sou Teresa, atendente virtual da Exclusiva Lar Imóveis! 👋\n\nVou te ajudar a encontrar o apartamento ideal. Pode me contar mais sobre o que procura?',
-					message_type: 'text',
-					status: 'read',
-					created_at: '2025-11-26T10:30:15',
-					read_at: '2025-11-26T10:30:20'
-				},
-				{
-					id: '3',
-					direction: 'incoming',
-					content: 'Procuro algo na Zona Sul, até R$ 500 mil',
-					message_type: 'text',
-					status: 'delivered',
-					created_at: '2025-11-26T10:31:00'
-				},
-				{
-					id: '4',
-					direction: 'outgoing',
-					content: '🏠 Apartamento - Brooklin\n💰 R$ 480.000\n🛏️ 2 quartos | 1 suíte\n🚗 1 vaga\n📏 65m²\n\nImóvel reformado com armários planejados!',
-					message_type: 'text',
-					status: 'read',
-					created_at: '2025-11-26T10:32:00',
-					read_at: '2025-11-26T10:32:05'
-				},
-				{
-					id: '5',
-					direction: 'incoming',
-					content: 'Gostei muito do segundo imóvel!',
-					message_type: 'text',
-					status: 'delivered',
-					created_at: '2025-11-26T10:45:00'
-				}
-			]);
+			const mensagensData = await directusClient.request(
+				readItems('mensagens', {
+					filter: {
+						conversa_id: { _eq: conversaId }
+					},
+					fields: [
+						'id',
+						'direction',
+						'content',
+						'message_type',
+						'media_url',
+						'status',
+						'created_at',
+						'read_at'
+					],
+					sort: ['created_at'],
+					limit: -1
+				})
+			);
+
+			setMensagens(mensagensData as Mensagem[]);
+
+			// Marcar mensagens incoming como lidas
+			const unreadIncoming = mensagensData.filter(
+				(msg: any) => msg.direction === 'incoming' && !msg.read_at
+			);
+
+			if (unreadIncoming.length > 0) {
+				// TODO: Implementar update batch para marcar como lido
+				console.log('Mensagens a marcar como lidas:', unreadIncoming.length);
+			}
 		} catch (error) {
 			console.error('Erro ao carregar mensagens:', error);
+		}
+	};
+
+	const formatTime = (dateString: string) => {
+		const date = new Date(dateString);
+		const now = new Date();
+		const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+
+		if (diffDays === 0) {
+			return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+		} else if (diffDays === 1) {
+			return 'Ontem';
+		} else if (diffDays < 7) {
+			return `${diffDays} dias atrás`;
+		} else {
+			return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 		}
 	};
 
@@ -208,26 +259,39 @@ export default function ConversasPage() {
 		return labels[stage] || stage;
 	};
 
-	const formatTime = (dateString: string) => {
-		const date = new Date(dateString);
-		return date.toLocaleTimeString('pt-BR', { 
-			hour: '2-digit', 
-			minute: '2-digit' 
-		});
-	};
-
 	const filteredConversas = conversas.filter(conv =>
 		conv.lead_id.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
 		conv.lead_id.telefone.includes(searchTerm)
 	);
 
-	if (loading) {
+	// Loading State
+	if (authLoading || loading) {
 		return (
 			<div className="flex items-center justify-center min-h-screen">
 				<div className="text-center">
-					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+					<Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
 					<p className="text-gray-600">Carregando conversas...</p>
 				</div>
+			</div>
+		);
+	}
+
+	// Error State
+	if (error) {
+		return (
+			<div className="flex items-center justify-center min-h-screen">
+				<Card className="max-w-md border-destructive">
+					<div className="p-6">
+						<div className="flex items-center gap-2 text-destructive mb-2">
+							<X className="h-5 w-5" />
+							<p className="font-semibold">Erro ao carregar conversas</p>
+						</div>
+						<p className="text-sm text-muted-foreground mb-4">{error}</p>
+						<Button onClick={() => window.location.reload()} variant="outline">
+							Tentar Novamente
+						</Button>
+					</div>
+				</Card>
 			</div>
 		);
 	}

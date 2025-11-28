@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import { directusClient } from '@/lib/directus/client';
 import { createItem } from '@directus/sdk';
 import ImageUpload from '@/components/forms/ImageUpload';
@@ -14,9 +15,16 @@ interface UploadedImage {
 
 export default function NovoImovelPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+
+  // Redirect if not authenticated
+  if (!user?.company_id) {
+    router.push('/login');
+    return null;
+  }
 
   const [formData, setFormData] = useState({
     title: '',
@@ -61,10 +69,9 @@ export default function NovoImovelPage() {
     setError('');
 
     try {
-      // TODO: Get company_id from authenticated user
       const propertyData = {
         ...formData,
-        company_id: '1', // This should come from auth context
+        company_id: user.company_id,
         views_count: 0
       };
 

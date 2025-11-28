@@ -46,11 +46,12 @@ import {
   ArrowRight,
   Save,
   X,
+  Loader2,
 } from 'lucide-react';
-import { createDirectus, rest, readItems, aggregate, updateItem } from '@directus/sdk';
+import { directusClient } from '@/lib/directus/client';
+import { readItems, updateItem } from '@directus/sdk';
 import { useRouter } from 'next/navigation';
-
-const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055').with(rest());
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Lead {
   id: string;
@@ -126,6 +127,7 @@ const SOURCES = [
 
 export default function LeadsPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -142,21 +144,29 @@ export default function LeadsPage() {
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedLead, setEditedLead] = useState<Partial<Lead>>({});
+  const [error, setError] = useState<string | null>(null);
+
+  // Redirect se não autenticado
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login?redirect=/leads');
+    }
+  }, [user, authLoading, router]);
 
   // Carregar leads do Directus
   useEffect(() => {
     const fetchLeads = async () => {
+      if (!user?.company_id) return;
+
       try {
         setIsLoading(true);
-
-        // TODO: Obter company_id do contexto de autenticação
-        const companyId = '1'; // Temporário
+        setError(null);
 
         // Buscar leads com agregações
-        const leadsData = await directus.request(
+        const leadsData = await directusClient.request(
           readItems('leads', {
             filter: {
-              company_id: { _eq: companyId },
+              company_id: { _eq: user.company_id },
             },
             fields: [
               'id',
@@ -239,98 +249,16 @@ export default function LeadsPage() {
         setFilteredLeads(leadsWithCounts);
       } catch (error) {
         console.error('Erro ao carregar leads:', error);
-        // Fallback para mock data em caso de erro
-        loadMockData();
+        setError('Erro ao carregar leads. Por favor, tente novamente.');
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchLeads();
-  }, []);
-
-  const loadMockData = () => {
-    const mockLeads: Lead[] = [
-      {
-        id: '1',
-        name: 'João Silva',
-        phone: '5511999999999',
-        email: 'joao@example.com',
-        stage: 'negociacao',
-        source: 'whatsapp',
-        created_at: '2025-11-20T10:00:00Z',
-        last_interaction: '2025-11-26T15:30:00Z',
-        budget_min: 300000,
-        budget_max: 500000,
-        tipo_imovel: 'Apartamento',
-        location: 'São Paulo - SP',
-        mensagens_count: 25,
-        imoveis_enviados_count: 8,
-        requires_human_attention: false,
-      },
-      {
-        id: '2',
-        name: 'Maria Santos',
-        phone: '5511888888888',
-        email: 'maria@example.com',
-        stage: 'envio_imoveis',
-        source: 'instagram',
-        created_at: '2025-11-22T14:00:00Z',
-        last_interaction: '2025-11-26T12:00:00Z',
-        budget_min: 200000,
-        budget_max: 350000,
-        tipo_imovel: 'Casa',
-        location: 'Campinas - SP',
-        mensagens_count: 18,
-        imoveis_enviados_count: 12,
-        requires_human_attention: true,
-      },
-      {
-        id: '3',
-        name: 'Pedro Costa',
-        phone: '5511777777777',
-        stage: 'coleta_dados',
-        source: 'site',
-        created_at: '2025-11-25T09:00:00Z',
-        last_interaction: '2025-11-25T18:00:00Z',
-        mensagens_count: 5,
-        imoveis_enviados_count: 0,
-        requires_human_attention: false,
-      },
-      {
-        id: '4',
-        name: 'Ana Oliveira',
-        phone: '5511666666666',
-        email: 'ana@example.com',
-        stage: 'fechamento',
-        source: 'whatsapp',
-        created_at: '2025-11-15T11:00:00Z',
-        last_interaction: '2025-11-26T16:00:00Z',
-        budget_min: 500000,
-        budget_max: 800000,
-        tipo_imovel: 'Cobertura',
-        location: 'São Paulo - SP',
-        mensagens_count: 42,
-        imoveis_enviados_count: 15,
-        requires_human_attention: false,
-      },
-      {
-        id: '5',
-        name: 'Carlos Mendes',
-        phone: '5511555555555',
-        stage: 'perdido',
-        source: 'facebook',
-        created_at: '2025-11-10T08:00:00Z',
-        last_interaction: '2025-11-18T10:00:00Z',
-        mensagens_count: 8,
-        imoveis_enviados_count: 3,
-        requires_human_attention: false,
-      },
-    ];
-
-    setLeads(mockLeads);
-    setFilteredLeads(mockLeads);
-  };
+    if (user?.company_id) {
+      fetchLeads();
+    }
+  }, [user]);
 
   // Aplicar filtros
   useEffect(() => {
@@ -521,18 +449,51 @@ export default function LeadsPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Gerenciamento de Leads</h1>
-          <p className="text-muted-foreground mt-1">
-            {filteredLeads.length} leads encontrados
-          </p>
+      {/* Loading State */}
+      {(authLoading || isLoading) && (
+        <div className="flex flex-col items-center justify-center min-h-[400px]">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+          <p className="text-muted-foreground">Carregando leads...</p>
         </div>
-        <Button onClick={handleExportCSV} variant="outline">
-          <Download className="mr-2 h-4 w-4" />
-          Exportar CSV
-        </Button>
-      </div>
+      )}
+
+      {/* Error State */}
+      {error && !isLoading && (
+        <Card className="border-destructive">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-2 text-destructive mb-2">
+              <X className="h-5 w-5" />
+              <p className="font-semibold">Erro ao carregar dados</p>
+            </div>
+            <p className="text-sm text-muted-foreground">{error}</p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="mt-4"
+              variant="outline"
+            >
+              Tentar Novamente
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Main Content */}
+      {!authLoading && !isLoading && !error && (
+        <>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold">Gerenciamento de Leads</h1>
+              <p className="text-muted-foreground mt-1">
+                {filteredLeads.length} leads encontrados
+              </p>
+            </div>
+            <Button onClick={handleExportCSV} variant="outline">
+              <Download className="mr-2 h-4 w-4" />
+              Exportar CSV
+            </Button>
+          </div>
+        </>
+      )}
 
       {/* Filtros */}
       <Card className="mb-6">
@@ -1047,6 +1008,8 @@ export default function LeadsPage() {
           )}
         </DialogContent>
       </Dialog>
+      </> 
+      )}
     </div>
   );
 }

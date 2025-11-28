@@ -197,6 +197,41 @@ const fieldsDefinitions = {
         { field: 'aprovacao_financiamento', type: 'boolean', meta: { interface: 'boolean', width: 'half' } },
         { field: 'valor_entrada', type: 'decimal', meta: { interface: 'input', width: 'half' } },
         
+        // Pessoa Física/Jurídica
+        { field: 'person_type', type: 'string', meta: { interface: 'select-dropdown', width: 'half', options: { choices: [
+            { text: 'Pessoa Física', value: 'individual' },
+            { text: 'Pessoa Jurídica', value: 'company' }
+        ] } } },
+        { field: 'cpf', type: 'string', meta: { interface: 'input', width: 'half', note: 'CPF da pessoa física' } },
+        { field: 'rg', type: 'string', meta: { interface: 'input', width: 'half', note: 'RG' } },
+        { field: 'rg_issuer', type: 'string', meta: { interface: 'input', width: 'half', note: 'Órgão expedidor (ex: SSP-SP)' } },
+        { field: 'rg_issue_date', type: 'date', meta: { interface: 'datetime', width: 'half', note: 'Data de expedição' } },
+        { field: 'cnh', type: 'string', meta: { interface: 'input', width: 'half', note: 'CNH' } },
+        { field: 'cnpj', type: 'string', meta: { interface: 'input', width: 'half', note: 'CNPJ da pessoa jurídica' } },
+        { field: 'company_name', type: 'string', meta: { interface: 'input', width: 'half', note: 'Razão social' } },
+        { field: 'trade_name', type: 'string', meta: { interface: 'input', width: 'half', note: 'Nome fantasia' } },
+        
+        // Endereço
+        { field: 'zip_code', type: 'string', meta: { interface: 'input', width: 'half', note: 'CEP' } },
+        { field: 'street', type: 'string', meta: { interface: 'input', width: 'full', note: 'Logradouro' } },
+        { field: 'number', type: 'string', meta: { interface: 'input', width: 'half', note: 'Número' } },
+        { field: 'complement', type: 'string', meta: { interface: 'input', width: 'half', note: 'Complemento' } },
+        { field: 'neighborhood', type: 'string', meta: { interface: 'input', width: 'half', note: 'Bairro' } },
+        { field: 'city', type: 'string', meta: { interface: 'input', width: 'half', note: 'Cidade' } },
+        { field: 'state', type: 'string', meta: { interface: 'input', width: 'half', note: 'Estado (UF)' } },
+        
+        // Preferências (ajustados)
+        { field: 'interest_type', type: 'string', meta: { interface: 'select-dropdown', width: 'half', options: { choices: [
+            { text: 'Comprar', value: 'buy' },
+            { text: 'Alugar', value: 'rent' },
+            { text: 'Vender', value: 'sell' },
+            { text: 'Comprar e Vender', value: 'both' }
+        ] } } },
+        { field: 'budget_min', type: 'decimal', meta: { interface: 'input', width: 'half', note: 'Orçamento mínimo' } },
+        { field: 'budget_max', type: 'decimal', meta: { interface: 'input', width: 'half', note: 'Orçamento máximo' } },
+        { field: 'preferred_neighborhoods', type: 'string', meta: { interface: 'input', width: 'full', note: 'Bairros de interesse (separados por vírgula)' } },
+        { field: 'notes', type: 'text', meta: { interface: 'input-multiline', width: 'full', note: 'Observações gerais' } },
+        
         // Outras
         { field: 'observacoes', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
         { field: 'responsavel_id', type: 'uuid', meta: { interface: 'select-dropdown-m2o', width: 'half', note: 'Corretor responsável' } },

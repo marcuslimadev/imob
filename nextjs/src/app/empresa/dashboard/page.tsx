@@ -1,6 +1,7 @@
 import { directusServer } from '@/lib/directus/client';
 import { readItems, aggregate } from '@directus/sdk';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getAuthenticatedCompanyId } from '@/lib/auth/server';
 import Link from 'next/link';
 
 interface DashboardStats {
@@ -98,8 +99,7 @@ async function getRecentLeads(companyId: string) {
 }
 
 export default async function EmpresaDashboardPage() {
-  // TODO: Get company_id from authenticated user session
-  const companyId = '1'; // This should come from auth context
+  const companyId = await getAuthenticatedCompanyId();
   
   const stats = await getDashboardStats(companyId);
   const recentLeads = await getRecentLeads(companyId);

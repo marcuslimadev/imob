@@ -1,5 +1,6 @@
 import { directusServer } from '@/lib/directus/client';
 import { readItems, aggregate } from '@directus/sdk';
+import { getAuthenticatedCompanyId } from '@/lib/auth/server';
 import Link from 'next/link';
 
 async function getCompanyLeads(companyId: string) {
@@ -142,8 +143,7 @@ function formatPhone(phone: string): string {
 }
 
 export default async function LeadsPage() {
-  // TODO: Get company_id from authenticated user session
-  const companyId = '211210b7-2ac9-44ab-b072-f4400ae401fd'; // Exclusiva Lar Imóveis
+  const companyId = await getAuthenticatedCompanyId();
   
   const leads = await getCompanyLeads(companyId);
   const stats = await getLeadsStats(companyId);
