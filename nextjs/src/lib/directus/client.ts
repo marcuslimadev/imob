@@ -16,8 +16,8 @@ export const directusServer = createDirectus<Schema>(directusUrl)
  * Usar em Client Components
  */
 export const directusClient = createDirectus<Schema>(directusUrl)
-  .with(authentication('json'))
-  .with(rest());
+  .with(authentication('cookie', { credentials: 'include' }))
+  .with(rest({ credentials: 'include' }));
 
 /**
  * Helper para criar cliente Directus com token customizado
