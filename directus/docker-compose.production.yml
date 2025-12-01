@@ -55,8 +55,8 @@ services:
       CACHE_REDIS: redis://cache:6379
       
       # Core
-      KEY: ${DIRECTUS_KEY}
-      SECRET: ${DIRECTUS_SECRET}
+      KEY: ${KEY}
+      SECRET: ${SECRET}
       PUBLIC_URL: ${PUBLIC_URL}
       
       # CORS
