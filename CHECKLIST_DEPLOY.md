@@ -364,6 +364,25 @@ chmod +x /home/ubuntu/backup-db.sh
 - [ ] Treinar cliente no uso do CRM
 - [ ] Criar manual do usuário (se necessário)
 
+### 22. CI/CD - GitHub Actions
+```
+1. Acessar: https://github.com/marcuslimadev/imob/settings/secrets/actions
+2. Adicionar secrets:
+   - EC2_SSH_KEY: conteúdo do arquivo .pem
+   - EC2_HOST: IP da EC2
+   - EC2_USER: ubuntu
+3. Fazer um push de teste:
+   git add .
+   git commit -m "test: deploy automático"
+   git push
+4. Verificar execução: https://github.com/marcuslimadev/imob/actions
+```
+
+- [ ] Secrets configurados no GitHub
+- [ ] Primeiro deploy via Actions testado
+- [ ] Health checks passaram
+- [ ] Workflow funcionando corretamente
+
 ---
 
 ## ENTREGA FINAL ✅
@@ -378,6 +397,7 @@ chmod +x /home/ubuntu/backup-db.sh
 - [ ] **Todos os testes E2E passaram**
 - [ ] **Backups configurados**
 - [ ] **Monitoramento ativo**
+- [ ] **CI/CD configurado** (GitHub Actions)
 - [ ] **Cliente treinado**
 
 ---

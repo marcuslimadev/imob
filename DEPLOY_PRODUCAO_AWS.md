@@ -561,7 +561,60 @@ docker exec directus-db-prod pg_dump -U directus directus_prod > backup-$(date +
 
 ---
 
-## 10. Entrega Mínima Cumprida ✅
+## 10. CI/CD - Deploy Automático com GitHub Actions
+
+### 10.1 Configurar Secrets no GitHub
+
+Acessar: `https://github.com/marcuslimadev/imob/settings/secrets/actions`
+
+Adicionar 3 secrets:
+
+| Nome | Valor | Descrição |
+|------|-------|-----------|
+| `EC2_SSH_KEY` | Conteúdo da chave `.pem` | Chave privada SSH completa (incluindo `-----BEGIN/END-----`) |
+| `EC2_HOST` | `18.206.14.123` | IP público da EC2 |
+| `EC2_USER` | `ubuntu` | Usuário SSH (padrão Ubuntu) |
+
+**Como obter EC2_SSH_KEY:**
+```bash
+# No computador local onde está a chave
+cat exclusiva-key.pem
+# Copiar TUDO (incluindo headers) e colar no secret
+```
+
+### 10.2 Workflow Criado
+
+Arquivo já criado em: `.github/workflows/deploy.yml`
+
+**Gatilho:** Todo push em `main` ou `master`
+
+**Ações executadas:**
+1. 📥 Checkout do código
+2. 🔑 Configurar SSH para EC2
+3. 🚀 Conectar na EC2 e executar:
+   - `git pull` (atualizar código)
+   - `docker-compose up -d --build` (reconstrói Directus)
+   - `pnpm install && pnpm build` (reconstrói Next.js)
+   - `pm2 reload` (reinicia app sem downtime)
+4. 🧪 Health checks (Directus API + Next.js)
+
+### 10.3 Como Usar
+
+```bash
+# Fazer alterações no código
+git add .
+git commit -m "feat: nova funcionalidade"
+git push
+
+# Aguardar 2-3 minutos
+# Acompanhar em: https://github.com/marcuslimadev/imob/actions
+```
+
+**Deploy automático está PRONTO!** 🎉
+
+---
+
+## 11. Entrega Mínima Cumprida ✅
 
 - [x] Directus acessível em https://directus.exclusivalarimoveis.com.br
 - [x] Site em https://exclusivalarimoveis.com.br exibindo imóveis
@@ -569,5 +622,6 @@ docker exec directus-db-prod pg_dump -U directus directus_prod > backup-$(date +
 - [x] WhatsApp integrado (envio, recebimento, botão no site)
 - [x] HTTPS válido em todos os domínios
 - [x] Multi-tenant por domínio configurado
+- [x] CI/CD configurado (deploy automático via GitHub Actions)
 
-**Próximos passos:** Monitoramento, backups automatizados, CI/CD.
+**Próximos passos:** Monitoramento, backups automatizados, testes E2E no CI/CD.
