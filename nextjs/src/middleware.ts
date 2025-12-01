@@ -6,11 +6,6 @@ import { readItems, readMe } from '@directus/sdk';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // Redirect root to /home
-  if (pathname === '/') {
-    return NextResponse.redirect(new URL('/home', request.url));
-  }
-  
   // Ignorar arquivos estáticos e API routes
   if (
     pathname.startsWith('/_next') ||
