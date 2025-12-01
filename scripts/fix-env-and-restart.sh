@@ -12,12 +12,13 @@ cd ~/exclusiva-prod/imob/directus
 echo "⏸️  Stopping containers..."
 docker-compose -f docker-compose.production.yml down
 
-# 2. Clean old database
-echo "🗑️  Removing old database..."
+# 2. Clean old database AND volumes
+echo "🗑️  Removing old database and Docker volumes..."
 sudo rm -rf data/database/*
+docker volume prune -f
 
 # 3. Get EC2 public IP
-PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "127.0.0.1")
 echo "📍 EC2 Public IP: $PUBLIC_IP"
 
 # 4. Create .env with correct values
