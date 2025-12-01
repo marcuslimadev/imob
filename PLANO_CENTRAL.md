@@ -1,17 +1,48 @@
 # PLANO CENTRAL IMOBI - Desenvolvimento Completo
-**Atualizado:** 28/11/2025  
+**Atualizado:** 01/12/2025  
 **Repositório:** marcuslimadev/imob  
 **Stack:** Next.js 15 (App Router) + Directus 11 + PostgreSQL + Redis
 
 ---
 
+## 🚀 DEPLOY DE PRODUÇÃO - EXCLUSIVA IMÓVEIS
+
+**Status:** 🟢 Pronto para deploy  
+**Cliente:** Exclusiva Lar Imóveis  
+**Domínio:** exclusivalarimoveis.com.br  
+**Infraestrutura:** AWS EC2 + Docker + Nginx + Let's Encrypt
+
+### Arquivos de Deploy Criados:
+- ✅ `DEPLOY_PRODUCAO_AWS.md` - Guia completo step-by-step
+- ✅ `CHECKLIST_DEPLOY.md` - Checklist interativo (21 etapas)
+- ✅ `directus/docker-compose.production.yml` - Stack Directus para produção
+- ✅ `directus/.env.production.template` - Template de variáveis
+- ✅ `nextjs/.env.production.template` - Template Next.js
+- ✅ `nginx/directus.conf` - Virtual host Directus com SSL
+- ✅ `nginx/nextjs.conf` - Virtual host Next.js com SSL  
+- ✅ `nextjs/ecosystem.config.js` - PM2 cluster mode
+- ✅ `scripts/deploy-production.sh` - Script automatizado de deploy
+- ✅ `scripts/test-production.sh` - Testes E2E automatizados
+
+### Próximos Passos para Deploy:
+1. Provisionar EC2 (t3.medium, Ubuntu 24.04)
+2. Configurar DNS (3 registros A)
+3. Executar `scripts/deploy-production.sh` na EC2
+4. Gerar certificados SSL com Certbot
+5. Configurar webhook Twilio
+6. Executar `scripts/test-production.sh`
+7. **Tempo estimado:** 3-4 horas
+
+---
+
 ## 📊 VISÃO GERAL DO PROGRESSO
 
-### Status Global: **42% Concluído** (+7% hoje)
+### Status Global: **42% Concluído** (+7% no Sprint 1)
 
 | Módulo | Status | Progresso | Prioridade |
 |--------|--------|-----------|------------|
 | **Infraestrutura Base** | ✅ Completo | 100% | - |
+| **Deploy Produção** | 🟢 Pronto | 100% (assets) | 🔴 Alta |
 | **Autenticação Multi-tenant** | ✅ Completo | 100% (+40%) | ✅ Concluído |
 | **Pessoas (Leads/Clientes)** | ⚠️ Parcial | 60% (+10%) | 🟡 Média |
 | **Imóveis** | ✅ Completo | 100% (+10%) | ✅ Concluído |
