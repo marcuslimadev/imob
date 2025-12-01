@@ -50,8 +50,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       
       # Cache
-      CACHE_ENABLED: "true"
-      CACHE_STORE: redis
+        REDIS_HOST: cache
+        REDIS_PORT: 6379
+        CACHE_ENABLED: "true"
+        CACHE_STORE: redis
       CACHE_REDIS: redis://cache:6379
       
       # Core
