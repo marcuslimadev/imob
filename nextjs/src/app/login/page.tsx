@@ -13,8 +13,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // Pre-filled with development credentials for testing
+  // TODO: Remove default values before production deployment
+  const [email, setEmail] = useState('marcus@admin.com');
+  const [password, setPassword] = useState('Teste@123');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -27,7 +29,8 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.push('/empresa/dashboard');
+      // Force a full page reload to ensure authentication state is updated
+      window.location.href = '/empresa/dashboard';
     } catch (err: any) {
       setError(err.message || 'Email ou senha inválidos');
     } finally {

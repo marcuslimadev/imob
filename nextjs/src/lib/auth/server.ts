@@ -9,7 +9,7 @@ import { redirect } from 'next/navigation';
  */
 export async function getAuthenticatedCompanyId(): Promise<string> {
   const cookieStore = await cookies();
-  const authToken = cookieStore.get('directus_token')?.value;
+  const authToken = cookieStore.get('directus_refresh_token')?.value;
 
   if (!authToken) {
     redirect('/login');
@@ -52,7 +52,7 @@ export async function getAuthenticatedCompanyId(): Promise<string> {
  */
 export async function getAuthenticatedUser() {
   const cookieStore = await cookies();
-  const authToken = cookieStore.get('directus_token')?.value;
+  const authToken = cookieStore.get('directus_refresh_token')?.value;
 
   if (!authToken) {
     redirect('/login');
