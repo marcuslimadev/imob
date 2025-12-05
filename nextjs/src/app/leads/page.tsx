@@ -49,7 +49,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { directusClient } from '@/lib/directus/client';
-import { readItems, updateItem } from '@directus/sdk';
+import { aggregate, readItems, updateItem } from '@directus/sdk';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -193,7 +193,7 @@ export default function LeadsPage() {
         const leadsWithCounts = await Promise.all(
           leadsData.map(async (lead: any) => {
             // Buscar conversas do lead
-            const conversas = await directus.request(
+            const conversas = await directusClient.request(
               readItems('conversas', {
                 filter: {
                   lead_id: { _eq: lead.id },
@@ -208,7 +208,7 @@ export default function LeadsPage() {
             let lastInteraction = lead.updated_at;
 
             if (conversaId) {
-              const mensagensAgg = await directus.request(
+              const mensagensAgg = await directusClient.request(
                 aggregate('mensagens', {
                   aggregate: { count: '*' },
                   query: {
@@ -334,7 +334,7 @@ export default function LeadsPage() {
 
     try {
       // Buscar conversas do lead
-      const conversas = await directus.request(
+      const conversas = await directusClient.request(
         readItems('conversas', {
           filter: {
             lead_id: { _eq: lead.id },
@@ -348,7 +348,7 @@ export default function LeadsPage() {
 
       if (conversaId) {
         // Buscar mensagens
-        const mensagens = await directus.request(
+        const mensagens = await directusClient.request(
           readItems('mensagens', {
             filter: {
               conversa_id: { _eq: conversaId },
@@ -393,7 +393,7 @@ export default function LeadsPage() {
     if (!selectedLead) return;
 
     try {
-      await directus.request(
+      await directusClient.request(
         updateItem('leads', selectedLead.id, {
           name: editedLead.name,
           email: editedLead.email,
