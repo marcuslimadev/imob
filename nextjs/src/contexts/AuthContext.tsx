@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { directusClient } from '@/lib/directus/client';
-import { readMe, login as directusLogin, logout as directusLogout } from '@directus/sdk';
+import { readMe } from '@directus/sdk';
 
 interface User {
   id: string;
@@ -50,9 +50,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function login(email: string, password: string) {
     try {
       // Login com autenticação via cookie
-      await directusClient.request(
-        directusLogin(email, password)
-      );
+      // No Directus SDK 20+, login espera um objeto com email e password
+      await directusClient.login({ email, password });
 
       await checkAuth();
     } catch (error) {
@@ -63,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function logout() {
     try {
-      await directusClient.request(directusLogout());
+      await directusClient.logout();
       setUser(null);
     } catch (error) {
       // Silently handle logout errors

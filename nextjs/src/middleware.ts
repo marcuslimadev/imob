@@ -105,9 +105,14 @@ export async function middleware(request: NextRequest) {
     response.headers.set('x-company-slug', companySlug);
   }
   
-  // 6. Redirecionar para página de erro se não encontrou company (exceto homepage e páginas estáticas)
-  if (!companyId && pathname !== '/' && pathname !== '/home' && !pathname.startsWith('/admin')) {
-    return NextResponse.redirect(new URL('/', request.url));
+  // 6. Para rotas /empresa, não exigir company_id (será detectado após login)
+  // Para outras rotas, redirecionar se não tiver company
+  if (!companyId && 
+      pathname !== '/login' && 
+      pathname !== '/home' && 
+      !pathname.startsWith('/admin') && 
+      !pathname.startsWith('/empresa')) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
   
   return response;

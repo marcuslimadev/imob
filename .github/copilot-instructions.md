@@ -314,3 +314,119 @@ Current `properties` collection has most required fields. Minor gaps:
 5. **Test multi-tenant isolation** - create 2 test companies, ensure data doesn't leak
 6. **Add loading states** when converting from mock to real data
 7. **Log errors with context** - include `company_id`, `user_id`, request details in logs
+
+---
+
+## AI Agent Development Guidelines (Directus + SaaS Multi-Tenant)
+
+### General Rules (MANDATORY)
+- Always assume backend is Directus (PostgreSQL + Redis + Docker in production)
+- Always propose/generate code thinking about multi-tenant, security, and scalability
+- Avoid "hacks" in frontend to compensate for lack of Directus modeling: if it's data/business logic, model it in Directus
+
+### Multi-Tenant Implementation
+
+1. **Tenant Isolation**
+   - Always consider `company_id` (tenant identifier) in all business collections (properties, leads, users, etc.)
+   - Every query MUST be filtered by tenant
+   - Use Directus Permissions + Conditions filters instead of frontend-only filtering
+   - Always think about endpoints/flows for automatic new tenant creation (real estate agency onboarding)
+
+2. **Permission Conditions Pattern**
+   ```javascript
+   // Always apply in Directus role permissions
+   {
+     "company_id": { "_eq": "$CURRENT_USER.company_id" }
+   }
+   ```
+
+### Roles and Permissions
+
+**Required roles:**
+- `platform_super_admin` - Full platform access, manages all tenants
+- `tenant_admin` - Company administrator, manages their own agency
+- `agent` / `corretor` - Real estate agent, limited to assigned leads/properties
+- `assistant` - Support staff, read-only or limited write access
+- `viewer` - Read-only access
+
+**Every sensitive operation** (create/edit/delete properties, leads, users, documents) must respect these roles.
+
+**When suggesting new collections**, always include permission definitions (who can read, create, update, delete).
+
+### Flows and Automations
+
+**Prefer reactive business logic via:**
+1. Directus Flows + Webhook/external endpoint, OR
+2. Directus Hooks/Extensions
+
+**NEVER put critical business logic only in frontend.**
+
+**Required automation triggers:**
+- Lead created → WhatsApp notification, email, CRM activity log
+- Property published → Webhook to portals, sitemap update
+- Status changed → Notifications, audit log
+- Document signed → Update contract status, notify parties
+
+### Directus Extensions
+
+**When needing specialized logic:**
+- Use `extensions/endpoints` for custom API routes
+- Use `extensions/hooks` for data lifecycle events
+- Use `extensions/modules` for admin UI extensions
+
+**Avoid creating parallel APIs outside Directus without necessity.**
+
+### Files and Media
+
+- Use Directus file system for documents, photos, and property videos
+- Always consider multi-tenant structure: folders or metadata by `company_id`
+- Configure public/private access via permissions + storage (e.g., S3)
+
+### Platform Super Admin Panel
+
+Always consider a `platform_super_admin` panel with:
+- Real estate agency (tenant) management
+- Plans, limits, and contract status
+- Logs/audit (user activities, API consumption, storage)
+- Billing integration (Mercado Pago/Asaas)
+
+### External Integrations
+
+**Main integrations:**
+- **Mercado Pago / Asaas** - SaaS billing
+- **WhatsApp API (Twilio)** - Messaging
+- **Transactional Email** - SendGrid/Resend
+- **SMS** - Twilio
+- **ClickSign** - Document signing
+
+**Always call integrations from Directus Flows/Hooks or well-defined backend, NOT from frontend.**
+
+### API for Next.js
+
+- Assume Next.js consumes Directus API (REST or GraphQL) with proper authentication (JWT, static token)
+- Optimize queries (filters, selected fields, pagination) to avoid unnecessary traffic
+- Always respect `company_id` and roles in queries
+
+### Code Style
+
+- Clear, modular, maintainable, and extensible code
+- Name entities, collections, fields, and functions explicitly and coherent with real estate domain:
+  - `imovel`, `lead`, `contrato`, `locacao`, `venda`, `vistoria`, `corretor`
+- When suggesting code, always include collection structure AND permission definitions
+
+### Collections Naming Convention
+
+| Collection | Description |
+|------------|-------------|
+| `companies` | Tenants (real estate agencies) |
+| `properties` | Properties/listings |
+| `leads` | Leads and clients |
+| `conversas` | WhatsApp conversations |
+| `mensagens` | Individual messages |
+| `contratos` | Rental/sale contracts |
+| `vistorias` | Property inspections |
+| `documentos_assinatura` | e-Signature documents |
+| `atividades` | Activity/audit log |
+| `app_settings` | Per-tenant configuration |
+| `subscription_plans` | SaaS plans |
+| `tenant_subscriptions` | Tenant billing records |

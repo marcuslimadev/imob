@@ -1,383 +1,416 @@
-import { directusServer } from '@/lib/directus/client';
-import { readItems, aggregate } from '@directus/sdk';
+'use client';
+
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getAuthenticatedCompanyId } from '@/lib/auth/server';
 import Link from 'next/link';
+import { 
+  Building2, 
+  Users, 
+  MessageSquare, 
+  TrendingUp, 
+  Home, 
+  UserPlus, 
+  FileCheck, 
+  ClipboardCheck,
+  ArrowUpRight,
+  Loader2,
+  RefreshCw
+} from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { directusClient } from '@/lib/directus/client';
+import { aggregate } from '@directus/sdk';
 
 interface DashboardStats {
-  totalProperties: number;
-  activeProperties: number;
-  totalLeads: number;
-  newLeadsThisWeek: number;
-  totalViews: number;
+  properties: number;
+  leads: number;
+  leadsThisMonth: number;
+  conversations: number;
+  vistorias: number;
+  documentos: number;
 }
 
-async function getDashboardStats(companyId: string): Promise<DashboardStats> {
-  try {
-    // @ts-ignore - Custom schema
-    const propertiesCount = await directusServer.request(
-      aggregate('properties', {
-        aggregate: { count: '*' },
-        query: {
-          filter: { company_id: { _eq: companyId } }
-        }
-      })
+export default function DashboardPage() {
+  const { user, loading: authLoading } = useAuth();
+  const [stats, setStats] = useState<DashboardStats>({
+    properties: 0,
+    leads: 0,
+    leadsThisMonth: 0,
+    conversations: 0,
+    vistorias: 0,
+    documentos: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+
+  console.log('[DashboardPage]', { user, authLoading, loading });
+
+  const fetchStats = useCallback(async () => {
+    if (!user?.company_id) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const companyFilter = { company_id: { _eq: user.company_id } };
+
+      // Busca estatísticas em paralelo
+      const results = await Promise.allSettled([
+        directusClient.request(
+          aggregate('properties', {
+            query: { filter: companyFilter },
+            aggregate: { count: '*' },
+          })
+        ),
+        directusClient.request(
+          aggregate('leads', {
+            query: { filter: companyFilter },
+            aggregate: { count: '*' },
+          })
+        ),
+        directusClient.request(
+          aggregate('leads', {
+            query: {
+              filter: {
+                _and: [
+                  companyFilter,
+                  { date_created: { _gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString() } }
+                ]
+              }
+            },
+            aggregate: { count: '*' },
+          })
+        ),
+        directusClient.request(
+          aggregate('conversas', {
+            query: { 
+              filter: {
+                _and: [
+                  companyFilter,
+                  { status: { _eq: 'active' } }
+                ]
+              }
+            },
+            aggregate: { count: '*' },
+          })
+        ),
+        directusClient.request(
+          aggregate('vistorias', {
+            query: { 
+              filter: {
+                _and: [
+                  companyFilter,
+                  { status: { _in: ['solicitada', 'designada', 'em_andamento'] } }
+                ]
+              }
+            },
+            aggregate: { count: '*' },
+          })
+        ),
+        directusClient.request(
+          aggregate('documentos_assinatura', {
+            query: { 
+              filter: {
+                _and: [
+                  companyFilter,
+                  { status: { _in: ['pending', 'partial', 'sent'] } }
+                ]
+              }
+            },
+            aggregate: { count: '*' },
+          })
+        ),
+      ]);
+
+      setStats({
+        properties: results[0].status === 'fulfilled' ? Number(results[0].value[0]?.count) || 0 : 0,
+        leads: results[1].status === 'fulfilled' ? Number(results[1].value[0]?.count) || 0 : 0,
+        leadsThisMonth: results[2].status === 'fulfilled' ? Number(results[2].value[0]?.count) || 0 : 0,
+        conversations: results[3].status === 'fulfilled' ? Number(results[3].value[0]?.count) || 0 : 0,
+        vistorias: results[4].status === 'fulfilled' ? Number(results[4].value[0]?.count) || 0 : 0,
+        documentos: results[5].status === 'fulfilled' ? Number(results[5].value[0]?.count) || 0 : 0,
+      });
+
+      setLastUpdate(new Date());
+    } catch (err: unknown) {
+      console.error('Erro ao buscar estatísticas:', err);
+      setError('Erro ao carregar dados. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.company_id]);
+
+  useEffect(() => {
+    if (user?.company_id) {
+      fetchStats();
+    }
+  }, [user?.company_id, fetchStats]);
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+      </div>
     );
-
-    // @ts-ignore - Custom schema
-    const activeCount = await directusServer.request(
-      aggregate('properties', {
-        aggregate: { count: '*' },
-        query: {
-          filter: {
-            company_id: { _eq: companyId },
-            status: { _eq: 'active' }
-          }
-        }
-      })
-    );
-
-    // @ts-ignore - Custom schema
-    const leadsCount = await directusServer.request(
-      aggregate('leads', {
-        aggregate: { count: '*' },
-        query: {
-          filter: { company_id: { _eq: companyId } }
-        }
-      })
-    );
-
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-    // @ts-ignore - Custom schema
-    const newLeadsCount = await directusServer.request(
-      aggregate('leads', {
-        aggregate: { count: '*' },
-        query: {
-          filter: {
-            company_id: { _eq: companyId },
-            created_at: { _gte: oneWeekAgo.toISOString() }
-          }
-        }
-      })
-    );
-
-    return {
-      totalProperties: Number(propertiesCount[0]?.count || 0),
-      activeProperties: Number(activeCount[0]?.count || 0),
-      totalLeads: Number(leadsCount[0]?.count || 0),
-      newLeadsThisWeek: Number(newLeadsCount[0]?.count || 0),
-      totalViews: 0 // TODO: Implement view tracking
-    };
-  } catch (error) {
-    console.error('Error fetching dashboard stats:', error);
-    return {
-      totalProperties: 0,
-      activeProperties: 0,
-      totalLeads: 0,
-      newLeadsThisWeek: 0,
-      totalViews: 0
-    };
   }
-}
 
-async function getRecentLeads(companyId: string) {
-  try {
-    // @ts-ignore - Custom schema
-    return await directusServer.request(
-      readItems('leads', {
-        filter: { company_id: { _eq: companyId } },
-        limit: 5,
-        fields: ['*']
-      })
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Acesso negado</h2>
+          <Link href="/" className="text-indigo-600 hover:underline">
+            Fazer login
+          </Link>
+        </div>
+      </div>
     );
-  } catch (error) {
-    console.error('Error fetching recent leads:', error);
-    return [];
   }
-}
-
-export default async function EmpresaDashboardPage() {
-  const companyId = await getAuthenticatedCompanyId();
-  
-  const stats = await getDashboardStats(companyId);
-  const recentLeads = await getRecentLeads(companyId);
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-6">
+      <header className="bg-white border-b">
+        <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-              <p className="text-gray-600">
-                Visão geral do seu negócio imobiliário
+              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+              <p className="text-sm text-gray-500 mt-1">
+                Bem-vindo, {user.first_name || user.email}!
               </p>
             </div>
-            <Link
-              href="/empresa/imoveis/novo"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-semibold transition-colors"
-            >
-              + Novo Imóvel
-            </Link>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={fetchStats}
+                disabled={loading}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Atualizar dados"
+              >
+                <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+              <Link
+                href="/empresa/leads/novo"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <UserPlus className="h-4 w-4" />
+                Novo Lead
+              </Link>
+            </div>
           </div>
+          {lastUpdate && (
+            <p className="text-xs text-gray-400 mt-2">
+              Última atualização: {lastUpdate.toLocaleTimeString('pt-BR')}
+            </p>
+          )}
         </div>
-      </div>
+      </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-6 py-8">
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            {error}
+            <button onClick={fetchStats} className="ml-2 underline">
+              Tentar novamente
+            </button>
+          </div>
+        )}
+
         {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
                 Total de Imóveis
               </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
+              <Building2 className="h-5 w-5 text-indigo-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalProperties}</div>
-              <p className="text-xs text-muted-foreground">
-                {stats.activeProperties} ativos
+              <div className="text-3xl font-bold text-gray-900">
+                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.properties}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                {stats.properties === 0 ? 'Cadastre seus primeiros imóveis' : 'imóveis cadastrados'}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total de Leads
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Leads Ativos
               </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <line x1="19" x2="19" y1="8" y2="14" />
-                <line x1="22" x2="16" y1="11" y2="11" />
-              </svg>
+              <Users className="h-5 w-5 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalLeads}</div>
-              <p className="text-xs text-muted-foreground">
-                +{stats.newLeadsThisWeek} esta semana
-              </p>
+              <div className="text-3xl font-bold text-gray-900">
+                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.leads}
+              </div>
+              <div className="flex items-center gap-1 mt-1">
+                {stats.leadsThisMonth > 0 ? (
+                  <>
+                    <ArrowUpRight className="h-4 w-4 text-green-500" />
+                    <span className="text-xs text-green-600">+{stats.leadsThisMonth} este mês</span>
+                  </>
+                ) : (
+                  <span className="text-xs text-gray-500">
+                    {stats.leads === 0 ? 'Nenhum lead cadastrado' : `${stats.leadsThisMonth} novos este mês`}
+                  </span>
+                )}
+              </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Visualizações
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Conversas WhatsApp
               </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
+              <MessageSquare className="h-5 w-5 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalViews}</div>
-              <p className="text-xs text-muted-foreground">
-                Nos últimos 30 dias
+              <div className="text-3xl font-bold text-gray-900">
+                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.conversations}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                {stats.conversations === 0 ? 'Configure o WhatsApp' : 'conversas ativas'}
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Vistorias Pendentes
+              </CardTitle>
+              <ClipboardCheck className="h-5 w-5 text-orange-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-gray-900">
+                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.vistorias}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                {stats.vistorias === 0 ? 'Nenhuma pendente' : 'aguardando conclusão'}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Secondary Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Documentos p/ Assinatura
+              </CardTitle>
+              <FileCheck className="h-5 w-5 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-gray-900">
+                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.documentos}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                {stats.documentos === 0 ? 'Nenhum pendente' : 'pendentes de assinatura'}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
                 Taxa de Conversão
               </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-              </svg>
+              <TrendingUp className="h-5 w-5 text-emerald-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {stats.totalViews > 0 
-                  ? ((stats.totalLeads / stats.totalViews) * 100).toFixed(1)
-                  : '0.0'}%
+              <div className="text-3xl font-bold text-gray-900">
+                {stats.leads > 0 ? `${Math.round((stats.leadsThisMonth / stats.leads) * 100)}%` : '0%'}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Visitantes que viraram leads
+              <p className="text-xs text-gray-500 mt-1">
+                {stats.leads === 0 ? 'Sem dados ainda' : 'dos leads convertidos'}
               </p>
             </CardContent>
           </Card>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-3 mb-8">
-          <Link
-            href="/empresa/imoveis"
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-          >
-            <div className="flex items-center">
-              <div className="bg-blue-100 rounded-full p-3 mr-4">
-                <svg
-                  className="h-6 w-6 text-blue-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Gerenciar Imóveis</h3>
-                <p className="text-sm text-gray-600">Ver todos os anúncios</p>
-              </div>
-            </div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Link href="/empresa/imoveis/novo">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-indigo-500 h-full">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-indigo-100 rounded-lg">
+                    <Home className="h-6 w-6 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Cadastrar Imóvel</h3>
+                    <p className="text-sm text-gray-500">Adicione um novo imóvel</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </Link>
 
-          <Link
-            href="/empresa/leads"
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-          >
-            <div className="flex items-center">
-              <div className="bg-green-100 rounded-full p-3 mr-4">
-                <svg
-                  className="h-6 w-6 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Gerenciar Leads</h3>
-                <p className="text-sm text-gray-600">Acompanhar interessados</p>
-              </div>
-            </div>
+          <Link href="/empresa/leads">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-green-500 h-full">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-green-100 rounded-lg">
+                    <Users className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Ver Leads</h3>
+                    <p className="text-sm text-gray-500">Gerencie seus leads</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </Link>
 
-          <Link
-            href="/empresa/configuracoes"
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-          >
-            <div className="flex items-center">
-              <div className="bg-purple-100 rounded-full p-3 mr-4">
-                <svg
-                  className="h-6 w-6 text-purple-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Configurações</h3>
-                <p className="text-sm text-gray-600">Personalizar empresa</p>
-              </div>
-            </div>
+          <Link href="/empresa/vistorias">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-orange-500 h-full">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-orange-100 rounded-lg">
+                    <ClipboardCheck className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Vistorias</h3>
+                    <p className="text-sm text-gray-500">Inspeções de imóveis</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/empresa/assinaturas">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-blue-500 h-full">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-blue-100 rounded-lg">
+                    <FileCheck className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Assinaturas</h3>
+                    <p className="text-sm text-gray-500">Documentos eletrônicos</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </Link>
         </div>
 
-        {/* Recent Leads */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Leads Recentes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentLeads.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  Nenhum lead ainda
-                </p>
-              ) : (
-                recentLeads.map((lead: any) => (
-                  <div
-                    key={lead.id}
-                    className="flex items-center justify-between border-b pb-4 last:border-0"
-                  >
-                    <div>
-                      <p className="font-medium">{lead.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {lead.email} • {lead.phone}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                          lead.stage === 'won'
-                            ? 'bg-green-50 text-green-700'
-                            : lead.stage === 'new'
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'bg-gray-50 text-gray-700'
-                        }`}
-                      >
-                        {lead.stage}
-                      </span>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {lead.interest_type === 'buy' ? 'Compra' : 'Aluguel'}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Recent Activity */}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Atividade Recente</h2>
+          <Card>
+            <CardContent className="py-8 text-center text-gray-500">
+              <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p>Nenhuma atividade recente</p>
+              <p className="text-sm mt-1">As últimas ações aparecerão aqui</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

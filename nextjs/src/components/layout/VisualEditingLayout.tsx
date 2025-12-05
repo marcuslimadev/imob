@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, ReactNode } from 'react';
 import { useVisualEditing } from '@/hooks/useVisualEditing';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import NavigationBar from '@/components/layout/NavigationBar';
 import Footer from '@/components/layout/Footer';
 
@@ -12,6 +12,9 @@ interface VisualEditingLayoutProps {
 	globals: any;
 	children: ReactNode;
 }
+
+// Rotas que não devem mostrar o layout público (header/footer)
+const ROUTES_WITHOUT_LAYOUT = ['/', '/login', '/empresa', '/admin'];
 
 export default function VisualEditingLayout({
 	headerNavigation,
@@ -23,9 +26,17 @@ export default function VisualEditingLayout({
 	const footerRef = useRef<HTMLElement>(null);
 	const { isVisualEditingEnabled, apply } = useVisualEditing();
 	const router = useRouter();
+	const pathname = usePathname();
+
+	// Verifica se a rota atual deve esconder o layout público
+	const shouldHideLayout = ROUTES_WITHOUT_LAYOUT.some(route => 
+		pathname === route || pathname?.startsWith(route + '/')
+	);
+
+	console.log('[VisualEditingLayout]', { pathname, shouldHideLayout });
 
 	useEffect(() => {
-		if (isVisualEditingEnabled) {
+		if (isVisualEditingEnabled && !shouldHideLayout) {
 			// Apply visual editing for the navigation bar if its ref is set.
 			if (navRef.current) {
 				apply({
@@ -41,7 +52,12 @@ export default function VisualEditingLayout({
 				});
 			}
 		}
-	}, [isVisualEditingEnabled, apply, router]);
+	}, [isVisualEditingEnabled, apply, router, shouldHideLayout]);
+
+	// Se for rota sem layout, renderiza apenas o children
+	if (shouldHideLayout) {
+		return <>{children}</>;
+	}
 
 	return (
 		<>
