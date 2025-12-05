@@ -13,6 +13,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function LoginPage() {
+  // Pre-filled with development credentials for testing
+  // TODO: Remove default values before production deployment
   const [email, setEmail] = useState('marcus@admin.com');
   const [password, setPassword] = useState('Teste@123');
   const [error, setError] = useState('');
