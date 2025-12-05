@@ -26,6 +26,7 @@ export async function middleware(request: NextRequest) {
     if (!authToken) {
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('redirect', pathname);
+
       return NextResponse.redirect(loginUrl);
     }
   }
