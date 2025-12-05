@@ -4,21 +4,26 @@
 
 :root {
 	--background-color: #ffffff; /* Light background */
-	--foreground-color: #42566e; /* Light text */
-	--background-color-muted: color-mix(in srgb, var(--background-color), var(--foreground-color) 10%);
+	--foreground-color: #1a202c; /* Darker text for better contrast */
+	--background-color-muted: #f7fafc; /* Lighter muted background */
 	--accent-color: #6644ff; /* Accent color */
 	--background-variant-color: #172940;
 	--accent-color-dark: color-mix(in srgb, var(--accent-color), black 40%);
 	--accent-color-soft: color-mix(in srgb, var(--accent-color), white 20%);
 	--accent-color-light: color-mix(in srgb, var(--accent-color), white 90%);
-	--input-color: color-mix(in srgb, var(--background-color), var(--foreground-color) 30%);
+	--input-color: #e2e8f0; /* Light gray for inputs */
+	--muted-foreground: #4a5568; /* Darker muted text */
+	--border-color: #cbd5e0; /* Visible borders */
 }
 
 .dark {
 	--background-color: #0e1a2b ; /* Default dark background */
-	--background-color-muted: color-mix(in srgb, var(--background-color), var(--foreground-color) 10%);
+	--background-color-muted: #1a2332; /* Slightly lighter muted background */
 	--background-variant-color: #172940;
-	--foreground-color: #ffffff; /* Default dark text */
+	--foreground-color: #f7fafc; /* Bright text for dark mode */
+	--muted-foreground: #cbd5e0; /* Lighter muted text in dark mode */
+	--border-color: #2d3748; /* Visible borders in dark mode */
+	--input-color: #2d3748; /* Dark input background */
 }
 
 @layer base {
