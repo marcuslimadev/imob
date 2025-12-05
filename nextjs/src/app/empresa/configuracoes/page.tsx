@@ -1,6 +1,5 @@
 'use client';
 
-import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,17 +40,9 @@ interface Company {
   storefront_template_id?: number | null;
 }
 
-interface AppSettings {
-  id: string;
-  chave: string;
-  valor?: string;
-  company_id: string;
-}
-
 export default function ConfiguracoesPage() {
   const { user, loading: authLoading } = useAuth();
   const [company, setCompany] = useState<Company | null>(null);
-  const [settings, setSettings] = useState<AppSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('empresa');
@@ -62,7 +53,6 @@ export default function ConfiguracoesPage() {
     try {
       setLoading(true);
 
-      // Buscar apenas dados da empresa via Directus SDK
       const companyData = await directusClient.request(
         readItems('companies', {
           filter: { id: { _eq: user.company_id } },
@@ -70,9 +60,9 @@ export default function ConfiguracoesPage() {
         })
       );
 
-      if (companyData.length > 0) setCompany(companyData[0] as unknown as Company);
-      
-      // App settings será carregado pelo componente ApiSettings via /api/settings
+      if (companyData.length > 0) {
+        setCompany(companyData[0] as unknown as Company);
+      }
     } catch (err) {
       console.error('Erro ao carregar configurações:', err);
     } finally {
@@ -114,30 +104,6 @@ export default function ConfiguracoesPage() {
     }
   };
 
-  const handleSaveIntegrations = async () => {
-    if (!settings) return;
-
-    try {
-      setSaving(true);
-      await directusClient.request(
-        updateItem('app_settings', settings.id, {
-          whatsapp_number: settings.whatsapp_number,
-          twilio_account_sid: settings.twilio_account_sid,
-          twilio_auth_token: settings.twilio_auth_token,
-          openai_api_key: settings.openai_api_key,
-          openai_model: settings.openai_model,
-          clicksign_access_token: settings.clicksign_access_token,
-        })
-      );
-      alert('Integrações salvas com sucesso!');
-    } catch (err) {
-      console.error('Erro ao salvar:', err);
-      alert('Erro ao salvar integrações');
-    } finally {
-      setSaving(false);
-    }
-  };
-
   if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -161,331 +127,226 @@ export default function ConfiguracoesPage() {
   }
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Configurações</h1>
-        <p className="text-gray-500">Gerencie as configurações da sua imobiliária</p>
+    <div className="min-h-screen bg-white">
+      {/* Bauhaus-inspired header with geometric accent */}
+      <div className="border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-8 py-12">
+          <div className="flex items-start gap-6">
+            <div className="w-2 h-24 bg-blue-600 rounded-sm" />
+            <div>
+              <h1 className="text-5xl font-light tracking-tight text-gray-900 mb-3">
+                Configurações
+              </h1>
+              <p className="text-lg font-light text-gray-500">
+                Gerencie as configurações da sua imobiliária
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
-          <TabsTrigger value="empresa" className="gap-2">
-            <Building2 className="w-4 h-4" />
-            <span className="hidden sm:inline">Empresa</span>
-          </TabsTrigger>
-          <TabsTrigger value="aparencia" className="gap-2">
-            <Palette className="w-4 h-4" />
-            <span className="hidden sm:inline">Aparência</span>
-          </TabsTrigger>
-          <TabsTrigger value="integracoes" className="gap-2">
-            <Key className="w-4 h-4" />
-            <span className="hidden sm:inline">Integrações</span>
-          </TabsTrigger>
-          <TabsTrigger value="dominio" className="gap-2">
-            <Globe className="w-4 h-4" />
-            <span className="hidden sm:inline">Domínio</span>
-          </TabsTrigger>
-        </TabsList>
+      {/* Main content */}
+      <div className="max-w-7xl mx-auto px-8 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          {/* Minimalist tabs with bottom border */}
+          <TabsList className="bg-transparent border-b border-gray-200 rounded-none h-auto p-0 gap-8">
+            <TabsTrigger 
+              value="empresa" 
+              className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-0 pb-4 font-light"
+            >
+              <Building2 className="mr-2 h-4 w-4" />
+              Empresa
+            </TabsTrigger>
+            <TabsTrigger 
+              value="integracoes" 
+              className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-0 pb-4 font-light"
+            >
+              <Key className="mr-2 h-4 w-4" />
+              Integrações
+            </TabsTrigger>
+            <TabsTrigger 
+              value="aparencia" 
+              className="bg-transparent rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent px-0 pb-4 font-light"
+            >
+              <Palette className="mr-2 h-4 w-4" />
+              Aparência
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Empresa */}
-        <TabsContent value="empresa">
-          <Card>
-            <CardHeader>
-              <CardTitle>Dados da Empresa</CardTitle>
-              <CardDescription>Informações básicas da sua imobiliária</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome da Empresa</Label>
+          {/* Empresa Tab */}
+          <TabsContent value="empresa" className="space-y-8">
+            <div className="max-w-2xl">
+              <h2 className="text-2xl font-light text-gray-900 mb-6">Informações da Empresa</h2>
+              
+              <div className="space-y-6">
+                <div>
+                  <Label htmlFor="name" className="font-light text-gray-700">Nome da Empresa</Label>
                   <Input
                     id="name"
+                    className="mt-2 rounded-none border-gray-300"
                     value={company?.name || ''}
                     onChange={(e) => setCompany(prev => prev ? {...prev, name: e.target.value} : null)}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">E-mail</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={company?.email || ''}
-                    onChange={(e) => setCompany(prev => prev ? {...prev, email: e.target.value} : null)}
-                  />
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="email" className="font-light text-gray-700">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      className="mt-2 rounded-none border-gray-300"
+                      value={company?.email || ''}
+                      onChange={(e) => setCompany(prev => prev ? {...prev, email: e.target.value} : null)}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="phone" className="font-light text-gray-700">Telefone</Label>
+                    <Input
+                      id="phone"
+                      className="mt-2 rounded-none border-gray-300"
+                      value={company?.phone || ''}
+                      onChange={(e) => setCompany(prev => prev ? {...prev, phone: e.target.value} : null)}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Telefone</Label>
-                  <Input
-                    id="phone"
-                    value={company?.phone || ''}
-                    onChange={(e) => setCompany(prev => prev ? {...prev, phone: e.target.value} : null)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="zip_code">CEP</Label>
-                  <Input
-                    id="zip_code"
-                    value={company?.zip_code || ''}
-                    onChange={(e) => setCompany(prev => prev ? {...prev, zip_code: e.target.value} : null)}
-                  />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="address">Endereço</Label>
+
+                <div>
+                  <Label htmlFor="address" className="font-light text-gray-700">Endereço</Label>
                   <Input
                     id="address"
+                    className="mt-2 rounded-none border-gray-300"
                     value={company?.address || ''}
                     onChange={(e) => setCompany(prev => prev ? {...prev, address: e.target.value} : null)}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="city">Cidade</Label>
-                  <Input
-                    id="city"
-                    value={company?.city || ''}
-                    onChange={(e) => setCompany(prev => prev ? {...prev, city: e.target.value} : null)}
-                  />
+
+                <div className="grid grid-cols-3 gap-6">
+                  <div>
+                    <Label htmlFor="city" className="font-light text-gray-700">Cidade</Label>
+                    <Input
+                      id="city"
+                      className="mt-2 rounded-none border-gray-300"
+                      value={company?.city || ''}
+                      onChange={(e) => setCompany(prev => prev ? {...prev, city: e.target.value} : null)}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="state" className="font-light text-gray-700">Estado</Label>
+                    <Input
+                      id="state"
+                      className="mt-2 rounded-none border-gray-300"
+                      value={company?.state || ''}
+                      onChange={(e) => setCompany(prev => prev ? {...prev, state: e.target.value} : null)}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="zip_code" className="font-light text-gray-700">CEP</Label>
+                    <Input
+                      id="zip_code"
+                      className="mt-2 rounded-none border-gray-300"
+                      value={company?.zip_code || ''}
+                      onChange={(e) => setCompany(prev => prev ? {...prev, zip_code: e.target.value} : null)}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="state">Estado</Label>
-                  <Input
-                    id="state"
-                    value={company?.state || ''}
-                    onChange={(e) => setCompany(prev => prev ? {...prev, state: e.target.value} : null)}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end pt-4">
-                <Button onClick={handleSaveCompany} disabled={saving}>
-                  {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                  Salvar
+
+                <Button 
+                  onClick={handleSaveCompany} 
+                  disabled={saving}
+                  className="rounded-none bg-blue-600 hover:bg-blue-700"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Salvando...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar Alterações
+                    </>
+                  )}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Aparência */}
-        <TabsContent value="aparencia">
-          <Card>
-            <CardHeader>
-              <CardTitle>Aparência</CardTitle>
-              <CardDescription>Personalize as cores e logo da sua vitrine</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <Label>Logo da Empresa</Label>
-                <div className="flex items-center gap-4">
-                  <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-                    {company?.logo ? (
-                      <img src={company.logo} alt="Logo" className="w-full h-full object-contain rounded-lg" />
-                    ) : (
-                      <Upload className="w-8 h-8 text-gray-400" />
-                    )}
-                  </div>
-                  <Button variant="outline">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Enviar Logo
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="primary_color">Cor Primária</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="primary_color"
-                      type="color"
-                      value={company?.primary_color || '#3B82F6'}
-                      onChange={(e) => setCompany(prev => prev ? {...prev, primary_color: e.target.value} : null)}
-                      className="w-12 h-10 p-1"
-                    />
-                    <Input
-                      value={company?.primary_color || '#3B82F6'}
-                      onChange={(e) => setCompany(prev => prev ? {...prev, primary_color: e.target.value} : null)}
-                      className="flex-1"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="secondary_color">Cor Secundária</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="secondary_color"
-                      type="color"
-                      value={company?.secondary_color || '#1E40AF'}
-                      onChange={(e) => setCompany(prev => prev ? {...prev, secondary_color: e.target.value} : null)}
-                      className="w-12 h-10 p-1"
-                    />
-                    <Input
-                      value={company?.secondary_color || '#1E40AF'}
-                      onChange={(e) => setCompany(prev => prev ? {...prev, secondary_color: e.target.value} : null)}
-                      className="flex-1"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-4">
-                <Button onClick={handleSaveCompany} disabled={saving}>
-                  {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                  Salvar
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Integrações */}
-        <TabsContent value="integracoes">
-          <div className="space-y-6">
-            {/* API Externa - Importação de Imóveis */}
-            <ApiSettings companyId={user?.company_id || ''} />
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-green-600" />
-                  WhatsApp (Twilio)
-                </CardTitle>
-                <CardDescription>Configure a integração com WhatsApp via Twilio</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="whatsapp_number">Número WhatsApp</Label>
-                    <Input
-                      id="whatsapp_number"
-                      placeholder="+5511999999999"
-                      value={settings?.whatsapp_number || ''}
-                      onChange={(e) => setSettings(prev => prev ? {...prev, whatsapp_number: e.target.value} : null)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="twilio_account_sid">Account SID</Label>
-                    <Input
-                      id="twilio_account_sid"
-                      placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                      value={settings?.twilio_account_sid || ''}
-                      onChange={(e) => setSettings(prev => prev ? {...prev, twilio_account_sid: e.target.value} : null)}
-                    />
-                  </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="twilio_auth_token">Auth Token</Label>
-                    <Input
-                      id="twilio_auth_token"
-                      type="password"
-                      placeholder="••••••••••••••••••••••••••••••••"
-                      value={settings?.twilio_auth_token || ''}
-                      onChange={(e) => setSettings(prev => prev ? {...prev, twilio_auth_token: e.target.value} : null)}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Key className="w-5 h-5 text-purple-600" />
-                  OpenAI
-                </CardTitle>
-                <CardDescription>Configure a IA para análise de mensagens e automação</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="openai_api_key">API Key</Label>
-                    <Input
-                      id="openai_api_key"
-                      type="password"
-                      placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                      value={settings?.openai_api_key || ''}
-                      onChange={(e) => setSettings(prev => prev ? {...prev, openai_api_key: e.target.value} : null)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="openai_model">Modelo</Label>
-                    <Input
-                      id="openai_model"
-                      placeholder="gpt-4o-mini"
-                      value={settings?.openai_model || 'gpt-4o-mini'}
-                      onChange={(e) => setSettings(prev => prev ? {...prev, openai_model: e.target.value} : null)}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Key className="w-5 h-5 text-blue-600" />
-                  ClickSign
-                </CardTitle>
-                <CardDescription>Configure a assinatura eletrônica de documentos</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="clicksign_access_token">Access Token</Label>
-                  <Input
-                    id="clicksign_access_token"
-                    type="password"
-                    placeholder="Token de acesso ClickSign"
-                    value={settings?.clicksign_access_token || ''}
-                    onChange={(e) => setSettings(prev => prev ? {...prev, clicksign_access_token: e.target.value} : null)}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="flex justify-end">
-              <Button onClick={handleSaveIntegrations} disabled={saving}>
-                {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                Salvar Integrações
-              </Button>
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        {/* Domínio */}
-        <TabsContent value="dominio">
-          <Card>
-            <CardHeader>
-              <CardTitle>Domínio Personalizado</CardTitle>
-              <CardDescription>Configure um domínio próprio para sua vitrine de imóveis</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="custom_domain">Domínio</Label>
-                <Input
-                  id="custom_domain"
-                  placeholder="www.suaimobiliaria.com.br"
-                  value={company?.custom_domain || ''}
-                  onChange={(e) => setCompany(prev => prev ? {...prev, custom_domain: e.target.value} : null)}
-                />
-              </div>
+          {/* Integrações Tab */}
+          <TabsContent value="integracoes" className="space-y-8">
+            <div className="max-w-2xl">
+              <h2 className="text-2xl font-light text-gray-900 mb-6">Configurações de API</h2>
+              <ApiSettings />
+            </div>
+          </TabsContent>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-medium text-blue-900 mb-2">Como configurar:</h4>
-                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                  <li>Acesse o painel de controle do seu domínio (Registro.br, GoDaddy, etc)</li>
-                  <li>Crie um registro CNAME apontando para: <code className="bg-blue-100 px-1 rounded">{company?.slug || 'sua-empresa'}.imobi.com.br</code></li>
-                  <li>Aguarde a propagação do DNS (pode levar até 24h)</li>
-                  <li>Salve o domínio acima e teste o acesso</li>
-                </ol>
-              </div>
+          {/* Aparência Tab */}
+          <TabsContent value="aparencia" className="space-y-8">
+            <div className="max-w-2xl">
+              <h2 className="text-2xl font-light text-gray-900 mb-6">Personalização Visual</h2>
+              
+              <div className="space-y-6">
+                <div>
+                  <Label htmlFor="primary_color" className="font-light text-gray-700">Cor Primária</Label>
+                  <Input
+                    id="primary_color"
+                    type="color"
+                    className="mt-2 h-12 rounded-none border-gray-300"
+                    value={company?.primary_color || '#3B82F6'}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, primary_color: e.target.value} : null)}
+                  />
+                </div>
 
-              <div className="flex justify-end pt-4">
-                <Button onClick={handleSaveCompany} disabled={saving}>
-                  {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                  Salvar
+                <div>
+                  <Label htmlFor="secondary_color" className="font-light text-gray-700">Cor Secundária</Label>
+                  <Input
+                    id="secondary_color"
+                    type="color"
+                    className="mt-2 h-12 rounded-none border-gray-300"
+                    value={company?.secondary_color || '#10B981'}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, secondary_color: e.target.value} : null)}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="custom_domain" className="font-light text-gray-700">Domínio Personalizado</Label>
+                  <Input
+                    id="custom_domain"
+                    placeholder="exemplo.com.br"
+                    className="mt-2 rounded-none border-gray-300"
+                    value={company?.custom_domain || ''}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, custom_domain: e.target.value} : null)}
+                  />
+                  <p className="text-sm font-light text-gray-500 mt-2">
+                    Configure o CNAME no seu provedor de domínio
+                  </p>
+                </div>
+
+                <Button 
+                  onClick={handleSaveCompany} 
+                  disabled={saving}
+                  className="rounded-none bg-blue-600 hover:bg-blue-700"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Salvando...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar Alterações
+                    </>
+                  )}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,562 @@
+'use client';
+
+import { useAuth } from '@/contexts/AuthContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Building2, 
+  User, 
+  Bell, 
+  Palette, 
+  MessageSquare, 
+  Key,
+  Globe,
+  Save,
+  Loader2,
+  Upload
+} from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { directusClient } from '@/lib/directus/client';
+import { readItems, updateItem } from '@directus/sdk';
+import { ApiSettings } from './api-settings';
+
+interface Company {
+  id: string;
+  name?: string;
+  slug?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  logo?: string | null;
+  primary_color?: string;
+  secondary_color?: string;
+  custom_domain?: string | null;
+  storefront_template_id?: number | null;
+}
+
+interface AppSettings {
+  id: string;
+  chave: string;
+  valor?: string;
+  company_id: string;
+}
+
+export default function ConfiguracoesPage() {
+  const { user, loading: authLoading } = useAuth();
+  const [company, setCompany] = useState<Company | null>(null);
+  const [settings, setSettings] = useState<AppSettings | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState('empresa');
+
+  const fetchData = useCallback(async () => {
+    if (!user?.company_id) return;
+
+    try {
+      setLoading(true);
+
+      // Buscar apenas dados da empresa via Directus SDK
+      const companyData = await directusClient.request(
+        readItems('companies', {
+          filter: { id: { _eq: user.company_id } },
+          limit: 1,
+        })
+      );
+
+      if (companyData.length > 0) setCompany(companyData[0] as unknown as Company);
+      
+      // App settings será carregado pelo componente ApiSettings via /api/settings
+    } catch (err) {
+      console.error('Erro ao carregar configurações:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.company_id]);
+
+  useEffect(() => {
+    if (user?.company_id) {
+      fetchData();
+    }
+  }, [user?.company_id, fetchData]);
+
+  const handleSaveCompany = async () => {
+    if (!company) return;
+
+    try {
+      setSaving(true);
+      await directusClient.request(
+        updateItem('companies', company.id, {
+          name: company.name,
+          email: company.email,
+          phone: company.phone,
+          address: company.address,
+          city: company.city,
+          state: company.state,
+          zip_code: company.zip_code,
+          primary_color: company.primary_color,
+          secondary_color: company.secondary_color,
+          custom_domain: company.custom_domain,
+        })
+      );
+      alert('Configurações salvas com sucesso!');
+    } catch (err) {
+      console.error('Erro ao salvar:', err);
+      alert('Erro ao salvar configurações');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveIntegrations = async () => {
+    // Função temporariamente desabilitada - será implementada com app_settings correto
+    alert('Funcionalidade em desenvolvimento');
+  };
+
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Carregando configurações...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user?.company_id) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <p className="text-red-600 font-semibold">Erro: Empresa não encontrada</p>
+          <p className="text-gray-600">Faça login novamente</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Bauhaus-inspired header with geometric accent */}
+      <div className="border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-8 py-12">
+          <div className="flex items-start gap-6">
+            <div className="w-2 h-24 bg-blue-600 rounded-sm" />
+            <div>
+              <h1 className="text-5xl font-light tracking-tight text-gray-900 mb-3">
+                Configurações
+              </h1>
+              <p className="text-lg font-light text-gray-500">
+                Gerencie as configurações da sua imobiliária
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <div className="max-w-7xl mx-auto px-8 py-12">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-12">
+            {/* Minimalist tab list */}
+            <TabsList className="bg-transparent border-b border-gray-200 rounded-none p-0 h-auto space-x-8">
+              <TabsTrigger 
+                value="empresa" 
+                className="bg-transparent border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent rounded-none px-0 pb-4 text-base font-normal data-[state=active]:font-medium data-[state=active]:text-blue-600 transition-colors"
+              >
+                Empresa
+              </TabsTrigger>
+              <TabsTrigger 
+                value="aparencia" 
+                className="bg-transparent border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent rounded-none px-0 pb-4 text-base font-normal data-[state=active]:font-medium data-[state=active]:text-blue-600 transition-colors"
+              >
+                Aparência
+              </TabsTrigger>
+              <TabsTrigger 
+                value="integracoes" 
+                className="bg-transparent border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent rounded-none px-0 pb-4 text-base font-normal data-[state=active]:font-medium data-[state=active]:text-blue-600 transition-colors"
+              >
+                Integrações
+              </TabsTrigger>
+              <TabsTrigger 
+                value="dominio" 
+                className="bg-transparent border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent rounded-none px-0 pb-4 text-base font-normal data-[state=active]:font-medium data-[state=active]:text-blue-600 transition-colors"
+              >
+                Domínio
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Empresa Tab - Clean minimal forms */}
+            <TabsContent value="empresa" className="space-y-8">
+              <div className="max-w-3xl">
+                <h2 className="text-2xl font-light text-gray-900 mb-8">Dados da Empresa</h2>
+                
+                <div className="space-y-8">
+                  <div className="grid gap-8 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+                        Nome da Empresa
+                      </Label>
+                      <Input
+                        id="name"
+                        value={company?.name || ''}
+                        onChange={(e) => setCompany(prev => prev ? {...prev, name: e.target.value} : null)}
+                        className="border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-none h-12 text-base"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                        E-mail
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={company?.email || ''}
+                        onChange={(e) => setCompany(prev => prev ? {...prev, email: e.target.value} : null)}
+                        className="border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-none h-12 text-base"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                        Telefone
+                      </Label>
+                      <Input
+                        id="phone"
+                        value={company?.phone || ''}
+                        onChange={(e) => setCompany(prev => prev ? {...prev, phone: e.target.value} : null)}
+                        className="border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-none h-12 text-base"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="zip_code" className="text-sm font-medium text-gray-700">
+                        CEP
+                      </Label>
+                      <Input
+                        id="zip_code"
+                        value={company?.zip_code || ''}
+                        onChange={(e) => setCompany(prev => prev ? {...prev, zip_code: e.target.value} : null)}
+                        className="border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-none h-12 text-base"
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="address" className="text-sm font-medium text-gray-700">
+                        Endereço
+                      </Label>
+                      <Input
+                        id="address"
+                        value={company?.address || ''}
+                        onChange={(e) => setCompany(prev => prev ? {...prev, address: e.target.value} : null)}
+                        className="border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-none h-12 text-base"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="city" className="text-sm font-medium text-gray-700">
+                        Cidade
+                      </Label>
+                      <Input
+                        id="city"
+                        value={company?.city || ''}
+                        onChange={(e) => setCompany(prev => prev ? {...prev, city: e.target.value} : null)}
+                        className="border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-none h-12 text-base"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="state" className="text-sm font-medium text-gray-700">
+                        Estado
+                      </Label>
+                      <Input
+                        id="state"
+                        value={company?.state || ''}
+                        onChange={(e) => setCompany(prev => prev ? {...prev, state: e.target.value} : null)}
+                        className="border-gray-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 rounded-none h-12 text-base"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end pt-6 border-t border-gray-200">
+                    <Button 
+                      onClick={handleSaveCompany} 
+                      disabled={saving}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-8 h-12 rounded-none font-medium"
+                    >
+                      {saving ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Salvando...
+                        </>
+                      ) : (
+                        'Salvar Alterações'
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+                    value={company?.zip_code || ''}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, zip_code: e.target.value} : null)}
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="address">Endereço</Label>
+                  <Input
+                    id="address"
+                    value={company?.address || ''}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, address: e.target.value} : null)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">Cidade</Label>
+                  <Input
+                    id="city"
+                    value={company?.city || ''}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, city: e.target.value} : null)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">Estado</Label>
+                  <Input
+                    id="state"
+                    value={company?.state || ''}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, state: e.target.value} : null)}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end pt-4">
+                <Button onClick={handleSaveCompany} disabled={saving}>
+                  {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  Salvar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Aparência */}
+        <TabsContent value="aparencia">
+          <Card>
+            <CardHeader>
+              <CardTitle>Aparência</CardTitle>
+              <CardDescription>Personalize as cores e logo da sua vitrine</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <Label>Logo da Empresa</Label>
+                <div className="flex items-center gap-4">
+                  <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                    {company?.logo ? (
+                      <img src={company.logo} alt="Logo" className="w-full h-full object-contain rounded-lg" />
+                    ) : (
+                      <Upload className="w-8 h-8 text-gray-400" />
+                    )}
+                  </div>
+                  <Button variant="outline">
+                    <Upload className="w-4 h-4 mr-2" />
+                    Enviar Logo
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="primary_color">Cor Primária</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="primary_color"
+                      type="color"
+                      value={company?.primary_color || '#3B82F6'}
+                      onChange={(e) => setCompany(prev => prev ? {...prev, primary_color: e.target.value} : null)}
+                      className="w-12 h-10 p-1"
+                    />
+                    <Input
+                      value={company?.primary_color || '#3B82F6'}
+                      onChange={(e) => setCompany(prev => prev ? {...prev, primary_color: e.target.value} : null)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="secondary_color">Cor Secundária</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="secondary_color"
+                      type="color"
+                      value={company?.secondary_color || '#1E40AF'}
+                      onChange={(e) => setCompany(prev => prev ? {...prev, secondary_color: e.target.value} : null)}
+                      className="w-12 h-10 p-1"
+                    />
+                    <Input
+                      value={company?.secondary_color || '#1E40AF'}
+                      onChange={(e) => setCompany(prev => prev ? {...prev, secondary_color: e.target.value} : null)}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button onClick={handleSaveCompany} disabled={saving}>
+                  {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  Salvar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Integrações */}
+        <TabsContent value="integracoes">
+          <div className="space-y-6">
+            {/* API Externa - Importação de Imóveis */}
+            <ApiSettings companyId={user?.company_id || ''} />
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-green-600" />
+                  WhatsApp (Twilio)
+                </CardTitle>
+                <CardDescription>Configure a integração com WhatsApp via Twilio</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="whatsapp_number">Número WhatsApp</Label>
+                    <Input
+                      id="whatsapp_number"
+                      placeholder="+5511999999999"
+                      value={settings?.whatsapp_number || ''}
+                      onChange={(e) => setSettings(prev => prev ? {...prev, whatsapp_number: e.target.value} : null)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="twilio_account_sid">Account SID</Label>
+                    <Input
+                      id="twilio_account_sid"
+                      placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                      value={settings?.twilio_account_sid || ''}
+                      onChange={(e) => setSettings(prev => prev ? {...prev, twilio_account_sid: e.target.value} : null)}
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="twilio_auth_token">Auth Token</Label>
+                    <Input
+                      id="twilio_auth_token"
+                      type="password"
+                      placeholder="••••••••••••••••••••••••••••••••"
+                      value={settings?.twilio_auth_token || ''}
+                      onChange={(e) => setSettings(prev => prev ? {...prev, twilio_auth_token: e.target.value} : null)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Key className="w-5 h-5 text-purple-600" />
+                  OpenAI
+                </CardTitle>
+                <CardDescription>Configure a IA para análise de mensagens e automação</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="openai_api_key">API Key</Label>
+                    <Input
+                      id="openai_api_key"
+                      type="password"
+                      placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                      value={settings?.openai_api_key || ''}
+                      onChange={(e) => setSettings(prev => prev ? {...prev, openai_api_key: e.target.value} : null)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="openai_model">Modelo</Label>
+                    <Input
+                      id="openai_model"
+                      placeholder="gpt-4o-mini"
+                      value={settings?.openai_model || 'gpt-4o-mini'}
+                      onChange={(e) => setSettings(prev => prev ? {...prev, openai_model: e.target.value} : null)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Key className="w-5 h-5 text-blue-600" />
+                  ClickSign
+                </CardTitle>
+                <CardDescription>Configure a assinatura eletrônica de documentos</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="clicksign_access_token">Access Token</Label>
+                  <Input
+                    id="clicksign_access_token"
+                    type="password"
+                    placeholder="Token de acesso ClickSign"
+                    value={settings?.clicksign_access_token || ''}
+                    onChange={(e) => setSettings(prev => prev ? {...prev, clicksign_access_token: e.target.value} : null)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-end">
+              <Button onClick={handleSaveIntegrations} disabled={saving}>
+                {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                Salvar Integrações
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Domínio */}
+        <TabsContent value="dominio">
+          <Card>
+            <CardHeader>
+              <CardTitle>Domínio Personalizado</CardTitle>
+              <CardDescription>Configure um domínio próprio para sua vitrine de imóveis</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="custom_domain">Domínio</Label>
+                <Input
+                  id="custom_domain"
+                  placeholder="www.suaimobiliaria.com.br"
+                  value={company?.custom_domain || ''}
+                  onChange={(e) => setCompany(prev => prev ? {...prev, custom_domain: e.target.value} : null)}
+                />
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-medium text-blue-900 mb-2">Como configurar:</h4>
+                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                  <li>Acesse o painel de controle do seu domínio (Registro.br, GoDaddy, etc)</li>
+                  <li>Crie um registro CNAME apontando para: <code className="bg-blue-100 px-1 rounded">{company?.slug || 'sua-empresa'}.imobi.com.br</code></li>
+                  <li>Aguarde a propagação do DNS (pode levar até 24h)</li>
+                  <li>Salve o domínio acima e teste o acesso</li>
+                </ol>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button onClick={handleSaveCompany} disabled={saving}>
+                  {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  Salvar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+        </div>
+      </div>
+  );
+}

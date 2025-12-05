@@ -42,13 +42,34 @@ const navigation = [
 
 export default function EmpresaLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
     window.location.href = '/login';
   };
+
+  // Debug: log auth state
+  console.log('EmpresaLayout - Auth state:', { user, loading });
+
+  // Redirect if not authenticated
+  if (!loading && !user) {
+    window.location.href = '/login';
+    return null;
+  }
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
