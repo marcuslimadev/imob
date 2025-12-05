@@ -16,7 +16,7 @@ export const directusServer = createDirectus<Schema>(directusUrl)
  * Usar em Client Components
  */
 export const directusClient = createDirectus<Schema>(directusUrl)
-  .with(authentication('cookie', { credentials: 'include' }))
+  .with(authentication('cookie', { credentials: 'include', autoRefresh: true }))
   .with(rest({ credentials: 'include' }));
 
 /**

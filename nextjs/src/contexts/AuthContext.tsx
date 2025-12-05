@@ -1,8 +1,6 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { directusClient } from '@/lib/directus/client';
-import { readMe } from '@directus/sdk';
 
 interface User {
   id: string;
@@ -33,14 +31,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function checkAuth() {
     try {
-      // @ts-ignore - Custom schema field company_id
-      const currentUser = await directusClient.request(readMe({
-        fields: ['*']
-      }));
-      
-      setUser(currentUser as User);
+      const response = await fetch('/api/auth/me');
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
-      // Silently handle unauthenticated state - this is expected behavior
       setUser(null);
     } finally {
       setLoading(false);
@@ -49,12 +47,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     try {
-      // Login com autenticação via cookie
-      // No Directus SDK 20+, login espera um objeto com email e password
-      await directusClient.login({ email, password });
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
+      if (!response.ok) {
+        throw new Error('Credenciais inválidas');
+      }
+
+      const data = await response.json();
       await checkAuth();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
       throw new Error('Credenciais inválidas');
     }
@@ -62,10 +67,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function logout() {
     try {
-      await directusClient.logout();
+      await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
     } catch (error) {
-      // Silently handle logout errors
       setUser(null);
     }
   }

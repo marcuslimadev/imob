@@ -29,6 +29,8 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
+      // Wait a bit to ensure cookie is set before redirect
+      await new Promise(resolve => setTimeout(resolve, 500));
       // Force a full page reload to ensure authentication state is updated
       window.location.href = '/empresa/dashboard';
     } catch (err: any) {

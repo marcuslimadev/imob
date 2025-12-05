@@ -1,5 +1,6 @@
 'use client';
 
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,7 @@ import {
 import { useEffect, useState, useCallback } from 'react';
 import { directusClient } from '@/lib/directus/client';
 import { readItems, updateItem } from '@directus/sdk';
+import { ApiSettings } from './api-settings';
 
 interface Company {
   id: string;
@@ -60,23 +62,17 @@ export default function ConfiguracoesPage() {
     try {
       setLoading(true);
 
-      const [companyData, settingsData] = await Promise.all([
-        directusClient.request(
-          readItems('companies', {
-            filter: { id: { _eq: user.company_id } },
-            limit: 1,
-          })
-        ),
-        directusClient.request(
-          readItems('app_settings', {
-            filter: { company_id: { _eq: user.company_id } },
-            limit: 1,
-          })
-        ),
-      ]);
+      // Buscar apenas dados da empresa via Directus SDK
+      const companyData = await directusClient.request(
+        readItems('companies', {
+          filter: { id: { _eq: user.company_id } },
+          limit: 1,
+        })
+      );
 
       if (companyData.length > 0) setCompany(companyData[0] as unknown as Company);
-      if (settingsData.length > 0) setSettings(settingsData[0] as unknown as AppSettings);
+      
+      // App settings será carregado pelo componente ApiSettings via /api/settings
     } catch (err) {
       console.error('Erro ao carregar configurações:', err);
     } finally {
@@ -145,7 +141,21 @@ export default function ConfiguracoesPage() {
   if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Carregando configurações...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user?.company_id) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <p className="text-red-600 font-semibold">Erro: Empresa não encontrada</p>
+          <p className="text-gray-600">Faça login novamente</p>
+        </div>
       </div>
     );
   }
@@ -329,6 +339,9 @@ export default function ConfiguracoesPage() {
         {/* Integrações */}
         <TabsContent value="integracoes">
           <div className="space-y-6">
+            {/* API Externa - Importação de Imóveis */}
+            <ApiSettings companyId={user?.company_id || ''} />
+
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">

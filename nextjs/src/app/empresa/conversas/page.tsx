@@ -1,5 +1,6 @@
 'use client';
 
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,6 +48,14 @@ interface Mensagem {
 }
 
 export default function ConversasPage() {
+  return (
+    <AuthGuard>
+      <ConversasPageContent />
+    </AuthGuard>
+  );
+}
+
+function ConversasPageContent() {
   const { user, loading: authLoading } = useAuth();
   const [conversas, setConversas] = useState<Conversa[]>([]);
   const [selectedConversa, setSelectedConversa] = useState<Conversa | null>(null);

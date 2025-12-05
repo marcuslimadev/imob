@@ -327,6 +327,10 @@ const fieldsDefinitions = {
             { text: 'JSON', value: 'json' }
         ] } } },
         { field: 'descricao', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
+        
+        // Campos específicos para integração com API externa
+        { field: 'external_api_url', type: 'string', meta: { interface: 'input', width: 'half', note: 'URL base da API externa (ex: https://www.exclusivalarimoveis.com.br)' } },
+        { field: 'external_api_token', type: 'string', meta: { interface: 'input', width: 'half', note: 'Token de autenticação da API externa' } },
     ],
     
     logs: [

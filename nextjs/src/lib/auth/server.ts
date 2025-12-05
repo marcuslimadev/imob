@@ -9,31 +9,27 @@ import { redirect } from 'next/navigation';
  */
 export async function getAuthenticatedCompanyId(): Promise<string> {
   const cookieStore = await cookies();
-  const authToken = cookieStore.get('directus_refresh_token')?.value;
+  const authToken = cookieStore.get('directus_token')?.value;
 
   if (!authToken) {
     redirect('/login');
   }
 
   try {
-    // Cria cliente temporário com o token do usuário
-    const { createDirectus, rest, authentication, readMe: readMeSDK } = await import('@directus/sdk');
-    
-    const client = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055')
-      .with(rest())
-      .with(authentication('json'));
+    // Faz requisição direta à API do Directus com o token
+    const response = await fetch(`${process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/users/me?fields=id,email,first_name,last_name,company_id`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    });
 
-    // Define o token manualmente
-    await client.setToken(authToken);
+    if (!response.ok) {
+      console.error('Failed to fetch user, status:', response.status);
+      redirect('/login?error=auth_failed');
+    }
 
-    // Busca dados do usuário
-    // @ts-ignore - Custom schema
-    const user = await client.request(
-      readMeSDK({
-        // @ts-ignore
-        fields: ['id', 'email', 'first_name', 'last_name', 'company_id']
-      })
-    );
+    const result = await response.json();
+    const user = result.data;
 
     if (!user?.company_id) {
       console.error('User has no company_id:', user);
@@ -52,28 +48,25 @@ export async function getAuthenticatedCompanyId(): Promise<string> {
  */
 export async function getAuthenticatedUser() {
   const cookieStore = await cookies();
-  const authToken = cookieStore.get('directus_refresh_token')?.value;
+  const authToken = cookieStore.get('directus_token')?.value;
 
   if (!authToken) {
     redirect('/login');
   }
 
   try {
-    const { createDirectus, rest, authentication, readMe: readMeSDK } = await import('@directus/sdk');
-    
-    const client = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055')
-      .with(rest())
-      .with(authentication('json'));
+    const response = await fetch(`${process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/users/me?fields=*`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    });
 
-    await client.setToken(authToken);
+    if (!response.ok) {
+      redirect('/login?error=auth_failed');
+    }
 
-    // @ts-ignore - Custom schema
-    const user = await client.request(
-      readMeSDK({
-        // @ts-ignore
-        fields: ['*', { company_id: ['id', 'name', 'slug'] }]
-      })
-    );
+    const result = await response.json();
+    const user = result.data;
 
     if (!user) {
       redirect('/login');

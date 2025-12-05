@@ -156,10 +156,19 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Acesso negado</h2>
-          <Link href="/" className="text-indigo-600 hover:underline">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Acesso negado</h2>
+          <p className="text-gray-600 mb-6">Você precisa estar autenticado para acessar esta página.</p>
+          <Link 
+            href="/login" 
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+          >
             Fazer login
           </Link>
         </div>
@@ -168,179 +177,213 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Bem-vindo, {user.first_name || user.email}!
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={fetchStats}
-                disabled={loading}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Atualizar dados"
-              >
-                <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
-              </button>
-              <Link
-                href="/empresa/leads/novo"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-              >
-                <UserPlus className="h-4 w-4" />
-                Novo Lead
-              </Link>
-            </div>
-          </div>
-          {lastUpdate && (
-            <p className="text-xs text-gray-400 mt-2">
-              Última atualização: {lastUpdate.toLocaleTimeString('pt-BR')}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-gray-600 mt-1">
+              Bem-vindo de volta, {user.first_name || user.email}! 👋
             </p>
-          )}
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={fetchStats}
+              disabled={loading}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              title="Atualizar dados"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Atualizar
+            </button>
+            <Link
+              href="/empresa/leads/novo"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <UserPlus className="h-4 w-4" />
+              Novo Lead
+            </Link>
+          </div>
         </div>
-      </header>
+        {lastUpdate && (
+          <p className="text-xs text-gray-500">
+            Última atualização: {lastUpdate.toLocaleTimeString('pt-BR')}
+          </p>
+        )}
+      </div>
 
-      <div className="container mx-auto px-6 py-8">
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            {error}
-            <button onClick={fetchStats} className="ml-2 underline">
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+          <div className="flex items-center">
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-800">{error}</p>
+            </div>
+            <button 
+              onClick={fetchStats} 
+              className="ml-4 text-sm font-medium text-red-600 hover:text-red-800 underline"
+            >
               Tentar novamente
             </button>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Total de Imóveis
-              </CardTitle>
-              <Building2 className="h-5 w-5 text-indigo-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-gray-900">
-                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.properties}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {stats.properties === 0 ? 'Cadastre seus primeiros imóveis' : 'imóveis cadastrados'}
-              </p>
-            </CardContent>
-          </Card>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="border-l-4 border-l-blue-500">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Total de Imóveis
+            </CardTitle>
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Building2 className="h-5 w-5 text-blue-600" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-gray-900">
+              {loading ? <Loader2 className="h-8 w-8 animate-spin text-blue-600" /> : stats.properties}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              {stats.properties === 0 ? 'Cadastre seus primeiros imóveis' : 'imóveis cadastrados'}
+            </p>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Leads Ativos
-              </CardTitle>
+        <Card className="border-l-4 border-l-green-500">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Leads Ativos
+            </CardTitle>
+            <div className="p-2 bg-green-100 rounded-lg">
               <Users className="h-5 w-5 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-gray-900">
-                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.leads}
-              </div>
-              <div className="flex items-center gap-1 mt-1">
-                {stats.leadsThisMonth > 0 ? (
-                  <>
-                    <ArrowUpRight className="h-4 w-4 text-green-500" />
-                    <span className="text-xs text-green-600">+{stats.leadsThisMonth} este mês</span>
-                  </>
-                ) : (
-                  <span className="text-xs text-gray-500">
-                    {stats.leads === 0 ? 'Nenhum lead cadastrado' : `${stats.leadsThisMonth} novos este mês`}
-                  </span>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-gray-900">
+              {loading ? <Loader2 className="h-8 w-8 animate-spin text-green-600" /> : stats.leads}
+            </div>
+            <div className="flex items-center gap-1 mt-2">
+              {stats.leadsThisMonth > 0 ? (
+                <>
+                  <ArrowUpRight className="h-4 w-4 text-green-600" />
+                  <span className="text-xs font-medium text-green-600">+{stats.leadsThisMonth} este mês</span>
+                </>
+              ) : (
+                <span className="text-xs text-gray-500">
+                  {stats.leads === 0 ? 'Nenhum lead cadastrado' : 'Nenhum novo este mês'}
+                </span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Conversas WhatsApp
-              </CardTitle>
+        <Card className="border-l-4 border-l-purple-500">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Conversas WhatsApp
+            </CardTitle>
+            <div className="p-2 bg-purple-100 rounded-lg">
               <MessageSquare className="h-5 w-5 text-purple-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-gray-900">
-                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.conversations}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {stats.conversations === 0 ? 'Configure o WhatsApp' : 'conversas ativas'}
-              </p>
-            </CardContent>
-          </Card>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-gray-900">
+              {loading ? <Loader2 className="h-8 w-8 animate-spin text-purple-600" /> : stats.conversations}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              {stats.conversations === 0 ? 'Configure o WhatsApp' : 'conversas ativas'}
+            </p>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Vistorias Pendentes
-              </CardTitle>
+        <Card className="border-l-4 border-l-orange-500">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Vistorias Pendentes
+            </CardTitle>
+            <div className="p-2 bg-orange-100 rounded-lg">
               <ClipboardCheck className="h-5 w-5 text-orange-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-gray-900">
-                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.vistorias}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {stats.vistorias === 0 ? 'Nenhuma pendente' : 'aguardando conclusão'}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-gray-900">
+              {loading ? <Loader2 className="h-8 w-8 animate-spin text-orange-600" /> : stats.vistorias}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              {stats.vistorias === 0 ? 'Nenhuma pendente' : 'aguardando conclusão'}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-        {/* Secondary Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Documentos p/ Assinatura
-              </CardTitle>
+      {/* Secondary Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Documentos p/ Assinatura
+            </CardTitle>
+            <div className="p-2 bg-blue-100 rounded-lg">
               <FileCheck className="h-5 w-5 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-gray-900">
-                {loading ? <Loader2 className="h-8 w-8 animate-spin" /> : stats.documentos}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {stats.documentos === 0 ? 'Nenhum pendente' : 'pendentes de assinatura'}
-              </p>
-            </CardContent>
-          </Card>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-gray-900">
+              {loading ? <Loader2 className="h-6 w-6 animate-spin text-blue-600" /> : stats.documentos}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              {stats.documentos === 0 ? 'Nenhum pendente' : 'aguardando assinatura'}
+            </p>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Taxa de Conversão
-              </CardTitle>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Taxa de Conversão
+            </CardTitle>
+            <div className="p-2 bg-emerald-100 rounded-lg">
               <TrendingUp className="h-5 w-5 text-emerald-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-gray-900">
-                {stats.leads > 0 ? `${Math.round((stats.leadsThisMonth / stats.leads) * 100)}%` : '0%'}
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {stats.leads === 0 ? 'Sem dados ainda' : 'dos leads convertidos'}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-gray-900">
+              {stats.leads > 0 ? `${Math.round((stats.leadsThisMonth / stats.leads) * 100)}%` : '0%'}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              novos leads / total
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Quick Actions */}
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Link href="/empresa/imoveis/novo">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-indigo-500 h-full">
+        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+          <CardHeader className="pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-blue-900">
+              🎯 Próxima Meta
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-900">
+              {stats.leads < 10 ? '10 leads' : stats.leads < 50 ? '50 leads' : '100 leads'}
+            </div>
+            <p className="text-xs text-blue-700 mt-2">
+              Você está {stats.leads < 10 ? `${10 - stats.leads} leads` : stats.leads < 50 ? `${50 - stats.leads} leads` : `${100 - stats.leads} leads`} de alcançar!
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link href="/empresa/imoveis/novo" className="group">
+            <Card className="h-full hover:shadow-lg hover:scale-105 transition-all cursor-pointer border-2 border-transparent hover:border-blue-500">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-indigo-100 rounded-lg">
-                    <Home className="h-6 w-6 text-indigo-600" />
+                  <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-600 transition-colors">
+                    <Home className="h-6 w-6 text-blue-600 group-hover:text-white transition-colors" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Cadastrar Imóvel</h3>
@@ -351,12 +394,12 @@ export default function DashboardPage() {
             </Card>
           </Link>
 
-          <Link href="/empresa/leads">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-green-500 h-full">
+          <Link href="/empresa/leads" className="group">
+            <Card className="h-full hover:shadow-lg hover:scale-105 transition-all cursor-pointer border-2 border-transparent hover:border-green-500">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-green-100 rounded-lg">
-                    <Users className="h-6 w-6 text-green-600" />
+                  <div className="p-3 bg-green-100 rounded-lg group-hover:bg-green-600 transition-colors">
+                    <Users className="h-6 w-6 text-green-600 group-hover:text-white transition-colors" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Ver Leads</h3>
@@ -367,12 +410,12 @@ export default function DashboardPage() {
             </Card>
           </Link>
 
-          <Link href="/empresa/vistorias">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-orange-500 h-full">
+          <Link href="/empresa/vistorias" className="group">
+            <Card className="h-full hover:shadow-lg hover:scale-105 transition-all cursor-pointer border-2 border-transparent hover:border-orange-500">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-orange-100 rounded-lg">
-                    <ClipboardCheck className="h-6 w-6 text-orange-600" />
+                  <div className="p-3 bg-orange-100 rounded-lg group-hover:bg-orange-600 transition-colors">
+                    <ClipboardCheck className="h-6 w-6 text-orange-600 group-hover:text-white transition-colors" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Vistorias</h3>
@@ -383,12 +426,12 @@ export default function DashboardPage() {
             </Card>
           </Link>
 
-          <Link href="/empresa/assinaturas">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-blue-500 h-full">
+          <Link href="/empresa/assinaturas" className="group">
+            <Card className="h-full hover:shadow-lg hover:scale-105 transition-all cursor-pointer border-2 border-transparent hover:border-purple-500">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <FileCheck className="h-6 w-6 text-blue-600" />
+                  <div className="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-600 transition-colors">
+                    <FileCheck className="h-6 w-6 text-purple-600 group-hover:text-white transition-colors" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Assinaturas</h3>
@@ -399,18 +442,20 @@ export default function DashboardPage() {
             </Card>
           </Link>
         </div>
+      </div>
 
-        {/* Recent Activity */}
-        <div className="mt-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Atividade Recente</h2>
-          <Card>
-            <CardContent className="py-8 text-center text-gray-500">
-              <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p>Nenhuma atividade recente</p>
-              <p className="text-sm mt-1">As últimas ações aparecerão aqui</p>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Recent Activity */}
+      <div>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Atividade Recente</h2>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="h-8 w-8 text-gray-400" />
+            </div>
+            <p className="text-gray-500 mb-2">Nenhuma atividade recente</p>
+            <p className="text-sm text-gray-400">Suas ações aparecerão aqui</p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
