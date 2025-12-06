@@ -146,6 +146,17 @@ export default function LeadsPage() {
   const [editedLead, setEditedLead] = useState<Partial<Lead>>({});
   const [error, setError] = useState<string | null>(null);
 
+  const leadsRequiringAttention = leads.filter((lead) => lead.requires_human_attention).length;
+  const hotPipeline = leads.filter((lead) =>
+    ['qualificacao', 'refinamento_criterios', 'envio_imoveis', 'interesse_demonstrado', 'negociacao'].includes(
+      lead.stage
+    )
+  ).length;
+  const stageMomentum = STAGES.map((stage) => ({
+    ...stage,
+    count: leads.filter((lead) => lead.stage === stage.value).length,
+  })).filter((stage) => stage.count > 0);
+
   // Redirect se não autenticado
   useEffect(() => {
     if (!authLoading && !user) {
@@ -448,7 +459,12 @@ export default function LeadsPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="relative min-h-screen px-4 py-10">
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-60">
+        <div className="bauhaus-grid absolute inset-6 rounded-[32px] border-[3px] border-[var(--foreground-color)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/30 to-[var(--accent-color)]/10 mix-blend-multiply" />
+      </div>
+
       {/* Loading State */}
       {(authLoading || isLoading) && (
         <div className="flex flex-col items-center justify-center min-h-[400px]">
@@ -480,30 +496,113 @@ export default function LeadsPage() {
       {/* Main Content */}
       {!authLoading && !isLoading && !error && (
         <>
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className="text-3xl font-bold">Gerenciamento de Leads</h1>
-              <p className="text-muted-foreground mt-1">
-                {filteredLeads.length} leads encontrados
-              </p>
+          <div className="mb-10 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+            <div className="bauhaus-card rounded-3xl p-8 relative overflow-hidden">
+              <div className="absolute right-6 top-6 flex gap-2">
+                <span className="bauhaus-pill bg-[var(--accent-color)] text-white">Pipeline vivo</span>
+                <span className="bauhaus-pill bg-[var(--accent-color-soft)] text-black">IA assistida</span>
+              </div>
+              <div className="flex flex-col gap-4 max-w-3xl">
+                <p className="text-sm uppercase tracking-[0.22em] text-[var(--foreground-color)]/80">Radar Bauhaus</p>
+                <div className="flex flex-wrap items-end gap-4">
+                  <h1 className="text-4xl md:text-5xl font-black leading-tight">
+                    Leads em fluxo, nuvem de dados e IA a serviço da negociação
+                  </h1>
+                </div>
+                <p className="text-lg text-muted-foreground max-w-2xl">
+                  Combina painéis geométricos, filtros inteligentes e alertas de atenção para guiar a operação.
+                  Visualize momentum por stage e exporte snapshots imediatos do funil.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="bauhaus-surface rounded-2xl p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Leads ativos</p>
+                    <div className="mt-2 flex items-baseline gap-2">
+                      <span className="text-4xl font-black">{filteredLeads.length}</span>
+                      <span className="text-xs uppercase tracking-[0.18em] text-[var(--accent-color)]">dataset vivo</span>
+                    </div>
+                  </div>
+                  <div className="bauhaus-surface rounded-2xl p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Alertas humanos</p>
+                    <div className="mt-2 flex items-baseline gap-2">
+                      <span className="text-4xl font-black">{leadsRequiringAttention}</span>
+                      <span className="text-xs uppercase tracking-[0.18em] text-[var(--accent-color-soft)]">prioridade</span>
+                    </div>
+                  </div>
+                  <div className="bauhaus-surface rounded-2xl p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Pipeline quente</p>
+                    <div className="mt-2 flex items-baseline gap-2">
+                      <span className="text-4xl font-black">{hotPipeline}</span>
+                      <span className="text-xs uppercase tracking-[0.18em] text-[var(--accent-color-light)]">negociação</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-3 pt-2">
+                  {stageMomentum.slice(0, 6).map((stage) => (
+                    <span
+                      key={stage.value}
+                      className="bauhaus-chip bg-white text-[var(--foreground-color)]"
+                    >
+                      {stage.label} · {stage.count}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
-            <Button onClick={handleExportCSV} variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Exportar CSV
-            </Button>
+
+            <div className="grid gap-4">
+              <div className="bauhaus-card rounded-3xl p-6">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Export rápido</p>
+                    <h3 className="text-xl font-bold mt-2">CSV instantâneo</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Baixe um snapshot com filtros aplicados e mantenha o time sincronizado.
+                    </p>
+                  </div>
+                  <Button onClick={handleExportCSV} variant="outline" className="rounded-full border-2">
+                    <Download className="mr-2 h-4 w-4" />
+                    Exportar CSV
+                  </Button>
+                </div>
+                <div className="mt-6 grid grid-cols-3 gap-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  <span className="bauhaus-stripe rounded-xl bg-[var(--background-color-muted)] px-3 py-2">Mensagens</span>
+                  <span className="bauhaus-stripe rounded-xl bg-[var(--background-color-muted)] px-3 py-2">Origem</span>
+                  <span className="bauhaus-stripe rounded-xl bg-[var(--background-color-muted)] px-3 py-2">Stage</span>
+                </div>
+              </div>
+
+              <div className="bauhaus-card rounded-3xl p-6">
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Ritmo do funil</p>
+                <div className="mt-4 space-y-3">
+                  {stageMomentum.slice(0, 5).map((stage) => (
+                    <div key={stage.value} className="flex items-center gap-3">
+                      <div className="h-2 flex-1 rounded-full bg-[var(--background-color-muted)]">
+                        <div
+                          className="h-full rounded-full bg-[var(--accent-color)]"
+                          style={{ width: `${Math.min((stage.count / Math.max(filteredLeads.length, 1)) * 100, 100)}%` }}
+                        />
+                      </div>
+                      <span className="text-xs uppercase tracking-[0.18em] font-semibold">
+                        {stage.label} · {stage.count}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </>
       )}
 
       {/* Filtros */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <Card className="mb-6 border-[3px] border-[var(--foreground-color)] shadow-[10px_10px_0_#0c0c0c]">
+        <CardHeader className="border-b border-[var(--foreground-color)] bg-[var(--accent-color)] text-white">
+          <CardTitle className="flex items-center gap-2 uppercase tracking-[0.18em] text-sm">
             <Filter className="h-5 w-5" />
-            Filtros
+            Painel de filtros
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Busca */}
             <div className="lg:col-span-2">
@@ -577,7 +676,7 @@ export default function LeadsPage() {
                 setDateFrom('');
                 setDateTo('');
               }}
-              className="mt-4"
+              className="mt-4 rounded-full border-2"
             >
               Limpar filtros
             </Button>
@@ -586,13 +685,13 @@ export default function LeadsPage() {
       </Card>
 
       {/* Tabela de Leads */}
-      <Card>
+      <Card className="bauhaus-card rounded-3xl">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
+                <TableRow className="bg-[var(--background-color-muted)]">
+                  <TableHead className="uppercase tracking-[0.14em] text-xs">Nome</TableHead>
                   <TableHead>Contato</TableHead>
                   <TableHead>Stage</TableHead>
                   <TableHead>Origem</TableHead>

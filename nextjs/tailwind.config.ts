@@ -7,11 +7,11 @@ const config: Config = {
 	content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		extend: {
-			fontFamily: {
-				heading: ['Poppins', 'sans-serif'],
-				sans: ['Inter', 'sans-serif'],
-				code: ['Fira Mono', 'monospace'],
-			},
+                        fontFamily: {
+                                heading: ['"Space Grotesk"', 'Manrope', 'Inter', 'sans-serif'],
+                                sans: ['Manrope', 'Inter', 'sans-serif'],
+                                code: ['Fira Mono', 'monospace'],
+                        },
 			fontSize: {
 				tagline: ['24px', '33.6px'], // Tagline
 				headline: ['56px', '64px'], // Headline
