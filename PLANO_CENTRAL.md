@@ -43,6 +43,7 @@
 |--------|--------|-----------|------------|
 | **Infraestrutura Base** | ✅ Completo | 100% | - |
 | **Deploy Produção** | 🟢 Pronto | 100% (assets) | 🔴 Alta |
+| **Sistema de Temas** | ✅ Completo | 100% (novo) | ✅ Concluído |
 | **Autenticação Multi-tenant** | ✅ Completo | 100% (+40%) | ✅ Concluído |
 | **Pessoas (Leads/Clientes)** | ⚠️ Parcial | 60% (+10%) | 🟡 Média |
 | **Imóveis** | ✅ Completo | 100% (+10%) | ✅ Concluído |
@@ -80,6 +81,53 @@ cd ../nextjs
 pnpm install
 pnpm dev  # http://localhost:4000
 ```
+
+---
+
+### 1️⃣.5 Sistema de Temas ✅ (100% - NOVO)
+
+**O que está pronto:**
+- ✅ 10 temas baseados em escolas de design renomadas
+- ✅ CSS Variables system (`themes.css` com 250+ linhas)
+- ✅ Data-theme attribute switching (sem reload)
+- ✅ Theme selector UI com preview visual
+- ✅ Campo `theme_key` em `companies` collection
+- ✅ Fetch + apply tema no layout automaticamente
+- ✅ Preview instantâneo antes de salvar
+
+**Temas disponíveis:**
+1. **Bauhaus** - Funcionalismo alemão (geometria pura, sharp edges)
+2. **Ulm** - Minimalismo funcional (grade precisa, hierarquia clara)
+3. **Cranbrook** - Experimentalismo narrativo (dark mode, camadas complexas)
+4. **RCA** - Elegância britânica (sofisticação, atenção aos detalhes)
+5. **RISD** - Criatividade vibrante (cores ousadas, formas orgânicas)
+6. **IIT** - Racionalismo modular (sistema claro, estrutura lógica)
+7. **Pratt** - Visão urbana contemporânea (dark mode, contraste alto)
+8. **Parsons** - Inovação fashion-forward (formas fluidas, saturação)
+9. **Swiss Style** - Grid suíço internacional (precisão matemática, neutralidade)
+10. **VKhUTEMAS** - Construtivismo russo (dark mode, diagonal dinâmica)
+
+**Arquitetura:**
+```css
+/* themes.css */
+:root[data-theme="bauhaus"] {
+  --color-primary: #e63946;
+  --color-accent: #1d3557;
+  --radius-md: 2px;
+  --shadow-soft: 6px 6px 0 rgba(0,0,0,0.2);
+  /* ... */
+}
+```
+
+**Fluxo:**
+1. Empresa acessa `/empresa/configuracoes` → aba "Aparência"
+2. Clica em card de tema → preview instantâneo
+3. Clica "Salvar Alterações" → persiste `theme_key` no banco
+4. Layout busca tema no mount → aplica `data-theme` attribute
+
+**Documentação completa:** `THEME_SYSTEM.md`
+
+**Commit:** a78fe55 (pushed to main)
 
 ---
 
