@@ -48,8 +48,12 @@ export async function POST(request: NextRequest) {
     console.log('[API /import-properties] Usando API:', settings.external_api_url);
 
     // Fazer requisição para API externa - Exclusiva Lar Imóveis
-    // Endpoint: /api/v1/app/imovel/lista
-    const apiUrl = `${settings.external_api_url}/api/v1/app/imovel/lista`;
+    // Endpoint correto: /api/v1/imovel/lista (não /app/imovel/lista)
+    const baseUrl = settings.external_api_url.replace(/\/+$/, ''); // Remove trailing slashes
+    const apiUrl = `${baseUrl}/api/v1/imovel/lista`;
+    
+    console.log('[API /import-properties] URL construída:', apiUrl);
+    console.log('[API /import-properties] Token:', settings.external_api_token.substring(0, 20) + '...');
     
     const externalResponse = await fetch(apiUrl, {
       method: 'POST',

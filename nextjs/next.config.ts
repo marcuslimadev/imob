@@ -9,11 +9,11 @@ const ContentSecurityPolicy = `
     default-src 'self';
     script-src 'self' 'unsafe-eval' 'unsafe-inline';
     frame-src *;
-    style-src 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src * blob: data:;
     media-src *;
     connect-src *;
-    font-src 'self' data:;
+    font-src 'self' data: https://fonts.gstatic.com;
     frame-ancestors 'self' http://localhost:3000 ${process.env.NEXT_PUBLIC_DIRECTUS_URL};
 `;
 

@@ -4,6 +4,9 @@ import { redirect } from 'next/navigation';
 import { getAuthenticatedCompanyId } from '@/lib/auth/server';
 import Link from 'next/link';
 import { ImportPropertiesButton } from '@/components/properties/ImportPropertiesButton';
+import { BauhausPageHeader } from '@/components/layout/BauhausPageHeader';
+import { BauhausCard, BauhausStatCard } from '@/components/layout/BauhausCard';
+import { Plus } from 'lucide-react';
 
 async function getCompanyProperties(companyId: string) {
   try {
@@ -46,10 +49,10 @@ function formatPrice(price: number): string {
 
 function getStatusBadgeClass(status: string): string {
   const classes: Record<string, string> = {
-    active: 'bg-green-100 text-green-700',
-    sold: 'bg-red-100 text-red-700',
-    rented: 'bg-blue-100 text-blue-700',
-    inactive: 'bg-gray-100 text-gray-700'
+    active: 'bg-green-600 text-white font-bold',
+    sold: 'bg-red-600 text-white font-bold',
+    rented: 'bg-blue-600 text-white font-bold',
+    inactive: 'bg-gray-600 text-white font-bold'
   };
   return classes[status] || classes.inactive;
 }
@@ -70,80 +73,59 @@ export default async function CompanyPropertiesPage() {
   const properties = await getCompanyProperties(companyId);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="container mx-auto px-6 py-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">Meus Imóveis</h1>
-              <p className="text-gray-600 text-lg">
-                Gerencie todos os imóveis da sua imobiliária
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <ImportPropertiesButton />
-              <Link
-                href="/empresa/imoveis/novo"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                Novo Imóvel
-              </Link>
-            </div>
+    <div className="min-h-screen bg-white">
+      {/* Bauhaus Header */}
+      <BauhausPageHeader
+        title="Imóveis"
+        description="Gerencie todos os imóveis da sua imobiliária"
+        actions={
+          <div className="flex gap-3">
+            <ImportPropertiesButton />
+            <Link
+              href="/empresa/imoveis/novo"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-none font-light uppercase tracking-wide text-sm transition-colors flex items-center gap-2 border-2 border-blue-600"
+            >
+              <Plus className="h-4 w-4" />
+              Novo Imóvel
+            </Link>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Stats */}
-      <div className="container mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Total de Imóveis</p>
-            <p className="text-4xl font-bold text-gray-900">{properties.length}</p>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Ativos</p>
-            <p className="text-4xl font-bold text-green-600">
-              {properties.filter((p: any) => p.status === 'active').length}
-            </p>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Vendidos</p>
-            <p className="text-4xl font-bold text-red-600">
-              {properties.filter((p: any) => p.status === 'sold').length}
-            </p>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Alugados</p>
-            <p className="text-4xl font-bold text-blue-600">
-              {properties.filter((p: any) => p.status === 'rented').length}
-            </p>
-          </div>
+          <BauhausStatCard 
+            label="Total de Imóveis" 
+            value={properties.length}
+            color="gray"
+          />
+          <BauhausStatCard 
+            label="Ativos" 
+            value={properties.filter((p: any) => p.status === 'active').length}
+            color="green"
+          />
+          <BauhausStatCard 
+            label="Vendidos" 
+            value={properties.filter((p: any) => p.status === 'sold').length}
+            color="red"
+          />
+          <BauhausStatCard 
+            label="Alugados" 
+            value={properties.filter((p: any) => p.status === 'rented').length}
+            color="blue"
+          />
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-md border-2 border-gray-200 p-6 mb-8">
           <div className="flex flex-wrap gap-4">
             <input
               type="text"
               placeholder="Buscar por título, cidade..."
-              className="flex-1 min-w-[200px] px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              className="flex-1 min-w-[200px] px-4 py-3 border-2 border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-gray-900 font-medium"
             />
-            <select className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white font-medium">
+            <select className="px-4 py-3 border-2 border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-gray-900 bg-white font-semibold">
               <option value="">Todos os tipos</option>
               <option value="apartment">Apartamento</option>
               <option value="house">Casa</option>
@@ -163,12 +145,12 @@ export default async function CompanyPropertiesPage() {
         </div>
 
         {/* Properties Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border-2 border-gray-200 overflow-hidden">
           {properties.length === 0 ? (
             <div className="text-center py-16">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-20 w-20 mx-auto text-gray-300 mb-6"
+                className="h-20 w-20 mx-auto text-gray-400 mb-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -180,15 +162,15 @@ export default async function CompanyPropertiesPage() {
                   d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                 />
               </svg>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
                 Nenhum imóvel cadastrado
               </h3>
-              <p className="text-gray-600 mb-6 text-lg">
+              <p className="text-gray-700 mb-6 text-lg font-medium">
                 Comece cadastrando seu primeiro imóvel
               </p>
               <Link
                 href="/empresa/imoveis/novo"
-                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg"
+                className="inline-block bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-lg font-bold transition-all shadow-md hover:shadow-lg"
               >
                 Cadastrar Imóvel
               </Link>
@@ -196,34 +178,34 @@ export default async function CompanyPropertiesPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b-2 border-gray-200">
+                <thead className="bg-gray-700 border-b-2 border-gray-900">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
                       Imóvel
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
                       Tipo
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
                       Localização
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
                       Valor
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
                       Visualizações
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
                       Ações
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-300">
                   {properties.map((property: any) => (
-                    <tr key={property.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={property.id} className="hover:bg-blue-50 transition-colors">
                       <td className="px-6 py-5">
                         <div className="flex items-center">
                           {property.featured && (

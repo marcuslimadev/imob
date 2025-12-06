@@ -1,7 +1,10 @@
 import { directusServer } from '@/lib/directus/client';
 import { readItems, aggregate } from '@directus/sdk';
 import { getAuthenticatedCompanyId } from '@/lib/auth/server';
+import { BauhausPageHeader } from '@/components/layout/BauhausPageHeader';
+import { BauhausCard, BauhausStatCard } from '@/components/layout/BauhausCard';
 import Link from 'next/link';
+import { Plus } from 'lucide-react';
 
 async function getCompanyLeads(companyId: string) {
   try {

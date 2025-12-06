@@ -2,6 +2,8 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BauhausPageHeader } from '@/components/layout/BauhausPageHeader';
+import { BauhausCard, BauhausStatCard } from '@/components/layout/BauhausCard';
 import Link from 'next/link';
 import { 
   Building2, 
@@ -177,25 +179,26 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600 mt-1">
-              Bem-vindo de volta, {user.first_name || user.email}! 👋
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={fetchStats}
-              disabled={loading}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-              title="Atualizar dados"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              Atualizar
+    <div className="min-h-screen bg-white">
+      {/* Bauhaus Header */}
+      <BauhausPageHeader
+        title="Dashboard"
+        description={`Bem-vindo, ${user.first_name || user.email}`}
+        accentColor="#6366F1"
+        actions={
+          <button
+            onClick={fetchStats}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-light uppercase tracking-wide text-gray-900 bg-white border-2 border-gray-900 rounded-none hover:bg-gray-900 hover:text-white transition-colors disabled:opacity-50"
+            title="Atualizar dados"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            Atualizar
+          </button>
+        }
+      />
+
+      <div className="max-w-7xl mx-auto px-8 py-8">{
             </button>
             <Link
               href="/empresa/leads/novo"
@@ -214,37 +217,44 @@ export default function DashboardPage() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+        <BauhausCard className="mb-6 border-l-4 border-l-red-600">
           <div className="flex items-center">
             <div className="flex-1">
-              <p className="text-sm font-medium text-red-800">{error}</p>
+              <p className="text-sm font-medium text-red-900">{error}</p>
             </div>
             <button 
               onClick={fetchStats} 
-              className="ml-4 text-sm font-medium text-red-600 hover:text-red-800 underline"
+              className="ml-4 px-4 py-2 text-sm font-light uppercase tracking-wide bg-red-600 text-white hover:bg-red-700 transition-colors rounded-none"
             >
               Tentar novamente
             </button>
           </div>
-        </div>
+        </BauhausCard>
       )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="border-l-4 border-l-blue-500">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Total de Imóveis
-            </CardTitle>
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Building2 className="h-5 w-5 text-blue-600" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-gray-900">
-              {loading ? <Loader2 className="h-8 w-8 animate-spin text-blue-600" /> : stats.properties}
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
+        <BauhausStatCard
+          label="Total de Imóveis"
+          value={loading ? '...' : stats.properties}
+          color="blue"
+        />
+        <BauhausStatCard
+          label="Total de Leads"
+          value={loading ? '...' : stats.leads}
+          color="green"
+        />
+        <BauhausStatCard
+          label="Leads Este Mês"
+          value={loading ? '...' : stats.leadsThisMonth}
+          color="yellow"
+        />
+        <BauhausStatCard
+          label="Conversas Ativas"
+          value={loading ? '...' : stats.conversations}
+          color="gray"
+        />
+      </div>
               {stats.properties === 0 ? 'Cadastre seus primeiros imóveis' : 'imóveis cadastrados'}
             </p>
           </CardContent>

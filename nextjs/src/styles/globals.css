@@ -78,11 +78,15 @@
         }
 
         .bauhaus-pill {
-                @apply inline-flex items-center gap-2 rounded-full border-[2px] border-[var(--foreground-color)] px-3 py-1 uppercase tracking-[0.16em] text-xs font-semibold;
+                @apply inline-flex items-center gap-2 rounded-full px-3 py-1 uppercase tracking-[0.16em] text-xs font-semibold;
+                border: 2px solid var(--foreground-color);
         }
 
         .bauhaus-surface {
-                @apply border-[3px] border-[var(--foreground-color)] bg-[var(--background-color)]/90 backdrop-blur shadow-[10px_10px_0_#0c0c0c];
+                border: 3px solid var(--foreground-color);
+                background-color: rgba(var(--background-color-rgb), 0.9);
+                backdrop-filter: blur(8px);
+                box-shadow: 10px 10px 0 #0c0c0c;
         }
 
         .bauhaus-stripe {
