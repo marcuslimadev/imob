@@ -1,4 +1,5 @@
 import '@/styles/globals.css';
+import '@/styles/themes.css';
 import '@/styles/fonts.css';
 import '@/lib/suppressConsoleErrors';
 import { ReactNode } from 'react';

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -29,6 +29,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { directusClient } from '@/lib/directus/client';
+import { readItems } from '@directus/sdk';
 
 const navigation = [
   { name: 'Dashboard', href: '/empresa/dashboard', icon: LayoutDashboard },
@@ -44,6 +46,32 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { user, logout, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Apply theme from company settings
+  useEffect(() => {
+    const fetchAndApplyTheme = async () => {
+      if (!user?.company_id) return;
+
+      try {
+        const companies = await directusClient.request(
+          readItems('companies', {
+            filter: { id: { _eq: user.company_id } },
+            fields: ['theme_key'],
+            limit: 1,
+          })
+        );
+
+        const theme = companies[0]?.theme_key || 'bauhaus';
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (error) {
+        console.error('Error fetching company theme:', error);
+        // Fallback to bauhaus
+        document.documentElement.setAttribute('data-theme', 'bauhaus');
+      }
+    };
+
+    fetchAndApplyTheme();
+  }, [user?.company_id]);
 
   const handleLogout = async () => {
     await logout();

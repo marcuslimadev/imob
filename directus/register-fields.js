@@ -87,6 +87,18 @@ const fieldsDefinitions = {
             { text: 'Cancelado', value: 'cancelled' }
         ] } } },
         { field: 'trial_ends_at', type: 'timestamp', meta: { interface: 'datetime', width: 'half', note: 'Data de término do trial' } },
+        { field: 'theme_key', type: 'string', meta: { interface: 'select-dropdown', width: 'half', note: 'Tema visual da interface', options: { choices: [
+            { text: 'Bauhaus', value: 'bauhaus' },
+            { text: 'Ulm', value: 'ulm' },
+            { text: 'Cranbrook', value: 'cranbrook' },
+            { text: 'RCA', value: 'rca' },
+            { text: 'RISD', value: 'risd' },
+            { text: 'IIT', value: 'iit' },
+            { text: 'Pratt', value: 'pratt' },
+            { text: 'Parsons', value: 'parsons' },
+            { text: 'Swiss Style', value: 'swiss' },
+            { text: 'VKhUTEMAS', value: 'vkhutemas' }
+        ] } } },
     ],
     
     properties: [
