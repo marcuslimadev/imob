@@ -58,7 +58,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 		console.log('Running in offline mode - Directus data unavailable');
 	}
 
-	const accentColor = globals?.accent_color || '#6644ff';
+        const accentColor = globals?.accent_color || '#d90429';
 
 	return (
 		<html lang="pt-BR" style={{ '--accent-color': accentColor } as React.CSSProperties} suppressHydrationWarning>

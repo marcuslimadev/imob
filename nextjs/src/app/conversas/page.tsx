@@ -259,10 +259,14 @@ export default function ConversasPage() {
 		return labels[stage] || stage;
 	};
 
-	const filteredConversas = conversas.filter(conv =>
-		conv.lead_id.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-		conv.lead_id.telefone.includes(searchTerm)
-	);
+        const filteredConversas = conversas.filter(conv =>
+                conv.lead_id.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                conv.lead_id.telefone.includes(searchTerm)
+        );
+
+        const unreadTotal = conversas.reduce((acc, conv) => acc + (conv.unread_count || 0), 0);
+        const activePipelines = conversas.filter((conv) => conv.stage !== 'atendimento_humano').length;
+        const humanTransfers = conversas.filter((conv) => conv.stage === 'atendimento_humano').length;
 
 	// Loading State
 	if (authLoading || loading) {
@@ -271,10 +275,10 @@ export default function ConversasPage() {
 				<div className="text-center">
 					<Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
 					<p className="text-gray-600">Carregando conversas...</p>
-				</div>
-			</div>
-		);
-	}
+                </div>
+        </div>
+);
+}
 
 	// Error State
 	if (error) {
@@ -297,52 +301,105 @@ export default function ConversasPage() {
 	}
 
 	return (
-		<div className="flex h-screen bg-gray-100">
+		<div className="relative min-h-screen px-4 py-8">
+			<div className="pointer-events-none absolute inset-0 -z-10 opacity-70">
+				<div className="bauhaus-grid absolute inset-6 rounded-[32px] border-[3px] border-[var(--foreground-color)]" />
+				<div className="absolute inset-0 bg-gradient-to-br from-transparent via-[var(--accent-color)]/12 to-[var(--accent-color-light)]/10 mix-blend-multiply" />
+			</div>
+
+			<div className="mb-8 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
+				<div className="bauhaus-card rounded-3xl p-8">
+					<div className="flex items-start justify-between gap-4">
+						<div className="space-y-3">
+							<p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Central de Conversas</p>
+							<h1 className="text-4xl font-black leading-tight">Bauhaus chat desk — blocos sólidos, cores fortes e foco em velocidade.</h1>
+							<p className="text-muted-foreground max-w-2xl">Monitore unread, transfira para humano e mantenha contexto visual com um layout modular.</p>
+							<div className="flex flex-wrap gap-3">
+								<span className="bauhaus-pill bg-[var(--accent-color)] text-white">Operação</span>
+								<span className="bauhaus-pill bg-[var(--accent-color-soft)] text-black">IA ativa</span>
+								<span className="bauhaus-pill bg-[var(--accent-color-light)] text-black">Escuta</span>
+							</div>
+						</div>
+						<div className="grid grid-cols-1 gap-3">
+							<div className="bauhaus-surface rounded-2xl p-4">
+								<p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Mensagens não lidas</p>
+								<div className="flex items-baseline gap-2 mt-1">
+									<span className="text-4xl font-black">{unreadTotal}</span>
+									<span className="text-xs uppercase tracking-[0.18em] text-[var(--accent-color)]">pulse</span>
+								</div>
+							</div>
+							<div className="bauhaus-surface rounded-2xl p-4">
+								<p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Pipelines ativos</p>
+								<div className="flex items-baseline gap-2 mt-1">
+									<span className="text-3xl font-black">{activePipelines}</span>
+									<span className="text-xs uppercase tracking-[0.18em] text-[var(--accent-color-soft)]">automação</span>
+								</div>
+							</div>
+							<div className="bauhaus-surface rounded-2xl p-4">
+								<p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Transferidos para humano</p>
+								<div className="flex items-baseline gap-2 mt-1">
+									<span className="text-3xl font-black">{humanTransfers}</span>
+									<span className="text-xs uppercase tracking-[0.18em] text-[var(--accent-color-light)]">prioridade</span>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+
+			<div className="bauhaus-card rounded-3xl p-8 grid grid-cols-2 gap-3">
+				{["Boas-vindas", "Coleta", "Matching", "Apresentação"].map((label, index) => (
+					<div key={label} className="bauhaus-stripe rounded-2xl bg-[var(--background-color-muted)] px-4 py-3 flex items-center justify-between">
+						<span className="text-xs uppercase tracking-[0.2em] font-semibold">{label}</span>
+						<span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Stage {index + 1}</span>
+					</div>
+				))}
+			</div>
+		</div>
+
+		<div className="grid gap-6 lg:grid-cols-[400px_1fr]">
 			{/* Sidebar - Lista de Conversas */}
-			<div className="w-96 bg-white border-r border-gray-200 flex flex-col">
-				{/* Header */}
-				<div className="p-4 bg-gray-50 border-b border-gray-200">
-					<h1 className="text-xl font-bold text-gray-900 mb-3">Conversas</h1>
-					<div className="relative">
-						<Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+			<div className="bauhaus-card rounded-3xl border-[3px] border-[var(--foreground-color)] shadow-[10px_10px_0_#0c0c0c] flex flex-col">
+				<div className="border-b border-[var(--foreground-color)] bg-[var(--accent-color)] text-white p-4">
+					<div className="flex items-center justify-between gap-3">
+						<div>
+							<p className="text-xs uppercase tracking-[0.2em]">Conversas</p>
+							<p className="text-sm opacity-80">{filteredConversas.length} threads</p>
+						</div>
+						<div className="bauhaus-pill bg-white text-[var(--foreground-color)]">Inbox</div>
+					</div>
+					<div className="relative mt-3">
+						<Search className="absolute left-3 top-2.5 h-4 w-4 text-white/70" />
 						<Input
 							type="text"
 							placeholder="Buscar conversas..."
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							className="pl-9"
+							className="pl-9 border-2 border-[var(--foreground-color)] bg-white text-[var(--foreground-color)]"
 						/>
 					</div>
 				</div>
 
-				{/* Lista de Conversas */}
-				<div className="flex-1 overflow-y-auto">
+				<div className="flex-1 overflow-y-auto divide-y divide-[var(--foreground-color)]/10">
 					{filteredConversas.map((conversa) => (
 						<div
 							key={conversa.id}
 							onClick={() => setSelectedConversa(conversa)}
-							className={`p-4 border-b border-gray-100 cursor-pointer transition-colors ${
-								selectedConversa?.id === conversa.id
-									? 'bg-blue-50 border-l-4 border-l-blue-600'
-									: 'hover:bg-gray-50'
-							}`}
+							className={`cursor-pointer p-4 transition-transform duration-150 ${selectedConversa?.id === conversa.id ? 'bg-[var(--background-color-muted)] border-l-4 border-[var(--accent-color)]' : 'hover:bg-white'}`}
 						>
 							<div className="flex items-start justify-between mb-1">
-								<h3 className="font-semibold text-gray-900">{conversa.lead_id.nome}</h3>
-								<span className="text-xs text-gray-500">{conversa.last_message_time}</span>
+								<h3 className="font-semibold text-lg">{conversa.lead_id.nome}</h3>
+								<span className="text-xs text-muted-foreground">{conversa.last_message_time}</span>
 							</div>
-							<div className="flex items-center justify-between">
-								<p className="text-sm text-gray-600 truncate flex-1 mr-2">
-									{conversa.last_message}
-								</p>
+							<div className="flex items-center justify-between gap-2">
+								<p className="text-sm text-muted-foreground truncate flex-1">{conversa.last_message}</p>
 								{conversa.unread_count > 0 && (
-									<Badge className="bg-blue-600 text-white text-xs">
+									<Badge className="border-[2px] border-[var(--foreground-color)] bg-[var(--accent-color)] text-white text-xs">
 										{conversa.unread_count}
 									</Badge>
 								)}
 							</div>
-							<div className="mt-2">
-								<Badge className={`text-xs ${getStageColor(conversa.stage)}`}>
+							<div className="mt-2 flex items-center gap-2">
+								<Badge className={`border-2 ${getStageColor(conversa.stage)} uppercase tracking-[0.12em]`}>
 									{getStageLabel(conversa.stage)}
 								</Badge>
 							</div>
@@ -350,7 +407,7 @@ export default function ConversasPage() {
 					))}
 
 					{filteredConversas.length === 0 && (
-						<div className="text-center text-gray-500 py-8">
+						<div className="text-center text-muted-foreground py-8">
 							<p>Nenhuma conversa encontrada</p>
 						</div>
 					)}
@@ -359,75 +416,60 @@ export default function ConversasPage() {
 
 			{/* Área de Chat */}
 			{selectedConversa ? (
-				<div className="flex-1 flex flex-col bg-gray-50">
-					{/* Header do Chat */}
-					<div className="bg-white border-b border-gray-200 p-4">
+				<div className="bauhaus-card rounded-3xl flex flex-col border-[3px] border-[var(--foreground-color)] shadow-[12px_12px_0_#0c0c0c]">
+					<div className="border-b border-[var(--foreground-color)] bg-[var(--background-color-muted)] p-4">
 						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-3">
-								<div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+								<div className="w-12 h-12 rounded-full bg-[var(--accent-color)] flex items-center justify-center text-white font-black">
 									{selectedConversa.lead_id.nome.charAt(0).toUpperCase()}
 								</div>
 								<div>
-									<h2 className="font-semibold text-gray-900">
-										{selectedConversa.lead_id.nome}
-									</h2>
-									<p className="text-xs text-gray-500">
-										{selectedConversa.lead_id.telefone}
-									</p>
+									<h2 className="font-semibold text-xl">{selectedConversa.lead_id.nome}</h2>
+									<p className="text-xs text-muted-foreground">{selectedConversa.lead_id.telefone}</p>
 								</div>
 							</div>
 							<div className="flex items-center gap-2">
-								<Button variant="ghost" size="icon">
+								<Button variant="ghost" size="icon" className="border-2 border-[var(--foreground-color)] rounded-full">
 									<Phone className="h-4 w-4" />
 								</Button>
-								<Button variant="ghost" size="icon">
+								<Button variant="ghost" size="icon" className="border-2 border-[var(--foreground-color)] rounded-full">
 									<Archive className="h-4 w-4" />
 								</Button>
-								<Button variant="ghost" size="icon">
+								<Button variant="ghost" size="icon" className="border-2 border-[var(--foreground-color)] rounded-full">
 									<MoreVertical className="h-4 w-4" />
 								</Button>
 							</div>
 						</div>
 					</div>
 
-					{/* Mensagens */}
-					<div 
+					<div
 						id="chat-messages"
-						className="flex-1 overflow-y-auto p-4 space-y-4"
-						style={{ 
-							backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h100v100H0z\' fill=\'%23f3f4f6\'/%3E%3Cpath d=\'M20 20l60 60M80 20L20 80\' stroke=\'%23e5e7eb\' stroke-width=\'0.5\' opacity=\'0.2\'/%3E%3C/svg%3E")',
-							backgroundSize: '100px 100px'
+						className="flex-1 overflow-y-auto p-6 space-y-4 bg-white"
+						style={{
+							backgroundImage: 'repeating-linear-gradient(90deg, rgba(12,12,12,0.04) 0, rgba(12,12,12,0.04) 1px, transparent 1px, transparent 16px), repeating-linear-gradient(0deg, rgba(12,12,12,0.04) 0, rgba(12,12,12,0.04) 1px, transparent 1px, transparent 16px)'
 						}}
 					>
 						{mensagens.map((mensagem) => (
 							<div
 								key={mensagem.id}
-								className={`flex ${
-									mensagem.direction === 'outgoing' ? 'justify-end' : 'justify-start'
-								}`}
+								className={`flex ${mensagem.direction === 'outgoing' ? 'justify-end' : 'justify-start'}`}
 							>
 								<div
-									className={`max-w-[70%] rounded-lg p-3 ${
+									className={`max-w-[70%] rounded-2xl border-[3px] p-3 ${
 										mensagem.direction === 'outgoing'
-											? 'bg-blue-600 text-white'
-											: 'bg-white text-gray-900 border border-gray-200'
+											? 'bg-[var(--accent-color)] text-white border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]'
+											: 'bg-[var(--background-color-muted)] text-[var(--foreground-color)] border-[var(--foreground-color)]/70'
 									}`}
 								>
 									<p className="text-sm whitespace-pre-wrap">{mensagem.content}</p>
 									<div className="flex items-center justify-end gap-1 mt-1">
-										<span className={`text-xs ${
-											mensagem.direction === 'outgoing' 
-												? 'text-blue-100' 
-												: 'text-gray-500'
-										}`}>
-											{formatTime(mensagem.created_at)}
+										<span className={`text-xs ${mensagem.direction === 'outgoing' ? 'text-white/80' : 'text-muted-foreground'}`}>
+											{new Date(mensagem.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
 										</span>
 										{mensagem.direction === 'outgoing' && (
-											mensagem.status === 'read' ? (
-												<CheckCheck className="h-3 w-3 text-blue-100" />
-											) : (
-												<Check className="h-3 w-3 text-blue-100" />
-											)
+											<>
+												{mensagem.status === 'read' ? <CheckCheck className="h-3 w-3" /> : <Check className="h-3 w-3" />}
+											</>
 										)}
 									</div>
 								</div>
@@ -435,41 +477,39 @@ export default function ConversasPage() {
 						))}
 					</div>
 
-					{/* Input de Mensagem */}
-					<div className="bg-white border-t border-gray-200 p-4">
+					<div className="p-4 border-t border-[var(--foreground-color)] bg-[var(--background-color-muted)]">
 						<div className="flex items-center gap-2">
 							<Input
-								type="text"
 								placeholder="Digite uma mensagem..."
 								value={newMessage}
 								onChange={(e) => setNewMessage(e.target.value)}
-								onKeyPress={(e) => {
+								onKeyDown={(e) => {
 									if (e.key === 'Enter' && !e.shiftKey) {
 										e.preventDefault();
-										sendMessage();
+										handleSendMessage();
 									}
 								}}
-								className="flex-1"
+								className="border-[3px] border-[var(--foreground-color)]"
 							/>
-							<Button 
-								onClick={sendMessage}
-								disabled={!newMessage.trim()}
-								className="bg-blue-600 hover:bg-blue-700"
-							>
-								<Send className="h-4 w-4" />
+							<Button onClick={handleSendMessage} className="border-[3px] border-[var(--foreground-color)] bg-[var(--accent-color)] text-white">
+								<Send className="h-4 w-4 mr-2" />
+								Enviar
 							</Button>
 						</div>
 					</div>
 				</div>
 			) : (
-				<div className="flex-1 flex items-center justify-center bg-gray-50">
-					<div className="text-center text-gray-500">
-						<MessageSquare className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-						<p className="text-lg font-medium">Selecione uma conversa</p>
-						<p className="text-sm">Escolha uma conversa à esquerda para começar</p>
+				<div className="bauhaus-card rounded-3xl flex items-center justify-center border-[3px] border-[var(--foreground-color)] shadow-[12px_12px_0_#0c0c0c]">
+					<div className="text-center max-w-md p-10 space-y-3">
+						<MessageSquare className="h-12 w-12 text-[var(--accent-color)] mx-auto" />
+						<h3 className="text-2xl font-black">Selecione uma conversa</h3>
+						<p className="text-muted-foreground">
+							Escolha um lead na coluna da esquerda para visualizar o histórico e responder rapidamente.
+						</p>
 					</div>
 				</div>
 			)}
 		</div>
-	);
+	</div>
+);
 }

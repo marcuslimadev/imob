@@ -3,59 +3,105 @@
 @tailwind utilities;
 
 :root {
-	--background-color: #ffffff; /* Light background */
-	--foreground-color: #1a202c; /* Darker text for better contrast */
-	--background-color-muted: #f7fafc; /* Lighter muted background */
-	--accent-color: #6644ff; /* Accent color */
-	--background-variant-color: #172940;
-	--accent-color-dark: color-mix(in srgb, var(--accent-color), black 40%);
-	--accent-color-soft: color-mix(in srgb, var(--accent-color), white 20%);
-	--accent-color-light: color-mix(in srgb, var(--accent-color), white 90%);
-	--input-color: #e2e8f0; /* Light gray for inputs */
-	--muted-foreground: #4a5568; /* Darker muted text */
-	--border-color: #cbd5e0; /* Visible borders */
+        --background-color: #f7f2e8;
+        --foreground-color: #0c0c0c;
+        --background-color-muted: #f0e6d2;
+        --accent-color: #d90429;
+        --background-variant-color: #0f1419;
+        --accent-color-dark: #850015;
+        --accent-color-soft: #ffc900;
+        --accent-color-light: #00a8e8;
+        --input-color: #efe5d6;
+        --muted-foreground: #2f2f2f;
+        --border-color: #0c0c0c;
 }
 
 .dark {
-	--background-color: #0e1a2b ; /* Default dark background */
-	--background-color-muted: #1a2332; /* Slightly lighter muted background */
-	--background-variant-color: #172940;
-	--foreground-color: #f7fafc; /* Bright text for dark mode */
-	--muted-foreground: #cbd5e0; /* Lighter muted text in dark mode */
-	--border-color: #2d3748; /* Visible borders in dark mode */
-	--input-color: #2d3748; /* Dark input background */
+        --background-color: #0d0d0d;
+        --background-color-muted: #111216;
+        --background-variant-color: #0f1419;
+        --foreground-color: #f4ede3;
+        --muted-foreground: #cbd5e0;
+        --border-color: #f4ede3;
+        --input-color: #1f242d;
 }
 
 @layer base {
-	html {
-		@apply bg-[var(--background-color)] text-[var(--foreground-color)];
-	}
+        html {
+                @apply bg-[var(--background-color)] text-[var(--foreground-color)];
+        }
+
+        body {
+                background-image:
+                        radial-gradient(circle at 10% 20%, rgba(255, 201, 0, 0.35) 0, rgba(255, 201, 0, 0) 30%),
+                        radial-gradient(circle at 80% 0, rgba(0, 168, 232, 0.35) 0, rgba(0, 168, 232, 0) 28%),
+                        radial-gradient(circle at 30% 90%, rgba(217, 4, 41, 0.25) 0, rgba(217, 4, 41, 0) 32%),
+                        linear-gradient(135deg, rgba(12, 12, 12, 0.04) 25%, transparent 25%),
+                        linear-gradient(-45deg, rgba(12, 12, 12, 0.04) 25%, transparent 25%),
+                        linear-gradient(90deg, rgba(12, 12, 12, 0.05) 1px, transparent 1px),
+                        linear-gradient(0deg, rgba(12, 12, 12, 0.05) 1px, transparent 1px);
+                background-size: 300px 300px, 280px 280px, 320px 320px, 24px 24px, 24px 24px, 160px 160px, 160px 160px;
+                background-position: left top, right top, left bottom, 0 0, 12px 12px, 0 0, 0 0;
+                @apply min-h-screen;
+        }
 }
 
 @layer components {
-	input:focus,
-	textarea:focus,
-	select:focus,
-	button:focus,
-	a:focus,
-	[role='button']:focus {
-		@apply outline-none ring-2 ring-[var(--accent-color)] ring-offset-2 ring-offset-background;
-	}
+        input:focus,
+        textarea:focus,
+        select:focus,
+        button:focus,
+        a:focus,
+        [role='button']:focus {
+                @apply outline-none ring-2 ring-[var(--accent-color)] ring-offset-2 ring-offset-background;
+        }
 
-	[data-background='dark'] {
-		@apply bg-gray dark:bg-[var(--background-variant-color)];
-	}
+        [data-background='dark'] {
+                @apply bg-gray dark:bg-[var(--background-variant-color)];
+        }
 
+        :root:not(.dark) [data-background='dark'] {
+                .inline-flex[class*='bg-gray'] {
+                        @apply bg-[#0f1419] text-white hover:bg-accent;
+                }
+        }
 
-	:root:not(.dark) [data-background='dark'] {
-		.inline-flex[class*='bg-gray'] {
-			@apply bg-[#172940] text-white hover:bg-accent;
-		}
-	}
+        .bauhaus-grid {
+                background-image:
+                        linear-gradient(90deg, rgba(12, 12, 12, 0.08) 1px, transparent 1px),
+                        linear-gradient(0deg, rgba(12, 12, 12, 0.08) 1px, transparent 1px);
+                background-size: 80px 80px;
+        }
+
+        .bauhaus-card {
+                @apply border-[3px] border-[var(--foreground-color)] bg-[var(--background-color)] shadow-[10px_10px_0_#0c0c0c];
+        }
+
+        .bauhaus-pill {
+                @apply inline-flex items-center gap-2 rounded-full border-[2px] border-[var(--foreground-color)] px-3 py-1 uppercase tracking-[0.16em] text-xs font-semibold;
+        }
+
+        .bauhaus-surface {
+                @apply border-[3px] border-[var(--foreground-color)] bg-[var(--background-color)]/90 backdrop-blur shadow-[10px_10px_0_#0c0c0c];
+        }
+
+        .bauhaus-stripe {
+                background-image: repeating-linear-gradient(
+                        135deg,
+                        rgba(12, 12, 12, 0.07) 0px,
+                        rgba(12, 12, 12, 0.07) 12px,
+                        transparent 12px,
+                        transparent 24px
+                );
+        }
+
+        .bauhaus-chip {
+                @apply inline-flex items-center gap-2 rounded-full border-[3px] border-[var(--foreground-color)] px-4 py-2 uppercase tracking-[0.18em] text-xs font-extrabold;
+        }
 }
 
 @layer utilities {
-	a {
-		@apply hover:text-accent transition-colors no-underline;
-	}
+        a {
+                @apply hover:text-accent transition-colors no-underline;
+        }
 }
