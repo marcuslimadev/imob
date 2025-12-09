@@ -287,7 +287,7 @@ export default function ConfiguracoesPage() {
           <TabsContent value="integracoes" className="space-y-8">
             <div className="max-w-2xl">
               <h2 className="text-2xl font-light text-gray-900 mb-6">Configurações de API</h2>
-              <ApiSettings />
+              {company?.id && <ApiSettings companyId={company.id} />}
             </div>
           </TabsContent>
 
