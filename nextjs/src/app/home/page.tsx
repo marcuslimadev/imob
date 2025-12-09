@@ -21,7 +21,7 @@ const featureBlocks = [
     tone: 'bg-[var(--accent-color)] text-[var(--background-color)]',
   },
   {
-    title: 'Pipeline Bauhaus',
+    title: 'Pipeline estrutural',
     description: '17 estágios com progressão visual e foco absoluto na conversão.',
     icon: BarChart3,
     tone: 'bg-[var(--accent-color-soft)] text-[var(--foreground-color)]',
@@ -85,7 +85,7 @@ export default function HomePage() {
         <section className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] items-center">
           <div className="space-y-6">
             <Badge className="bg-[var(--foreground-color)] text-[var(--background-color)] px-4 py-2 text-xs uppercase tracking-[0.24em] rounded-none">
-              Visual Bauhaus • Geometria pura
+              Visual construtivo • Geometria pura
             </Badge>
             <h1 className="text-5xl lg:text-6xl font-extrabold leading-tight">
               CRM geométrico para imobiliárias
@@ -117,12 +117,13 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="relative grid gap-4">
-            {featureBlocks.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={feature.title}
+            <div className="relative grid gap-4">
+              {featureBlocks.map((feature, index) => {
+                const Icon = feature.icon;
+
+                return (
+                  <div
+                    key={feature.title}
                   className={`grid grid-cols-[auto_1fr] items-center gap-4 bauhaus-card p-6 ${feature.tone}`}
                   style={{ transform: index === 1 ? 'rotate(-1deg)' : 'none' }}
                 >
@@ -144,12 +145,13 @@ export default function HomePage() {
             <p className="text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Interface modular</p>
             <h2 className="text-4xl font-extrabold leading-tight">Blocos primários para cada rotina.</h2>
             <p className="text-lg text-[var(--muted-foreground)] max-w-xl">
-              A estrutura do CRM segue a disciplina Bauhaus: formas simples, cores fortes e foco no uso. Nada supérfluo.
+              A estrutura do CRM segue disciplina construtiva: formas simples, cores fortes e foco no uso. Nada supérfluo.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {modules.map(module => {
               const Icon = module.icon;
+
               return (
                 <div key={module.title} className="h-full bauhaus-card p-5 flex flex-col gap-3">
                   <div className="h-12 w-12 bg-[var(--accent-color)] text-[var(--background-color)] flex items-center justify-center font-black text-lg uppercase">{module.title.slice(0, 2)}</div>

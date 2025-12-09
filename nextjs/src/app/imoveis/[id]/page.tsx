@@ -31,17 +31,18 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
-function getPropertyTypeLabel(type: string): string {
-  const types: Record<string, string> = {
-    apartment: 'Apartamento',
-    house: 'Casa',
-    commercial: 'Comercial',
-    land: 'Terreno',
-    farm: 'Fazenda',
-    penthouse: 'Cobertura'
-  };
-  return types[type] || type;
-}
+  function getPropertyTypeLabel(type: string): string {
+    const types: Record<string, string> = {
+      apartment: 'Apartamento',
+      house: 'Casa',
+      commercial: 'Comercial',
+      land: 'Terreno',
+      farm: 'Fazenda',
+      penthouse: 'Cobertura'
+    };
+
+    return types[type] || type;
+  }
 
 export default async function PropertyDetailPage({ params }: PropertyPageProps) {
   const property = await getProperty(params.id);
@@ -65,7 +66,7 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
             ← Voltar à vitrine
           </Link>
           <div className="flex items-center gap-3 text-xs uppercase tracking-[0.16em] font-semibold">
-            <span className="bauhaus-pill bg-[var(--accent-color)] text-white">Bauhaus</span>
+            <span className="bauhaus-pill bg-[var(--accent-color)] text-white">Curadoria</span>
             <span className="bauhaus-pill bg-[var(--accent-color-light)]">Imóvel</span>
           </div>
         </div>
@@ -240,7 +241,7 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
             {property.description && (
               <div className="bauhaus-card p-6 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-black">Descrição Bauhaus</h2>
+                  <h2 className="text-2xl font-black">Descrição detalhada</h2>
                   <div className="h-10 w-10 rounded-full bg-[var(--accent-color)] border-[3px] border-[var(--foreground-color)]" />
                 </div>
                 <p className="text-base leading-relaxed text-[var(--muted-foreground)] whitespace-pre-wrap">
@@ -331,7 +332,7 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
                 <div className="h-4 w-12 bg-[var(--accent-color)] border-[3px] border-[var(--foreground-color)]" />
               </div>
               <p className="text-sm text-[var(--muted-foreground)]">
-                Bloco lateral para reforçar o ritmo Bauhaus: bordas fortes, cores primárias e contraste brutalista.
+                Bloco lateral para reforçar o ritmo gráfico: bordas fortes, cores primárias e contraste marcante.
               </p>
             </div>
           </div>

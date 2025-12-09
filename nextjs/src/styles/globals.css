@@ -3,27 +3,434 @@
 @tailwind utilities;
 
 :root {
-        --background-color: #f7f2e8;
-        --foreground-color: #0c0c0c;
-        --background-color-muted: #f0e6d2;
-        --accent-color: #d90429;
-        --background-variant-color: #0f1419;
-        --accent-color-dark: #850015;
-        --accent-color-soft: #ffc900;
-        --accent-color-light: #00a8e8;
-        --input-color: #efe5d6;
-        --muted-foreground: #2f2f2f;
-        --border-color: #0c0c0c;
+        --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        --color-bg: #f5f5f5;
+        --color-bg-alt: #ececec;
+        --color-surface: #ffffff;
+        --color-border: #dddddd;
+        --color-primary: #0066ff;
+        --color-primary-soft: #e0ecff;
+        --color-accent: #ff9f1c;
+        --color-on-primary: #ffffff;
+        --color-danger: #e63946;
+        --color-success: #2a9d8f;
+        --color-text: #222222;
+        --color-text-muted: #666666;
+        --grid-line-color: rgba(12, 12, 12, 0.05);
+        --bg-spot-1: #e0ecff;
+        --bg-spot-2: #ffe7d6;
+        --bg-spot-3: #d9f2ff;
+
+        --radius-sm: 2px;
+        --radius-md: 6px;
+        --radius-lg: 10px;
+
+        --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.06);
+        --shadow-strong: 0 10px 30px rgba(0, 0, 0, 0.16);
+
+        --control-height: 40px;
+        --control-padding-x: 14px;
+        --control-padding-y: 8px;
+
+        --background-color: var(--color-bg);
+        --background-color-muted: var(--color-bg-alt);
+        --background-variant-color: var(--color-bg-alt);
+        --foreground-color: var(--color-text);
+        --accent-color: var(--color-primary);
+        --accent-color-soft: var(--color-primary-soft);
+        --accent-color-light: var(--color-accent);
+        --accent-color-dark: var(--color-accent);
+        --input-color: var(--color-surface);
+        --muted-foreground: var(--color-text-muted);
+        --border-color: var(--color-border);
 }
 
-.dark {
-        --background-color: #0d0d0d;
-        --background-color-muted: #111216;
-        --background-variant-color: #0f1419;
-        --foreground-color: #f4ede3;
-        --muted-foreground: #cbd5e0;
-        --border-color: #f4ede3;
-        --input-color: #1f242d;
+html,
+body {
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-sans);
+        background: var(--color-bg);
+        color: var(--color-text);
+}
+
+.app-shell {
+        background: var(--color-bg);
+        color: var(--color-text);
+}
+
+.app-header {
+        background: var(--color-surface);
+        border-bottom: 1px solid var(--color-border);
+        box-shadow: var(--shadow-soft);
+}
+
+.app-sidebar {
+        background: var(--color-bg-alt);
+        border-right: 1px solid var(--color-border);
+}
+
+.card {
+        background: var(--color-surface);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: var(--shadow-soft);
+}
+
+.btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--control-height);
+        padding: var(--control-padding-y) var(--control-padding-x);
+        border-radius: var(--radius-md);
+        border: 1px solid transparent;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: var(--font-sans);
+}
+
+.btn-primary {
+        background: var(--color-primary);
+        color: var(--color-on-primary, #ffffff);
+}
+
+.btn-primary:hover {
+        filter: brightness(1.05);
+}
+
+.btn-outline {
+        background: transparent;
+        color: var(--color-primary);
+        border-color: var(--color-primary);
+}
+
+.input {
+        height: var(--control-height);
+        padding: var(--control-padding-y) var(--control-padding-x);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--color-border);
+        background: #ffffff;
+        font-family: var(--font-sans);
+        color: var(--color-text);
+}
+
+.input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 1px var(--color-primary-soft);
+}
+
+.badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 12px;
+        background: var(--color-primary-soft);
+        color: var(--color-primary);
+}
+
+:root[data-theme="bauhaus"] {
+        --font-sans: "Futura", "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "Futura", "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        --color-bg: #f2f2f2;
+        --color-bg-alt: #e6e6e6;
+        --color-surface: #ffffff;
+        --color-border: #111111;
+        --color-primary: #e63946;
+        --color-primary-soft: #ffe3e6;
+        --color-accent: #1d3557;
+        --color-on-primary: #ffffff;
+        --color-danger: #000000;
+        --color-success: #2a9d8f;
+        --color-text: #111111;
+        --color-text-muted: #555555;
+        --grid-line-color: rgba(17, 17, 17, 0.14);
+        --bg-spot-1: #ffe3e6;
+        --bg-spot-2: #f7d21f;
+        --bg-spot-3: #d6e3ff;
+
+        --radius-sm: 0px;
+        --radius-md: 2px;
+        --radius-lg: 4px;
+
+        --shadow-soft: 6px 6px 0 rgba(0, 0, 0, 0.2);
+        --shadow-strong: 10px 10px 0 rgba(0, 0, 0, 0.25);
+        --accent-color-dark: #0f1a3a;
+}
+
+:root[data-theme="ulm"] {
+        --font-sans: "Helvetica Neue", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "Helvetica Neue", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        --color-bg: #f3f4f6;
+        --color-bg-alt: #e5e7eb;
+        --color-surface: #ffffff;
+        --color-border: #d1d5db;
+        --color-primary: #2563eb;
+        --color-primary-soft: #dbeafe;
+        --color-accent: #0f172a;
+        --color-on-primary: #ffffff;
+        --color-danger: #b91c1c;
+        --color-success: #16a34a;
+        --color-text: #111827;
+        --color-text-muted: #6b7280;
+        --grid-line-color: rgba(15, 23, 42, 0.12);
+        --bg-spot-1: #dbeafe;
+        --bg-spot-2: #bfdbfe;
+        --bg-spot-3: #e2e8f0;
+
+        --radius-sm: 2px;
+        --radius-md: 4px;
+        --radius-lg: 6px;
+
+        --shadow-soft: 0 3px 10px rgba(15, 23, 42, 0.1);
+        --shadow-strong: 0 15px 35px rgba(15, 23, 42, 0.18);
+        --accent-color-dark: #0b193e;
+}
+
+:root[data-theme="cranbrook"] {
+        --font-sans: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "IBM Plex Serif", "Georgia", serif;
+
+        --color-bg: #0b0c10;
+        --color-bg-alt: #111827;
+        --color-surface: #111827;
+        --color-border: #374151;
+        --color-primary: #f97316;
+        --color-primary-soft: #4b5563;
+        --color-accent: #a855f7;
+        --color-on-primary: #0b0c10;
+        --color-danger: #f97373;
+        --color-success: #22c55e;
+        --color-text: #f9fafb;
+        --color-text-muted: #9ca3af;
+        --grid-line-color: rgba(249, 250, 251, 0.12);
+        --bg-spot-1: #4338ca;
+        --bg-spot-2: #f97316;
+        --bg-spot-3: #111827;
+
+        --radius-sm: 4px;
+        --radius-md: 10px;
+        --radius-lg: 18px;
+
+        --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.55);
+        --shadow-strong: 0 35px 80px rgba(0, 0, 0, 0.75);
+        --accent-color-dark: #6b21a8;
+}
+
+:root[data-theme="rca"] {
+        --font-sans: "SF Pro Text", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "SF Pro Display", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        --color-bg: #f5f5f4;
+        --color-bg-alt: #e7e5e4;
+        --color-surface: #ffffff;
+        --color-border: #d6d3d1;
+        --color-primary: #1f2933;
+        --color-primary-soft: #e5e7eb;
+        --color-accent: #b68c4a;
+        --color-on-primary: #ffffff;
+        --color-danger: #b91c1c;
+        --color-success: #15803d;
+        --color-text: #111827;
+        --color-text-muted: #6b7280;
+        --grid-line-color: rgba(31, 41, 51, 0.08);
+        --bg-spot-1: #f0d28c;
+        --bg-spot-2: #d6d3d1;
+        --bg-spot-3: #cfd8ff;
+
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --radius-lg: 14px;
+
+        --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.09);
+        --shadow-strong: 0 20px 50px rgba(15, 23, 42, 0.16);
+        --accent-color-dark: #0f1720;
+}
+
+:root[data-theme="risd"] {
+        --font-sans: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        --color-bg: #fefce8;
+        --color-bg-alt: #fef9c3;
+        --color-surface: #ffffff;
+        --color-border: #e5e7eb;
+        --color-primary: #ec4899;
+        --color-primary-soft: #fce7f3;
+        --color-accent: #22c55e;
+        --color-on-primary: #1f2937;
+        --color-danger: #fb7185;
+        --color-success: #22c55e;
+        --color-text: #1f2937;
+        --color-text-muted: #6b7280;
+        --grid-line-color: rgba(31, 41, 55, 0.08);
+        --bg-spot-1: #fce7f3;
+        --bg-spot-2: #fef3c7;
+        --bg-spot-3: #bbf7d0;
+
+        --radius-sm: 6px;
+        --radius-md: 12px;
+        --radius-lg: 20px;
+
+        --shadow-soft: 0 10px 30px rgba(248, 250, 252, 0.9);
+        --shadow-strong: 0 20px 45px rgba(148, 163, 184, 0.5);
+        --accent-color-dark: #be185d;
+}
+
+:root[data-theme="iit"] {
+        --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        --color-bg: #f3f4f6;
+        --color-bg-alt: #e5e7eb;
+        --color-surface: #ffffff;
+        --color-border: #d1d5db;
+        --color-primary: #0ea5e9;
+        --color-primary-soft: #e0f2fe;
+        --color-accent: #14b8a6;
+        --color-on-primary: #f8fafc;
+        --color-danger: #f97316;
+        --color-success: #22c55e;
+        --color-text: #020617;
+        --color-text-muted: #6b7280;
+        --grid-line-color: rgba(2, 6, 23, 0.08);
+        --bg-spot-1: #e0f2fe;
+        --bg-spot-2: #bae6fd;
+        --bg-spot-3: #ccfbf1;
+
+        --radius-sm: 3px;
+        --radius-md: 6px;
+        --radius-lg: 10px;
+
+        --shadow-soft: 0 6px 20px rgba(15, 23, 42, 0.08);
+        --shadow-strong: 0 16px 40px rgba(15, 23, 42, 0.18);
+        --accent-color-dark: #0c4a6e;
+}
+
+:root[data-theme="pratt"] {
+        --font-sans: "Work Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "Playfair Display", "Georgia", serif;
+
+        --color-bg: #0f172a;
+        --color-bg-alt: #020617;
+        --color-surface: #111827;
+        --color-border: #1e293b;
+        --color-primary: #facc15;
+        --color-primary-soft: #4b5563;
+        --color-accent: #38bdf8;
+        --color-on-primary: #0f172a;
+        --color-danger: #f97373;
+        --color-success: #22c55e;
+        --color-text: #e5e7eb;
+        --color-text-muted: #9ca3af;
+        --grid-line-color: rgba(245, 204, 21, 0.14);
+        --bg-spot-1: #facc15;
+        --bg-spot-2: #111827;
+        --bg-spot-3: #1d4ed8;
+
+        --radius-sm: 2px;
+        --radius-md: 6px;
+        --radius-lg: 10px;
+
+        --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.6);
+        --shadow-strong: 0 32px 80px rgba(0, 0, 0, 0.85);
+        --accent-color-dark: #d97706;
+}
+
+:root[data-theme="parsons"] {
+        --font-sans: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        --color-bg: #020617;
+        --color-bg-alt: #0b1120;
+        --color-surface: #0f172a;
+        --color-border: #1e293b;
+        --color-primary: #a855f7;
+        --color-primary-soft: #312e81;
+        --color-accent: #f97316;
+        --color-on-primary: #0b1120;
+        --color-danger: #fb7185;
+        --color-success: #22c55e;
+        --color-text: #e5e7eb;
+        --color-text-muted: #9ca3af;
+        --grid-line-color: rgba(168, 85, 247, 0.12);
+        --bg-spot-1: #a855f7;
+        --bg-spot-2: #0b1120;
+        --bg-spot-3: #f97316;
+
+        --radius-sm: 8px;
+        --radius-md: 14px;
+        --radius-lg: 24px;
+
+        --shadow-soft: 0 18px 38px rgba(15, 23, 42, 0.65);
+        --shadow-strong: 0 28px 70px rgba(15, 23, 42, 0.9);
+        --accent-color-dark: #7e22ce;
+}
+
+:root[data-theme="swiss"] {
+        --font-sans: "Helvetica Neue", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "Helvetica Neue", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        --color-bg: #ffffff;
+        --color-bg-alt: #f3f4f6;
+        --color-surface: #ffffff;
+        --color-border: #e5e7eb;
+        --color-primary: #ef4444;
+        --color-primary-soft: #fee2e2;
+        --color-accent: #111827;
+        --color-on-primary: #ffffff;
+        --color-danger: #b91c1c;
+        --color-success: #16a34a;
+        --color-text: #020617;
+        --color-text-muted: #6b7280;
+        --grid-line-color: rgba(2, 6, 23, 0.07);
+        --bg-spot-1: #fee2e2;
+        --bg-spot-2: #f3f4f6;
+        --bg-spot-3: #ef4444;
+
+        --radius-sm: 0px;
+        --radius-md: 2px;
+        --radius-lg: 4px;
+
+        --shadow-soft: 0 1px 0 rgba(0, 0, 0, 0.04);
+        --shadow-strong: 0 8px 24px rgba(15, 23, 42, 0.1);
+        --accent-color-dark: #0b1224;
+}
+
+:root[data-theme="vkhutemas"] {
+        --font-sans: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-display: "Montserrat", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        --color-bg: #111111;
+        --color-bg-alt: #1a1a1a;
+        --color-surface: #18181b;
+        --color-border: #27272a;
+        --color-primary: #dc2626;
+        --color-primary-soft: #7f1d1d;
+        --color-accent: #facc15;
+        --color-on-primary: #0f0f0f;
+        --color-danger: #f97373;
+        --color-success: #22c55e;
+        --color-text: #f4f4f5;
+        --color-text-muted: #a1a1aa;
+        --grid-line-color: rgba(244, 244, 245, 0.12);
+        --bg-spot-1: #7f1d1d;
+        --bg-spot-2: #facc15;
+        --bg-spot-3: #1f1f1f;
+
+        --radius-sm: 0px;
+        --radius-md: 2px;
+        --radius-lg: 4px;
+
+        --shadow-soft: 8px 8px 0 rgba(0, 0, 0, 0.6);
+        --shadow-strong: 14px 14px 0 rgba(0, 0, 0, 0.85);
+        --accent-color-dark: #7f1d1d;
 }
 
 @layer base {
@@ -33,13 +440,13 @@
 
         body {
                 background-image:
-                        radial-gradient(circle at 10% 20%, rgba(255, 201, 0, 0.35) 0, rgba(255, 201, 0, 0) 30%),
-                        radial-gradient(circle at 80% 0, rgba(0, 168, 232, 0.35) 0, rgba(0, 168, 232, 0) 28%),
-                        radial-gradient(circle at 30% 90%, rgba(217, 4, 41, 0.25) 0, rgba(217, 4, 41, 0) 32%),
-                        linear-gradient(135deg, rgba(12, 12, 12, 0.04) 25%, transparent 25%),
-                        linear-gradient(-45deg, rgba(12, 12, 12, 0.04) 25%, transparent 25%),
-                        linear-gradient(90deg, rgba(12, 12, 12, 0.05) 1px, transparent 1px),
-                        linear-gradient(0deg, rgba(12, 12, 12, 0.05) 1px, transparent 1px);
+                        radial-gradient(circle at 12% 22%, var(--bg-spot-1) 0, transparent 32%),
+                        radial-gradient(circle at 84% 6%, var(--bg-spot-2) 0, transparent 30%),
+                        radial-gradient(circle at 26% 88%, var(--bg-spot-3) 0, transparent 34%),
+                        linear-gradient(135deg, var(--grid-line-color) 25%, transparent 25%),
+                        linear-gradient(-45deg, var(--grid-line-color) 25%, transparent 25%),
+                        linear-gradient(90deg, var(--grid-line-color) 1px, transparent 1px),
+                        linear-gradient(0deg, var(--grid-line-color) 1px, transparent 1px);
                 background-size: 300px 300px, 280px 280px, 320px 320px, 24px 24px, 24px 24px, 160px 160px, 160px 160px;
                 background-position: left top, right top, left bottom, 0 0, 12px 12px, 0 0, 0 0;
                 @apply min-h-screen;
@@ -78,15 +485,11 @@
         }
 
         .bauhaus-pill {
-                @apply inline-flex items-center gap-2 rounded-full px-3 py-1 uppercase tracking-[0.16em] text-xs font-semibold;
-                border: 2px solid var(--foreground-color);
+                @apply inline-flex items-center gap-2 rounded-full border-[2px] border-[var(--foreground-color)] px-3 py-1 uppercase tracking-[0.16em] text-xs font-semibold;
         }
 
         .bauhaus-surface {
-                border: 3px solid var(--foreground-color);
-                background-color: rgba(var(--background-color-rgb), 0.9);
-                backdrop-filter: blur(8px);
-                box-shadow: 10px 10px 0 #0c0c0c;
+                @apply border-[3px] border-[var(--foreground-color)] bg-[var(--background-color)]/90 backdrop-blur shadow-[10px_10px_0_#0c0c0c];
         }
 
         .bauhaus-stripe {

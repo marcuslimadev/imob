@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -320,6 +320,7 @@ export default function LeadsPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
+
     return new Intl.DateTimeFormat('pt-BR', {
       day: '2-digit',
       month: '2-digit',
@@ -494,8 +495,8 @@ export default function LeadsPage() {
       )}
 
       {/* Main Content */}
-      {!authLoading && !isLoading && !error && (
-        <>
+        {!authLoading && !isLoading && !error && (
+          <React.Fragment>
           <div className="mb-10 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
             <div className="bauhaus-card rounded-3xl p-8 relative overflow-hidden">
               <div className="absolute right-6 top-6 flex gap-2">
@@ -503,7 +504,7 @@ export default function LeadsPage() {
                 <span className="bauhaus-pill bg-[var(--accent-color-soft)] text-black">IA assistida</span>
               </div>
               <div className="flex flex-col gap-4 max-w-3xl">
-                <p className="text-sm uppercase tracking-[0.22em] text-[var(--foreground-color)]/80">Radar Bauhaus</p>
+                <p className="text-sm uppercase tracking-[0.22em] text-[var(--foreground-color)]/80">Radar ativo</p>
                 <div className="flex flex-wrap items-end gap-4">
                   <h1 className="text-4xl md:text-5xl font-black leading-tight">
                     Leads em fluxo, nuvem de dados e IA a serviço da negociação
@@ -591,8 +592,6 @@ export default function LeadsPage() {
               </div>
             </div>
           </div>
-        </>
-      )}
 
       {/* Filtros */}
       <Card className="mb-6 border-[3px] border-[var(--foreground-color)] shadow-[10px_10px_0_#0c0c0c]">
@@ -718,6 +717,7 @@ export default function LeadsPage() {
                 ) : (
                   filteredLeads.map((lead) => {
                     const stageInfo = getStageInfo(lead.stage);
+
                     return (
                       <TableRow key={lead.id}>
                         <TableCell className="font-medium">
@@ -997,14 +997,15 @@ export default function LeadsPage() {
                   {isLoadingDetails ? (
                     <div className="text-center py-8 text-muted-foreground">Carregando...</div>
                   ) : leadStageHistory.length > 0 ? (
-                    <div className="relative">
-                      <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border"></div>
-                      {leadStageHistory.map((history, index) => {
-                        const fromStage = getStageInfo(history.from_stage);
-                        const toStage = getStageInfo(history.to_stage);
-                        return (
-                          <div key={history.id} className="relative pl-12 pb-8">
-                            <div className="absolute left-2.5 top-2 w-3 h-3 rounded-full bg-primary"></div>
+                      <div className="relative">
+                        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border"></div>
+                        {leadStageHistory.map((history, index) => {
+                          const fromStage = getStageInfo(history.from_stage);
+                          const toStage = getStageInfo(history.to_stage);
+
+                          return (
+                            <div key={history.id} className="relative pl-12 pb-8">
+                              <div className="absolute left-2.5 top-2 w-3 h-3 rounded-full bg-primary"></div>
                             <div className="text-sm">
                               <div className="flex items-center gap-2 mb-1">
                                 <Badge className={`${fromStage.color} text-white text-xs`}>
@@ -1103,12 +1104,12 @@ export default function LeadsPage() {
                   )}
                 </div>
               </TabsContent>
-            </Tabs>
-          )}
-        </DialogContent>
-      </Dialog>
-      </> 
-      )}
-    </div>
-  );
+              </Tabs>
+            )}
+          </DialogContent>
+        </Dialog>
+      </React.Fragment>
+    )}
+  </div>
+);
 }

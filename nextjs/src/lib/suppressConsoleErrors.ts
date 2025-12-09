@@ -14,9 +14,10 @@ if (typeof window !== 'undefined') {
       if (typeof arg === 'object' && arg !== null) {
         return JSON.stringify(arg);
       }
+
       return String(arg || '');
     }).join(' ');
-    
+
     // Suppress specific error messages
     if (
       argsStr.includes('Error fetching site data') ||
@@ -27,6 +28,7 @@ if (typeof window !== 'undefined') {
       argsStr.includes('users/me') ||
       argsStr.includes('GET http://localhost:8055/users/me')
     ) {
+
       return;
     }
     
@@ -35,9 +37,10 @@ if (typeof window !== 'undefined') {
 
   console.warn = (...args: any[]) => {
     const argsStr = String(args[0] || '');
-    
+
     // Suppress React DevTools download message
     if (argsStr.includes('React DevTools')) {
+
       return;
     }
     
@@ -47,12 +50,13 @@ if (typeof window !== 'undefined') {
   // Suppress console.log for specific messages
   console.log = (...args: any[]) => {
     const argsStr = String(args[0] || '');
-    
+
     // Suppress specific log messages that look like errors
     if (
       argsStr.includes('GET http://localhost:8055/users/me') ||
       argsStr.includes('401 (Unauthorized)')
     ) {
+
       return;
     }
     
@@ -64,22 +68,26 @@ if (typeof window !== 'undefined') {
   window.addEventListener = function(type: string, listener: any, options?: any) {
     // Don't log network errors for failed resource loads
     if (type === 'error') {
-      const wrappedListener = function(event: Event) {
-        const target = event.target as HTMLElement;
-        if (target?.tagName === 'IMG' || target?.tagName === 'SCRIPT' || target?.tagName === 'LINK') {
-          const src = (target as any).src || (target as any).href;
-          if (src?.includes('8055') || src?.includes('401') || src?.includes('403')) {
-            event.preventDefault();
-            event.stopPropagation();
-            return;
+        const wrappedListener = function(event: Event) {
+          const target = event.target as HTMLElement;
+          if (target?.tagName === 'IMG' || target?.tagName === 'SCRIPT' || target?.tagName === 'LINK') {
+            const src = (target as any).src || (target as any).href;
+            if (src?.includes('8055') || src?.includes('401') || src?.includes('403')) {
+              event.preventDefault();
+              event.stopPropagation();
+
+              return;
+            }
           }
-        }
-        return listener(event);
-      };
-      return originalAddEventListener.call(this, type, wrappedListener, options);
-    }
-    return originalAddEventListener.call(this, type, listener, options);
-  };
-}
+
+          return listener(event);
+        };
+
+        return originalAddEventListener.call(this, type, wrappedListener, options);
+      }
+
+      return originalAddEventListener.call(this, type, listener, options);
+    };
+  }
 
 export {};

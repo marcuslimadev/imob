@@ -160,7 +160,7 @@ export default async function DashboardPage() {
       tone: 'bg-[var(--accent-color)] text-[var(--background-color)]'
     },
     {
-      label: 'Pipeline Bauhaus',
+      label: 'Pipeline estrutural',
       description: '17 estágios visuais para cadência, experimentação e foco absoluto em conversão.',
       tone: 'bg-[var(--accent-color-soft)] text-[var(--foreground-color)]'
     },
@@ -206,7 +206,7 @@ export default async function DashboardPage() {
       <div className="relative z-10 mx-auto max-w-6xl px-6 py-12 space-y-12">
         <header className="space-y-6">
           <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em] font-semibold">
-            <Badge className="rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--background-color)] px-4 py-2">Painel Bauhaus</Badge>
+            <Badge className="rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--background-color)] px-4 py-2">Painel gráfico</Badge>
             <span className="bauhaus-chip bg-[var(--foreground-color)] text-[var(--background-color)]">modo geométrico</span>
             <span className="bauhaus-chip bg-[var(--accent-color-soft)] text-[var(--foreground-color)]">17 estágios</span>
           </div>
@@ -215,7 +215,7 @@ export default async function DashboardPage() {
             <div className="space-y-4 max-w-2xl">
               <h1 className="text-4xl lg:text-5xl font-extrabold leading-tight">
                 Operação geométrica, métricas instantâneas.
-                <span className="block text-[var(--accent-color)]">CRM com ritmo Bauhaus.</span>
+                <span className="block text-[var(--accent-color)]">CRM com ritmo geométrico.</span>
               </h1>
               <p className="text-lg text-[var(--muted-foreground)]">
                 Painel redesenhado para cadenciar leads, acompanhar conversas e enxergar conversão sem ruído.

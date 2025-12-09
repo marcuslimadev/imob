@@ -22,10 +22,14 @@ export default function ImageUpload({ onImagesUploaded, maxFiles = 10 }: ImageUp
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
-    if (!files || files.length === 0) return;
+    if (!files || files.length === 0) {
+
+      return;
+    }
 
     if (uploadedImages.length + files.length > maxFiles) {
       setError(`Máximo de ${maxFiles} imagens permitido`);
+
       return;
     }
 

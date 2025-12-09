@@ -1,6 +1,6 @@
-import { directusServer } from '@/lib/directus/client';
-import { readItems } from '@directus/sdk';
 import Link from 'next/link';
+import { headers } from 'next/headers';
+import { fetchProperties } from '@/lib/directus/realEstate';
 
 interface Property {
   id: string;
@@ -18,44 +18,84 @@ interface Property {
   featured: boolean;
 }
 
-async function getFeaturedProperties(): Promise<Property[]> {
+async function getFeaturedProperties({
+  companySlug,
+  search,
+  propertyType,
+  transactionType,
+  city,
+  state
+}: {
+  companySlug?: string;
+  search?: string;
+  propertyType?: string;
+  transactionType?: string;
+  city?: string;
+  state?: string;
+}): Promise<Property[]> {
   try {
-    // @ts-ignore - Using custom schema
-    const properties = await directusServer.request(
-      readItems('properties', {
-        limit: 12,
-        fields: ['*']
-      })
-    );
-    return properties as any as Property[];
+    const properties = await fetchProperties({
+      companySlug,
+      featuredOnly: true,
+      limit: 24,
+      searchTerm: search,
+      propertyType,
+      transactionType,
+      city,
+      state
+    });
+
+    return properties as Property[];
   } catch (error) {
     console.error('Error fetching properties:', error);
+
     return [];
   }
 }
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0
-  }).format(price);
-}
+  function formatPrice(price: number): string {
 
-function getPropertyTypeLabel(type: string): string {
-  const types: Record<string, string> = {
-    apartment: 'Apartamento',
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 0
+    }).format(price);
+  }
+
+  function getPropertyTypeLabel(type: string): string {
+    const types: Record<string, string> = {
+      apartment: 'Apartamento',
     house: 'Casa',
     commercial: 'Comercial',
-    land: 'Terreno',
-    farm: 'Fazenda',
-    penthouse: 'Cobertura'
-  };
-  return types[type] || type;
-}
+      land: 'Terreno',
+      farm: 'Fazenda',
+      penthouse: 'Cobertura'
+    };
 
-export default async function VitrineHomePage() {
-  const properties = await getFeaturedProperties();
+    return types[type] || type;
+  }
+
+export default async function VitrineHomePage({
+  searchParams
+}: {
+  searchParams?: Record<string, string | string[]>;
+}) {
+  const headersList = headers();
+  const companySlug = headersList.get('x-company-slug') || undefined;
+  const search = typeof searchParams?.q === 'string' ? searchParams?.q : undefined;
+  const propertyType = typeof searchParams?.tipo === 'string' ? searchParams?.tipo : undefined;
+  const transactionType = typeof searchParams?.transacao === 'string' ? searchParams?.transacao : undefined;
+  const city = typeof searchParams?.cidade === 'string' ? searchParams?.cidade : undefined;
+  const state = typeof searchParams?.estado === 'string' ? searchParams?.estado : undefined;
+
+  const properties = await getFeaturedProperties({
+    companySlug,
+    search,
+    propertyType,
+    transactionType,
+    city,
+    state
+  });
 
   return (
     <div className="min-h-screen bg-[var(--background-color)] text-[var(--foreground-color)]">
@@ -70,7 +110,7 @@ export default async function VitrineHomePage() {
               mapa vivo de imóveis
             </div>
             <h1 className="text-4xl md:text-5xl font-black leading-tight">
-              Uma vitrine Bauhaus com imóveis selecionados à prova de indecisão
+              Uma vitrine geométrica com imóveis selecionados à prova de indecisão
             </h1>
             <p className="max-w-2xl text-lg md:text-xl text-[var(--muted-foreground)]">
               Combine geometria e propósito: encontre apartamentos, casas e comerciais com filtros rápidos, preços claros e um grid que respira ritmo e contraste.
@@ -85,12 +125,56 @@ export default async function VitrineHomePage() {
                 <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">
                   Pesquise por bairro, cidade ou código e deixe o grid modular entregar as melhores combinações.
                 </p>
-                <form className="flex flex-col gap-3">
+                <form className="flex flex-col gap-3" method="get">
                   <input
                     type="text"
                     placeholder="Buscar por cidade, bairro ou código..."
+                    name="q"
+                    defaultValue={search}
                     className="w-full rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--input-color)] px-4 py-3 text-base placeholder:text-[var(--muted-foreground)]"
                   />
+                  <div className="grid grid-cols-2 gap-3 text-sm font-semibold uppercase tracking-[0.14em]">
+                    <select
+                      name="tipo"
+                      defaultValue={propertyType || ''}
+                      className="w-full rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--input-color)] px-3 py-3 text-xs"
+                    >
+                      <option value="">Tipologia</option>
+                      <option value="apartment">Apartamento</option>
+                      <option value="house">Casa</option>
+                      <option value="commercial">Comercial</option>
+                      <option value="land">Terreno</option>
+                      <option value="farm">Fazenda</option>
+                      <option value="penthouse">Cobertura</option>
+                    </select>
+                    <select
+                      name="transacao"
+                      defaultValue={transactionType || ''}
+                      className="w-full rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--input-color)] px-3 py-3 text-xs"
+                    >
+                      <option value="">Transação</option>
+                      <option value="sale">Venda</option>
+                      <option value="rent">Aluguel</option>
+                      <option value="both">Venda + Aluguel</option>
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm font-semibold uppercase tracking-[0.14em]">
+                    <input
+                      type="text"
+                      name="cidade"
+                      defaultValue={city}
+                      placeholder="Cidade"
+                      className="w-full rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--input-color)] px-3 py-3 text-xs placeholder:text-[var(--muted-foreground)]"
+                    />
+                    <input
+                      type="text"
+                      name="estado"
+                      defaultValue={state}
+                      placeholder="UF"
+                      maxLength={2}
+                      className="w-full rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--input-color)] px-3 py-3 text-xs uppercase placeholder:text-[var(--muted-foreground)]"
+                    />
+                  </div>
                   <button
                     type="submit"
                     className="inline-flex justify-center items-center gap-2 bg-[var(--accent-color)] text-white font-semibold px-5 py-3 border-[3px] border-[var(--foreground-color)] shadow-[8px_8px_0_#0c0c0c] uppercase tracking-[0.14em]"
@@ -132,7 +216,7 @@ export default async function VitrineHomePage() {
                 <div className="h-16 w-16 rounded-full bg-[var(--accent-color)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]" />
               </div>
               <p className="text-base text-[var(--muted-foreground)] leading-relaxed">
-                Blocos de imóveis em grid 4x4, rótulos fortes, preços em destaque e selos de tipologia que seguem o vermelho Bauhaus.
+                Blocos de imóveis em grid 4x4, rótulos fortes, preços em destaque e selos de tipologia que seguem a paleta primária.
               </p>
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="p-4 bg-[var(--background-color-muted)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
@@ -167,6 +251,21 @@ export default async function VitrineHomePage() {
               </button>
             ))}
           </div>
+          {(search || propertyType || transactionType || city || state) && (
+            <div className="flex flex-wrap gap-2 items-center text-xs font-semibold uppercase tracking-[0.14em]">
+              {search && <span className="bauhaus-chip bg-[var(--accent-color-soft)]">Busca: {search}</span>}
+              {propertyType && <span className="bauhaus-chip bg-[var(--background-color)]">Tipo: {getPropertyTypeLabel(propertyType)}</span>}
+              {transactionType && <span className="bauhaus-chip bg-[var(--background-color)]">Transação: {transactionType}</span>}
+              {city && <span className="bauhaus-chip bg-[var(--background-color)]">Cidade: {city}</span>}
+              {state && <span className="bauhaus-chip bg-[var(--background-color)]">UF: {state.toUpperCase()}</span>}
+              <a
+                href="/vitrine"
+                className="bauhaus-chip bg-[var(--accent-color)] text-white border-[2px] border-[var(--foreground-color)]"
+              >
+                Limpar
+              </a>
+            </div>
+          )}
         </div>
       </section>
 
@@ -191,7 +290,7 @@ export default async function VitrineHomePage() {
           <div className="bauhaus-card p-10 text-center">
             <p className="text-lg font-semibold">Nenhum imóvel disponível no momento</p>
             <p className="text-[var(--muted-foreground)] mt-2">
-              Voltamos já com novas opções para seu radar Bauhaus.
+              Voltamos já com novas opções para seu radar visual.
             </p>
           </div>
         ) : (

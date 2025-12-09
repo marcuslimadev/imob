@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { directusClient } from '@/lib/directus/client';
+import { createItem } from '@directus/sdk';
 
 interface FormularioContatoProps {
   propertyId?: string;
@@ -14,6 +16,8 @@ export default function FormularioContato({ propertyId, companyId, interestType 
     email: '',
     phone: '',
     interest_type: interestType,
+    budget_min: 0,
+    budget_max: 0,
     message: ''
   });
 
@@ -33,154 +37,10 @@ export default function FormularioContato({ propertyId, companyId, interestType 
     setSuccess(false);
 
     try {
-      const response = await fetch('/api/leads', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...formData,
-          property_id: propertyId,
-          company_id: companyId
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao enviar mensagem');
-      }
-
-      setSuccess(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        interest_type: interestType,
-        message: ''
-      });
-
-      // Resetar mensagem de sucesso após 5 segundos
-      setTimeout(() => setSuccess(false), 5000);
-
-    } catch (err) {
-      console.error('Error submitting form:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao enviar mensagem. Tente novamente.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (success) {
-    return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-        <svg className="mx-auto h-12 w-12 text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <h3 className="text-lg font-semibold text-green-900 mb-2">
-          Mensagem Enviada!
-        </h3>
-        <p className="text-green-700 text-sm">
-          Entraremos em contato em breve.
-        </p>
-        <button
-          onClick={() => setSuccess(false)}
-          className="mt-4 text-sm text-green-600 hover:text-green-800 underline"
-        >
-          Enviar nova mensagem
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Nome *
-        </label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Seu nome completo"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          E-mail *
-        </label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="seu@email.com"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Telefone *
-        </label>
-        <input
-          type="tel"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="(00) 00000-0000"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Mensagem
-        </label>
-        <textarea
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Gostaria de mais informações..."
-        />
-      </div>
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {loading ? 'Enviando...' : 'Enviar Mensagem'}
-      </button>
-    </form>
-  );
-}
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess(false);
-
-    try {
       const leadData = {
         ...formData,
         company_id: companyId,
+        property_id: propertyId,
         lead_source: 'website',
         lead_score: 50,
         stage: 'new' as const
@@ -195,7 +55,7 @@ export default function FormularioContato({ propertyId, companyId, interestType 
         name: '',
         email: '',
         phone: '',
-        interest_type: 'buy',
+        interest_type: interestType,
         budget_min: 0,
         budget_max: 0,
         message: ''
@@ -209,6 +69,7 @@ export default function FormularioContato({ propertyId, companyId, interestType 
   }
 
   if (success) {
+
     return (
       <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
         <div className="text-center">
@@ -247,7 +108,7 @@ export default function FormularioContato({ propertyId, companyId, interestType 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
       <h3 className="text-xl font-bold mb-4">Entre em Contato</h3>
-      
+
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4 text-sm">
           {error}

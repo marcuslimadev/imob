@@ -58,7 +58,7 @@ export default function LoginPage() {
             <div className="inline-flex items-center gap-3 bg-[var(--foreground-color)] text-[var(--background-color)] px-4 py-2 uppercase tracking-[0.18em] text-xs">CRM geométrico</div>
             <h1 className="text-5xl font-extrabold leading-tight text-[var(--foreground-color)]">
               IMOBI, reimaginado
-              <span className="block text-[var(--accent-color)]">no ritmo Bauhaus.</span>
+              <span className="block text-[var(--accent-color)]">no ritmo geométrico.</span>
             </h1>
             <p className="text-lg text-[var(--foreground-color)]/80 max-w-xl">
               Formas primárias, contrastes ousados e tipografia geométrica criam uma experiência de login totalmente nova.
@@ -81,7 +81,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center gap-3 text-sm font-semibold text-[var(--foreground-color)] uppercase tracking-[0.18em]">
-            <span className="bauhaus-pill bg-[var(--foreground-color)] text-[var(--background-color)]">Bauhaus</span>
+            <span className="bauhaus-pill bg-[var(--foreground-color)] text-[var(--background-color)]">Ateliê</span>
             <span className="bauhaus-pill bg-[var(--accent-color)] text-[var(--background-color)]">1925</span>
             <span className="bauhaus-pill bg-[var(--accent-color-light)] text-[var(--foreground-color)]">Geometria</span>
           </div>

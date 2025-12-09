@@ -119,24 +119,27 @@ export default function NovaAssinaturaPage() {
     setSignatarios(updated);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!user?.company_id) {
-      setError('Erro de autenticação');
-      return;
-    }
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    if (!formData.assunto) {
-      setError('Informe o assunto do documento');
-      return;
-    }
+      if (!user?.company_id) {
+        setError('Erro de autenticação');
 
-    const validSignatarios = signatarios.filter(s => s.nome && s.email);
-    if (validSignatarios.length === 0) {
-      setError('Adicione pelo menos um signatário');
-      return;
-    }
+        return;
+      }
+
+      if (!formData.assunto) {
+        setError('Informe o assunto do documento');
+
+        return;
+      }
+
+      const validSignatarios = signatarios.filter(s => s.nome && s.email);
+      if (validSignatarios.length === 0) {
+        setError('Adicione pelo menos um signatário');
+
+        return;
+      }
 
     try {
       setLoading(true);

@@ -8,7 +8,10 @@ import { useEffect } from 'react';
  */
 export default function SuppressConsoleErrors() {
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+
+      return;
+    }
 
     // Store original console methods
     const originalError = console.error;
@@ -23,9 +26,11 @@ export default function SuppressConsoleErrors() {
           try {
             return JSON.stringify(arg);
           } catch {
+
             return String(arg);
           }
         }
+
         return String(arg || '');
       }).join(' ');
       
@@ -40,6 +45,7 @@ export default function SuppressConsoleErrors() {
         message.includes('localhost:8055') ||
         message.includes('GET http://localhost:8055/users/me')
       ) {
+
         return; // Suppress
       }
       
@@ -52,6 +58,7 @@ export default function SuppressConsoleErrors() {
       
       // Filter out React DevTools message
       if (message.includes('React DevTools')) {
+
         return; // Suppress
       }
       
@@ -67,6 +74,7 @@ export default function SuppressConsoleErrors() {
         message.includes('GET http://localhost:8055/users/me') ||
         message.includes('401 (Unauthorized)')
       ) {
+
         return; // Suppress
       }
       

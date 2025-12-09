@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Send, Phone, MoreVertical, Archive, Check, CheckCheck, Loader2, X } from 'lucide-react';
+import { Search, Send, Phone, MoreVertical, Archive, Check, CheckCheck, Loader2, X, MessageSquare } from 'lucide-react';
 import { directusClient } from '@/lib/directus/client';
 import { readItems } from '@directus/sdk';
 import { useAuth } from '@/contexts/AuthContext';
@@ -133,12 +133,13 @@ export default function ConversasPage() {
 							unread_count: unreadMessages.length > 0 ? unreadMessages[0].count.id : 0,
 							archived: conv.archived || false
 						};
-					} catch (err) {
-						console.error('Erro ao processar conversa:', err);
-						return null;
-					}
-				})
-			);
+                                        } catch (err) {
+                                                console.error('Erro ao processar conversa:', err);
+
+                                                return null;
+                                        }
+                                })
+                        );
 
 			setConversas(conversasComMensagens.filter(c => c !== null) as Conversa[]);
 		} catch (error) {
@@ -232,32 +233,34 @@ export default function ConversasPage() {
 	};
 
 	const getStageColor = (stage: string) => {
-		const colors: Record<string, string> = {
-			boas_vindas: 'bg-blue-100 text-blue-700',
-			coleta_dados: 'bg-purple-100 text-purple-700',
-			matching: 'bg-green-100 text-green-700',
-			apresentacao: 'bg-cyan-100 text-cyan-700',
-			interesse: 'bg-teal-100 text-teal-700',
-			agendamento: 'bg-orange-100 text-orange-700',
-			negociacao: 'bg-yellow-100 text-yellow-700',
-			atendimento_humano: 'bg-pink-100 text-pink-700'
-		};
-		return colors[stage] || 'bg-gray-100 text-gray-700';
-	};
+                const colors: Record<string, string> = {
+                        boas_vindas: 'bg-blue-100 text-blue-700',
+                        coleta_dados: 'bg-purple-100 text-purple-700',
+                        matching: 'bg-green-100 text-green-700',
+                        apresentacao: 'bg-cyan-100 text-cyan-700',
+                        interesse: 'bg-teal-100 text-teal-700',
+                        agendamento: 'bg-orange-100 text-orange-700',
+                        negociacao: 'bg-yellow-100 text-yellow-700',
+                        atendimento_humano: 'bg-pink-100 text-pink-700'
+                };
 
-	const getStageLabel = (stage: string) => {
-		const labels: Record<string, string> = {
+                return colors[stage] || 'bg-gray-100 text-gray-700';
+        };
+
+        const getStageLabel = (stage: string) => {
+                const labels: Record<string, string> = {
 			boas_vindas: 'Boas-vindas',
 			coleta_dados: 'Coleta',
 			matching: 'Matching',
-			apresentacao: 'Apresentação',
-			interesse: 'Interesse',
-			agendamento: 'Agendamento',
-			negociacao: 'Negociação',
-			atendimento_humano: 'Humano'
-		};
-		return labels[stage] || stage;
-	};
+                        apresentacao: 'Apresentação',
+                        interesse: 'Interesse',
+                        agendamento: 'Agendamento',
+                        negociacao: 'Negociação',
+                        atendimento_humano: 'Humano'
+                };
+
+                return labels[stage] || stage;
+        };
 
         const filteredConversas = conversas.filter(conv =>
                 conv.lead_id.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -268,24 +271,26 @@ export default function ConversasPage() {
         const activePipelines = conversas.filter((conv) => conv.stage !== 'atendimento_humano').length;
         const humanTransfers = conversas.filter((conv) => conv.stage === 'atendimento_humano').length;
 
-	// Loading State
-	if (authLoading || loading) {
-		return (
-			<div className="flex items-center justify-center min-h-screen">
-				<div className="text-center">
-					<Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+        // Loading State
+        if (authLoading || loading) {
+
+                return (
+                        <div className="flex items-center justify-center min-h-screen">
+                                <div className="text-center">
+                                        <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
 					<p className="text-gray-600">Carregando conversas...</p>
                 </div>
         </div>
 );
 }
 
-	// Error State
-	if (error) {
-		return (
-			<div className="flex items-center justify-center min-h-screen">
-				<Card className="max-w-md border-destructive">
-					<div className="p-6">
+        // Error State
+        if (error) {
+
+                return (
+                        <div className="flex items-center justify-center min-h-screen">
+                                <Card className="max-w-md border-destructive">
+                                        <div className="p-6">
 						<div className="flex items-center gap-2 text-destructive mb-2">
 							<X className="h-5 w-5" />
 							<p className="font-semibold">Erro ao carregar conversas</p>
@@ -312,7 +317,7 @@ export default function ConversasPage() {
 					<div className="flex items-start justify-between gap-4">
 						<div className="space-y-3">
 							<p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Central de Conversas</p>
-							<h1 className="text-4xl font-black leading-tight">Bauhaus chat desk — blocos sólidos, cores fortes e foco em velocidade.</h1>
+                                                    <h1 className="text-4xl font-black leading-tight">Desk de conversas — blocos sólidos, cores fortes e foco em velocidade.</h1>
 							<p className="text-muted-foreground max-w-2xl">Monitore unread, transfira para humano e mantenha contexto visual com um layout modular.</p>
 							<div className="flex flex-wrap gap-3">
 								<span className="bauhaus-pill bg-[var(--accent-color)] text-white">Operação</span>

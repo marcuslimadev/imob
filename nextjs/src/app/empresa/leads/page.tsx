@@ -9,6 +9,7 @@ import { Plus } from 'lucide-react';
 async function getCompanyLeads(companyId: string) {
   try {
     // @ts-ignore - Custom schema
+    
     return await directusServer.request(
       readItems('leads', {
         filter: {
@@ -21,6 +22,7 @@ async function getCompanyLeads(companyId: string) {
     );
   } catch (error) {
     console.error('Error fetching leads:', error);
+    
     return [];
   }
 }
@@ -76,6 +78,7 @@ async function getLeadsStats(companyId: string) {
       })
     );
 
+    
     return {
       total: Number(total[0]?.count || 0),
       new: Number(newLeads[0]?.count || 0),
@@ -84,6 +87,7 @@ async function getLeadsStats(companyId: string) {
     };
   } catch (error) {
     console.error('Error fetching leads stats:', error);
+    
     return { total: 0, new: 0, contacted: 0, won: 0 };
   }
 }
@@ -98,6 +102,7 @@ function getStageLabel(stage: string): string {
     won: 'Fechado',
     lost: 'Perdido'
   };
+
   return stages[stage] || stage;
 }
 
@@ -111,6 +116,7 @@ function getStageColor(stage: string): string {
     won: 'bg-green-100 text-green-800',
     lost: 'bg-gray-100 text-gray-800'
   };
+
   return colors[stage] || 'bg-gray-100 text-gray-800';
 }
 
@@ -119,11 +125,13 @@ function getInterestTypeLabel(type: string): string {
     buy: 'Compra',
     rent: 'Aluguel'
   };
+
   return types[type] || type;
 }
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
+
   return date.toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: '2-digit',
@@ -141,7 +149,8 @@ function formatPhone(phone: string): string {
   } else if (cleaned.length === 10) {
     return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
   }
-  
+
+
   return phone;
 }
 

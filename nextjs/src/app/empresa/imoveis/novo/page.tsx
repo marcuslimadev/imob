@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { directusClient } from '@/lib/directus/client';
 import { createItem } from '@directus/sdk';
 import ImageUpload from '@/components/forms/ImageUpload';
+import { lookupCep } from '@/lib/cep';
 
 interface UploadedImage {
   id: string;
@@ -19,6 +20,8 @@ export default function NovoImovelPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [cepStatus, setCepStatus] = useState('');
+  const [cepLoading, setCepLoading] = useState(false);
 
   // Redirect if not authenticated
   if (!user?.company_id) {
@@ -63,10 +66,47 @@ export default function NovoImovelPage() {
     }
   }
 
+  async function handleCepLookup(rawCep: string) {
+    const sanitized = (rawCep || '').replace(/\D/g, '');
+
+    if (!sanitized) {
+      setCepStatus('');
+      return;
+    }
+
+    setCepLoading(true);
+    setCepStatus('');
+
+    try {
+      const data = await lookupCep(sanitized);
+
+      setFormData(prev => ({
+        ...prev,
+        zip_code: data.cep,
+        address: prev.address || data.street,
+        neighborhood: prev.neighborhood || data.neighborhood,
+        city: prev.city || data.city,
+        state: prev.state || data.state,
+      }));
+
+      setCepStatus('Endereço preenchido automaticamente.');
+    } catch (err: any) {
+      setCepStatus(err.message || 'Não foi possível buscar o CEP.');
+    } finally {
+      setCepLoading(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    if (formData.area_total <= 0 || formData.area_built <= 0) {
+      setError('Área total e área construída devem ser maiores que zero.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const propertyData = {
@@ -199,8 +239,32 @@ export default function NovoImovelPage() {
           {/* Localização */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-bold mb-4">Localização</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">CEP</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    name="zip_code"
+                    value={formData.zip_code}
+                    onChange={handleChange}
+                    onBlur={() => handleCepLookup(formData.zip_code)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Digite o CEP"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleCepLookup(formData.zip_code)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md"
+                    disabled={cepLoading}
+                  >
+                    {cepLoading ? 'Buscando...' : 'Buscar'}
+                  </button>
+                </div>
+                {cepStatus && <p className="mt-2 text-sm text-gray-600">{cepStatus}</p>}
+              </div>
+
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Endereço *
@@ -226,20 +290,6 @@ export default function NovoImovelPage() {
                   value={formData.neighborhood}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  CEP
-                </label>
-                <input
-                  type="text"
-                  name="zip_code"
-                  value={formData.zip_code}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="00000-000"
                 />
               </div>
 

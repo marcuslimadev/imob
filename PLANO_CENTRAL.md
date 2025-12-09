@@ -37,20 +37,20 @@
 
 ## 📊 VISÃO GERAL DO PROGRESSO
 
-### Status Global: **42% Concluído** (+7% no Sprint 1)
+### Status Global: **66% Concluído** (+21% no Sprint 1)
 
 | Módulo | Status | Progresso | Prioridade |
 |--------|--------|-----------|------------|
 | **Infraestrutura Base** | ✅ Completo | 100% | - |
 | **Deploy Produção** | 🟢 Pronto | 100% (assets) | 🔴 Alta |
 | **Sistema de Temas** | ✅ Completo | 100% (novo) | ✅ Concluído |
-| **Autenticação Multi-tenant** | ✅ Completo | 100% (+40%) | ✅ Concluído |
-| **Pessoas (Leads/Clientes)** | ⚠️ Parcial | 60% (+10%) | 🟡 Média |
-| **Imóveis** | ✅ Completo | 100% (+10%) | ✅ Concluído |
+| **Autenticação Multi-tenant** | ⚠️ Parcial | 85% (+40%) | 🔴 Alta |
+| **Pessoas (Leads/Clientes)** | ⚠️ Parcial | 85% (+35%) | 🟡 Média |
+| **Imóveis** | ✅ Completo | 95% (+15%) | ✅ Concluído |
 | **Conversas WhatsApp** | ⚠️ Parcial | 50% (+10%) | 🟡 Média |
 | **Vistoria** | ❌ Não Iniciado | 0% | 🔴 Alta |
 | **Assinatura Eletrônica** | ⚠️ Preparado | 20% | 🟡 Média |
-| **Vitrines Públicas** | ❌ Não Iniciado | 0% | 🔴 Alta |
+| **Vitrines Públicas** | ⚠️ Parcial | 40% | 🔴 Alta |
 | **Dashboard/Analytics** | ✅ Completo | 100% (+70%) | ✅ Concluído |
 | **Admin Multi-empresa** | ⚠️ Mock | 25% | 🟡 Média |
 
@@ -88,7 +88,7 @@ pnpm dev  # http://localhost:4000
 
 **O que está pronto:**
 - ✅ 10 temas baseados em escolas de design renomadas
-- ✅ CSS Variables system (`themes.css` com 250+ linhas)
+- ✅ CSS Variables system (globals.css com 400+ linhas)
 - ✅ Data-theme attribute switching (sem reload)
 - ✅ Theme selector UI com preview visual
 - ✅ Campo `theme_key` em `companies` collection
@@ -109,10 +109,8 @@ pnpm dev  # http://localhost:4000
 
 **Arquitetura:**
 ```css
-/* themes.css */
 :root[data-theme="bauhaus"] {
   --color-primary: #e63946;
-  --color-accent: #1d3557;
   --radius-md: 2px;
   --shadow-soft: 6px 6px 0 rgba(0,0,0,0.2);
   /* ... */
@@ -125,29 +123,31 @@ pnpm dev  # http://localhost:4000
 3. Clica "Salvar Alterações" → persiste `theme_key` no banco
 4. Layout busca tema no mount → aplica `data-theme` attribute
 
-**Documentação completa:** `THEME_SYSTEM.md`
-
-**Commit:** a78fe55 (pushed to main)
+**Arquivos:**
+- `nextjs/src/styles/globals.css` - Todos os 10 temas inline
+- `nextjs/src/lib/design-themes.ts` - Metadata dos temas
+- `nextjs/src/components/ui/ThemeProvider.tsx` - Hook + sync
+- `nextjs/src/app/layout.tsx` - Script de inicialização
 
 ---
 
-### 2️⃣ Autenticação Multi-tenant ⚠️ (60%)
+### 2️⃣ Autenticação Multi-tenant ⚠️ (85%)
 
 **✅ O que funciona:**
 - Login via Directus SDK (`/login`)
 - Context de autenticação (`AuthContext.tsx`)
 - Middleware detecta empresa por subdomínio/query
 - Campo `company_id` existe em `directus_users`
+- Middleware protege `/empresa/*`, `/admin/*`, `/leads`, `/conversas` e renova tokens com refresh cookie automaticamente
+- `/api/auth/me` renova sessão silenciosamente e persiste cookies + `design-theme` sincronizado
 
 **❌ O que falta:**
-- [ ] Proteção server-side nas rotas `/empresa/*` e `/admin/*`
-- [ ] Middleware de auth (redirect se não autenticado)
-- [ ] Refresh token automático
-- [ ] Logout completo (limpar cookies)
 - [ ] Sistema de permissões por role (scripts prontos, não aplicados)
+- [ ] Validação `company_id` em todas as queries/filters dos módulos
 
 **Arquivos críticos:**
-- `nextjs/src/middleware.ts` (detecção tenant)
+- `nextjs/src/middleware.ts` (proteção + refresh)
+- `nextjs/src/app/api/auth/me/route.ts` (renovação server-side)
 - `nextjs/src/contexts/AuthContext.tsx` (sessão)
 - `directus/setup-roles.js` (criar roles)
 - `directus/setup-role-permissions.js` (aplicar permissões)
@@ -155,39 +155,28 @@ pnpm dev  # http://localhost:4000
 **Tarefas imediatas:**
 1. Executar `node setup-role-permissions.js`
 2. Exportar `access/permissions.json` do Directus
-3. Criar middleware de auth em `nextjs/src/middleware.ts`
-4. Adicionar validação `company_id` em todas as queries
+3. Propagar `company_id` obrigatório em consultas e mutações
 
 ---
 
-### 3️⃣ Pessoas (Leads/Clientes) ⚠️ (50%)
+### 3️⃣ Pessoas (Leads/Clientes) ⚠️ (85%)
 
 **✅ Collection `leads` existe com:**
 - Nome, email, telefone, CPF
 - Endereço completo
 - Status, origem, company_id
 
+**✅ Deliveries recentes:**
+- Lista `/empresa/pessoas` reestilizada com filtros PF/PJ, estágio visível e CTA de edição.
+- Formulário unificado de criação/edição com tabs, CEP assistido e campos de documento PF/PJ.
+- Edição completa de pessoas com validação de obrigatórios e alinhamento ao tema dinâmico.
+
 **❌ O que falta:**
+- Collection `pessoa_contatos` para múltiplos contatos e UI correspondente.
+- Sincronizar types do Directus (ENUM `tipo`) e expor histórico de estágio/logs.
+- Substituir mocks remanescentes no funil de leads em tempo real.
 
-#### Backend (Collections):
-- [ ] Campo `tipo` (Física/Jurídica) - ENUM
-- [ ] Campos Pessoa Física: RG, Órgão Expedidor, Data Expedição, CNH
-- [ ] Collection `pessoa_contatos` (múltiplos contatos por pessoa)
-  ```sql
-  - id, lead_id, tipo (telefone/email/whatsapp), contato, descricao
-  ```
-
-#### Frontend:
-- [ ] Página `/empresa/pessoas` - lista completa
-- [ ] Formulário multi-tab:
-  - Tab 1: Principal (nome, tipo, email, telefone)
-  - Tab 2: Pessoa Física (CPF, RG, CNH, nascimento)
-  - Tab 3: Endereço (com CEP auto-fill via ViaCEP)
-  - Tab 4: Contatos (lista add/remove)
-- [ ] Integração ViaCEP API
-- [ ] Substituir mock data em `/leads/page.tsx`
-
-**Estimativa:** 3-4 dias
+**Estimativa:** 1-2 dias
 
 ---
 
@@ -207,8 +196,10 @@ pnpm dev  # http://localhost:4000
 
 **❌ Gaps menores:**
 - [ ] Campo `edificio_condominio` (VARCHAR) na collection
-- [ ] CEP auto-fill no formulário
-- [ ] Validação de metragem (não permitir 0 ou negativo)
+
+**✅ Deliveries recentes:**
+- CEP auto-fill no cadastro/edição de imóveis
+- Validação de metragem (total e construída) para evitar valores 0/negativos
 
 **Estimativa:** 1 dia
 
@@ -390,34 +381,27 @@ pnpm dev  # http://localhost:4000
 
 ---
 
-### 8️⃣ Vitrines Públicas ❌ (0%)
+### 8️⃣ Vitrines Públicas ⚠️ (40%)
 
 **Requisito:** 20 templates de site para clientes da imobiliária escolherem.
 
-#### Backend:
-- [ ] Adicionar campo `storefront_template_id` (1-20) em `companies`
-- [ ] Middleware detectar custom domain e aplicar template
+**✅ Entregue agora:**
+- Vitrine pública (template base) lendo imóveis reais por `company_slug` via middleware.
+- Filtros de tipologia, transação, cidade/UF e busca textual, com chips ativos e limpeza rápida.
+- Resultados restritos a imóveis `published` e `featured`, prontos para rodar em Docker/AWS sem mocks.
 
-#### Templates:
-- [ ] Template #1: Portar `/imoveis` do projeto Exclusiva
-  - Lista de imóveis com filtros
-  - Detalhes do imóvel (fotos, mapa, contato)
-  - Responsivo (mobile/desktop)
-- [ ] Templates #2-20: Criar variações (cores, layouts, estilos)
+**Próximos passos:**
+- [ ] Adicionar campo `storefront_template_id` (1-20) em `companies` e aplicar no middleware.
+- [ ] Criar variações de template (#2-20) com identidade temática e seleção no admin.
+- [ ] Página `/empresa/configuracoes/vitrine` com seletor de template e instruções de CNAME.
 
-#### Frontend Admin:
-- [ ] `/empresa/configuracoes/vitrine` - Seletor de template
-  - Preview dos 20 templates
-  - Campo "Domínio Customizado" (CNAME)
-  - Instruções de configuração DNS
+**Fluxo alvo:**
+1. Admin escolhe Template #5.
+2. Admin configura CNAME `imoveis.exclusiva.com.br` → `vitrine.imobi.com.br`.
+3. Admin salva domínio no painel.
+4. Middleware detecta domínio → renderiza Template #5 com `company_id` filtrado.
 
-**Fluxo:**
-1. Admin escolhe Template #5
-2. Admin configura CNAME `imoveis.exclusiva.com.br` → `vitrine.imobi.com.br`
-3. Admin salva domínio no painel
-4. Middleware detecta domínio → renderiza Template #5 com `company_id` filtrado
-
-**Estimativa:** 15-20 dias (1 dia por template após o primeiro)
+**Estimativa restante:** 8-12 dias (1 dia por template a partir do #2).
 
 ---
 

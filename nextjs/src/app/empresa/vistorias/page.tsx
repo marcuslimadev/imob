@@ -119,8 +119,12 @@ export default function VistoriasPage() {
   }, [user?.company_id, statusFilter, fetchVistorias]);
 
   const filteredVistorias = vistorias.filter(v => {
-    if (!searchTerm) return true;
+    if (!searchTerm) {
+      return true;
+    }
+
     const search = searchTerm.toLowerCase();
+
     return (
       v.codigo?.toLowerCase().includes(search) ||
       v.property_id?.title?.toLowerCase().includes(search) ||

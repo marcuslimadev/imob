@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Building2, 
+import {
+  Building2,
   User, 
   Bell, 
   Palette, 
@@ -22,69 +22,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { directusClient } from '@/lib/directus/client';
 import { readItems, updateItem } from '@directus/sdk';
 import { ApiSettings } from './api-settings';
-
-const DESIGN_THEMES = [
-  {
-    key: 'bauhaus',
-    name: 'Bauhaus',
-    description: 'Funcionalismo alemão. Geometria pura, tipografia sem serifa, cores primárias.',
-    preview: { bg: '#f2f2f2', primary: '#e63946', accent: '#1d3557', text: '#111111' }
-  },
-  {
-    key: 'ulm',
-    name: 'Ulm',
-    description: 'Minimalismo funcional. Grade precisa, hierarquia clara, paleta neutra.',
-    preview: { bg: '#f3f4f6', primary: '#2563eb', accent: '#0f172a', text: '#111827' }
-  },
-  {
-    key: 'cranbrook',
-    name: 'Cranbrook',
-    description: 'Experimentalismo narrativo. Camadas complexas, tipografia expressiva.',
-    preview: { bg: '#0b0c10', primary: '#f97316', accent: '#a855f7', text: '#f9fafb' }
-  },
-  {
-    key: 'rca',
-    name: 'RCA',
-    description: 'Elegância britânica. Sofisticação moderada, atenção aos detalhes.',
-    preview: { bg: '#f5f5f4', primary: '#1f2933', accent: '#b68c4a', text: '#111827' }
-  },
-  {
-    key: 'risd',
-    name: 'RISD',
-    description: 'Criatividade vibrante. Cores ousadas, formas orgânicas, energia artística.',
-    preview: { bg: '#fefce8', primary: '#ec4899', accent: '#22c55e', text: '#1f2937' }
-  },
-  {
-    key: 'iit',
-    name: 'IIT',
-    description: 'Racionalismo modular. Sistema claro, estrutura lógica, eficiência visual.',
-    preview: { bg: '#f3f4f6', primary: '#0ea5e9', accent: '#14b8a6', text: '#020617' }
-  },
-  {
-    key: 'pratt',
-    name: 'Pratt',
-    description: 'Visão urbana contemporânea. Contraste alto, tipografia diversa.',
-    preview: { bg: '#0f172a', primary: '#facc15', accent: '#38bdf8', text: '#e5e7eb' }
-  },
-  {
-    key: 'parsons',
-    name: 'Parsons',
-    description: 'Inovação fashion-forward. Formas fluidas, cores saturadas, ousadia conceitual.',
-    preview: { bg: '#020617', primary: '#a855f7', accent: '#f97316', text: '#e5e7eb' }
-  },
-  {
-    key: 'swiss',
-    name: 'Swiss Style',
-    description: 'Grid suíço internacional. Precisão matemática, neutralidade objetiva.',
-    preview: { bg: '#ffffff', primary: '#ef4444', accent: '#111827', text: '#020617' }
-  },
-  {
-    key: 'vkhutemas',
-    name: 'VKhUTEMAS',
-    description: 'Construtivismo russo. Diagonal dinâmica, geometria revolucionária.',
-    preview: { bg: '#111111', primary: '#dc2626', accent: '#facc15', text: '#f4f4f5' }
-  }
-];
+import { useDesignTheme } from '@/components/ui/ThemeProvider';
+import { DESIGN_THEMES } from '@/lib/design-themes';
 
 interface Company {
   id: string;
@@ -101,11 +40,12 @@ interface Company {
   secondary_color?: string;
   custom_domain?: string | null;
   storefront_template_id?: number | null;
-  theme_key?: string;
+  theme_key?: string | null;
 }
 
 export default function ConfiguracoesPage() {
   const { user, loading: authLoading } = useAuth();
+  const { themeKey, setThemeKey } = useDesignTheme();
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -125,7 +65,9 @@ export default function ConfiguracoesPage() {
       );
 
       if (companyData.length > 0) {
-        setCompany(companyData[0] as unknown as Company);
+        const loadedCompany = companyData[0] as unknown as Company;
+        setCompany(loadedCompany);
+        setThemeKey(loadedCompany.theme_key || 'ulm');
       }
     } catch (err) {
       console.error('Erro ao carregar configurações:', err);
@@ -157,9 +99,10 @@ export default function ConfiguracoesPage() {
           primary_color: company.primary_color,
           secondary_color: company.secondary_color,
           custom_domain: company.custom_domain,
-          theme_key: company.theme_key,
+          theme_key: company.theme_key || themeKey,
         })
       );
+      setThemeKey(company.theme_key || themeKey);
       alert('Configurações salvas com sucesso!');
     } catch (err) {
       console.error('Erro ao salvar:', err);
@@ -193,7 +136,7 @@ export default function ConfiguracoesPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Bauhaus-inspired header with geometric accent */}
+      {/* Cabeçalho geométrico com acento de cor */}
       <div className="border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-8 py-12">
           <div className="flex items-start gap-6">
@@ -350,113 +293,113 @@ export default function ConfiguracoesPage() {
 
           {/* Aparência Tab */}
           <TabsContent value="aparencia" className="space-y-8">
-            <div className="max-w-4xl">
-              <div className="mb-8">
-                <h2 className="text-2xl font-light text-gray-900 mb-2">Tema Visual</h2>
-                <p className="text-sm font-light text-gray-500">
-                  Escolha a estética de design que representa sua marca
-                </p>
-              </div>
-              
-              {/* Theme Grid */}
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                {DESIGN_THEMES.map((theme) => (
-                  <button
-                    key={theme.key}
-                    onClick={() => {
-                      setCompany(prev => prev ? {...prev, theme_key: theme.key} : null);
-                      // Apply theme immediately for preview
-                      document.documentElement.setAttribute('data-theme', theme.key);
-                    }}
-                    className={`
-                      relative p-6 border-2 rounded-none text-left transition-all
-                      ${company?.theme_key === theme.key 
-                        ? 'border-blue-600 bg-blue-50' 
-                        : 'border-gray-300 hover:border-gray-400 bg-white'
-                      }
-                    `}
-                  >
-                    {/* Theme Preview Bar */}
-                    <div className="flex gap-2 mb-4">
-                      <div className="h-12 w-full rounded-none" style={{ backgroundColor: theme.preview.bg }} />
-                      <div className="h-12 w-full rounded-none" style={{ backgroundColor: theme.preview.primary }} />
-                      <div className="h-12 w-full rounded-none" style={{ backgroundColor: theme.preview.accent }} />
-                      <div className="h-12 w-full rounded-none" style={{ backgroundColor: theme.preview.text }} />
+            <div className="max-w-2xl">
+              <h2 className="text-2xl font-light text-gray-900 mb-6">Personalização Visual</h2>
+
+              <div className="space-y-6">
+                <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                      <p className="text-sm uppercase tracking-[0.2em] text-gray-500">Tema da imobiliária</p>
+                      <h3 className="text-xl font-semibold text-gray-900">Escolha uma escola de design</h3>
+                      <p className="text-sm text-gray-600 mt-1">Aplique um tema completo de forma instantânea em toda a plataforma.</p>
                     </div>
-
-                    {/* Theme Info */}
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                      {theme.name}
-                      {company?.theme_key === theme.key && (
-                        <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-none">ATIVO</span>
-                      )}
-                    </h3>
-                    <p className="text-sm font-light text-gray-600 leading-relaxed">
-                      {theme.description}
-                    </p>
-                  </button>
-                ))}
-              </div>
-
-              {/* Cores Personalizadas (mantidas para customização adicional) */}
-              <div className="border-t border-gray-200 pt-8">
-                <h3 className="text-xl font-light text-gray-900 mb-6">Cores Personalizadas</h3>
-                <div className="space-y-6 max-w-2xl">
-                  <div>
-                    <Label htmlFor="primary_color" className="font-light text-gray-700">Cor Primária</Label>
-                    <Input
-                      id="primary_color"
-                      type="color"
-                      className="mt-2 h-12 rounded-none border-gray-300"
-                      value={company?.primary_color || '#3B82F6'}
-                      onChange={(e) => setCompany(prev => prev ? {...prev, primary_color: e.target.value} : null)}
-                    />
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Visual vivo</span>
                   </div>
 
-                  <div>
-                    <Label htmlFor="secondary_color" className="font-light text-gray-700">Cor Secundária</Label>
-                    <Input
-                      id="secondary_color"
-                      type="color"
-                      className="mt-2 h-12 rounded-none border-gray-300"
-                      value={company?.secondary_color || '#10B981'}
-                      onChange={(e) => setCompany(prev => prev ? {...prev, secondary_color: e.target.value} : null)}
-                    />
-                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {DESIGN_THEMES.map((theme) => {
+                      const selected = (company?.theme_key || themeKey) === theme.key;
 
-                  <div>
-                    <Label htmlFor="custom_domain" className="font-light text-gray-700">Domínio Personalizado</Label>
-                    <Input
-                      id="custom_domain"
-                      placeholder="exemplo.com.br"
-                      className="mt-2 rounded-none border-gray-300"
-                      value={company?.custom_domain || ''}
-                      onChange={(e) => setCompany(prev => prev ? {...prev, custom_domain: e.target.value} : null)}
-                    />
-                    <p className="text-sm font-light text-gray-500 mt-2">
-                      Configure o CNAME no seu provedor de domínio
-                    </p>
+                      return (
+                        <button
+                          key={theme.key}
+                          type="button"
+                          onClick={() => {
+                            setCompany((prev) => (prev ? { ...prev, theme_key: theme.key } : null));
+                            setThemeKey(theme.key);
+                          }}
+                          className={`group w-full text-left border rounded-xl p-4 transition duration-200 ${
+                            selected ? 'border-blue-600 shadow-[0_10px_30px_rgba(37,99,235,0.18)] bg-blue-50' : 'border-gray-200 hover:border-blue-400'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div>
+                              <p className="text-xs uppercase tracking-[0.2em] text-gray-500">{theme.name}</p>
+                              <p className="text-sm text-gray-700 leading-relaxed mt-1">{theme.description}</p>
+                            </div>
+                            {selected && <span className="text-xs font-semibold text-blue-700">Aplicado</span>}
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {theme.palette.map((color) => (
+                              <span key={color} className="h-10 w-10 rounded-lg border border-gray-200" style={{ backgroundColor: color }} />
+                            ))}
+                            <div className="flex-1 flex items-center justify-end gap-2">
+                              <span className="bauhaus-pill bg-white text-gray-800 border-gray-900">UI</span>
+                              <span className="bauhaus-pill bg-black text-white border-black">Dash</span>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
-              </div>
 
-              <Button 
-                onClick={handleSaveCompany} 
-                disabled={saving}
-                className="mt-8 rounded-none bg-blue-600 hover:bg-blue-700"
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Salvando...
-                  </>
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Salvar Alterações
-                  </>
-                )}
-              </Button>
+                <div>
+                  <Label htmlFor="primary_color" className="font-light text-gray-700">Cor Primária</Label>
+                  <Input
+                    id="primary_color"
+                    type="color"
+                    className="mt-2 h-12 rounded-none border-gray-300"
+                    value={company?.primary_color || '#3B82F6'}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, primary_color: e.target.value} : null)}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="secondary_color" className="font-light text-gray-700">Cor Secundária</Label>
+                  <Input
+                    id="secondary_color"
+                    type="color"
+                    className="mt-2 h-12 rounded-none border-gray-300"
+                    value={company?.secondary_color || '#10B981'}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, secondary_color: e.target.value} : null)}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="custom_domain" className="font-light text-gray-700">Domínio Personalizado</Label>
+                  <Input
+                    id="custom_domain"
+                    placeholder="exemplo.com.br"
+                    className="mt-2 rounded-none border-gray-300"
+                    value={company?.custom_domain || ''}
+                    onChange={(e) => setCompany(prev => prev ? {...prev, custom_domain: e.target.value} : null)}
+                  />
+                  <p className="text-sm font-light text-gray-500 mt-2">
+                    Configure o CNAME no seu provedor de domínio
+                  </p>
+                </div>
+
+                <Button 
+                  onClick={handleSaveCompany} 
+                  disabled={saving}
+                  className="rounded-none bg-blue-600 hover:bg-blue-700"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Salvando...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar Alterações
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
