@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { directusClient } from '@/lib/directus/client';
 import { readItem, updateItem, createItem, deleteItem } from '@directus/sdk';
 import ImageUpload from '@/components/forms/ImageUpload';
+import { lookupCep } from '@/lib/cep';
 
 interface UploadedImage {
   id: string;
@@ -25,6 +26,8 @@ export default function EditImovelPage({ params }: EditImovelPageProps) {
   const [error, setError] = useState('');
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [existingMediaIds, setExistingMediaIds] = useState<string[]>([]);
+  const [cepStatus, setCepStatus] = useState('');
+  const [cepLoading, setCepLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -130,10 +133,47 @@ export default function EditImovelPage({ params }: EditImovelPageProps) {
     }
   }
 
+  async function handleCepLookup(rawCep: string) {
+    const sanitized = (rawCep || '').replace(/\D/g, '');
+
+    if (!sanitized) {
+      setCepStatus('');
+      return;
+    }
+
+    setCepLoading(true);
+    setCepStatus('');
+
+    try {
+      const data = await lookupCep(sanitized);
+
+      setFormData(prev => ({
+        ...prev,
+        zip_code: data.cep,
+        address: prev.address || data.street,
+        neighborhood: prev.neighborhood || data.neighborhood,
+        city: prev.city || data.city,
+        state: prev.state || data.state,
+      }));
+
+      setCepStatus('Endereço preenchido automaticamente.');
+    } catch (err: any) {
+      setCepStatus(err.message || 'Não foi possível buscar o CEP.');
+    } finally {
+      setCepLoading(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setError('');
+
+    if (formData.area_total <= 0 || formData.area_built <= 0) {
+      setError('Área total e área construída devem ser maiores que zero.');
+      setSaving(false);
+      return;
+    }
 
     try {
       // Update property
@@ -275,14 +315,304 @@ export default function EditImovelPage({ params }: EditImovelPageProps) {
               </div>
             </div>
           </div>
+          
+          {/* Localização */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Localização</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">CEP</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    name="zip_code"
+                    value={formData.zip_code}
+                    onChange={handleChange}
+                    onBlur={() => handleCepLookup(formData.zip_code)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Digite o CEP"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleCepLookup(formData.zip_code)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md"
+                    disabled={cepLoading}
+                  >
+                    {cepLoading ? 'Buscando...' : 'Buscar'}
+                  </button>
+                </div>
+                {cepStatus && <p className="mt-2 text-sm text-gray-600">{cepStatus}</p>}
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Endereço *
+                </label>
+                <input
+                  type="text"
+                  name="address"
+                  required
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Rua, número, complemento"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Bairro
+                </label>
+                <input
+                  type="text"
+                  name="neighborhood"
+                  value={formData.neighborhood}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Cidade *
+                </label>
+                <input
+                  type="text"
+                  name="city"
+                  required
+                  value={formData.city}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Estado *
+                </label>
+                <input
+                  type="text"
+                  name="state"
+                  required
+                  value={formData.state}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="MG"
+                  maxLength={2}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Características */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Características</h2>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Quartos
+                </label>
+                <input
+                  type="number"
+                  name="bedrooms"
+                  min="0"
+                  value={formData.bedrooms}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Banheiros
+                </label>
+                <input
+                  type="number"
+                  name="bathrooms"
+                  min="0"
+                  value={formData.bathrooms}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Suítes
+                </label>
+                <input
+                  type="number"
+                  name="suites"
+                  min="0"
+                  value={formData.suites}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Vagas
+                </label>
+                <input
+                  type="number"
+                  name="parking_spaces"
+                  min="0"
+                  value={formData.parking_spaces}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Área Total (m²)
+                </label>
+                <input
+                  type="number"
+                  name="area_total"
+                  min="0"
+                  step="0.01"
+                  value={formData.area_total}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Área Construída (m²)
+                </label>
+                <input
+                  type="number"
+                  name="area_built"
+                  min="0"
+                  step="0.01"
+                  value={formData.area_built}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Valores */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Valores</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Valor de Venda (R$)
+                </label>
+                <input
+                  type="number"
+                  name="price_sale"
+                  min="0"
+                  step="0.01"
+                  value={formData.price_sale}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Valor do Aluguel (R$)
+                </label>
+                <input
+                  type="number"
+                  name="price_rent"
+                  min="0"
+                  step="0.01"
+                  value={formData.price_rent}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Condomínio (R$)
+                </label>
+                <input
+                  type="number"
+                  name="price_condo"
+                  min="0"
+                  step="0.01"
+                  value={formData.price_condo}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  IPTU (R$)
+                </label>
+                <input
+                  type="number"
+                  name="price_iptu"
+                  min="0"
+                  step="0.01"
+                  value={formData.price_iptu}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Opções */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Opções</h2>
+
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  name="featured"
+                  checked={formData.featured}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="featured" className="ml-2 block text-sm text-gray-700">
+                  Marcar como destaque
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="active">Ativo</option>
+                  <option value="inactive">Inativo</option>
+                  <option value="sold">Vendido</option>
+                  <option value="rented">Alugado</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
           {/* Upload de Fotos */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 className="text-xl font-bold mb-4">Fotos</h2>
-            <ImageUpload 
+            <ImageUpload
               onImagesUploaded={setUploadedImages}
               maxFiles={20}
             />
+            <p className="text-sm text-gray-500 mt-2">
+              A primeira foto será a capa do anúncio. Você pode reordenar arrastando as imagens.
+            </p>
           </div>
 
           {/* Actions */}

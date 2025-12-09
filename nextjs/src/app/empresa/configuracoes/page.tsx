@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Building2, 
+import {
+  Building2,
   User, 
   Bell, 
   Palette, 
@@ -22,6 +22,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { directusClient } from '@/lib/directus/client';
 import { readItems, updateItem } from '@directus/sdk';
 import { ApiSettings } from './api-settings';
+import { useDesignTheme } from '@/components/ui/ThemeProvider';
+import { DESIGN_THEMES } from '@/lib/design-themes';
 
 interface Company {
   id: string;
@@ -38,10 +40,12 @@ interface Company {
   secondary_color?: string;
   custom_domain?: string | null;
   storefront_template_id?: number | null;
+  theme_key?: string | null;
 }
 
 export default function ConfiguracoesPage() {
   const { user, loading: authLoading } = useAuth();
+  const { themeKey, setThemeKey } = useDesignTheme();
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -61,7 +65,9 @@ export default function ConfiguracoesPage() {
       );
 
       if (companyData.length > 0) {
-        setCompany(companyData[0] as unknown as Company);
+        const loadedCompany = companyData[0] as unknown as Company;
+        setCompany(loadedCompany);
+        setThemeKey(loadedCompany.theme_key || 'ulm');
       }
     } catch (err) {
       console.error('Erro ao carregar configurações:', err);
@@ -93,8 +99,10 @@ export default function ConfiguracoesPage() {
           primary_color: company.primary_color,
           secondary_color: company.secondary_color,
           custom_domain: company.custom_domain,
+          theme_key: company.theme_key || themeKey,
         })
       );
+      setThemeKey(company.theme_key || themeKey);
       alert('Configurações salvas com sucesso!');
     } catch (err) {
       console.error('Erro ao salvar:', err);
@@ -128,7 +136,7 @@ export default function ConfiguracoesPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Bauhaus-inspired header with geometric accent */}
+      {/* Cabeçalho geométrico com acento de cor */}
       <div className="border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-8 py-12">
           <div className="flex items-start gap-6">
@@ -287,8 +295,57 @@ export default function ConfiguracoesPage() {
           <TabsContent value="aparencia" className="space-y-8">
             <div className="max-w-2xl">
               <h2 className="text-2xl font-light text-gray-900 mb-6">Personalização Visual</h2>
-              
+
               <div className="space-y-6">
+                <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                      <p className="text-sm uppercase tracking-[0.2em] text-gray-500">Tema da imobiliária</p>
+                      <h3 className="text-xl font-semibold text-gray-900">Escolha uma escola de design</h3>
+                      <p className="text-sm text-gray-600 mt-1">Aplique um tema completo de forma instantânea em toda a plataforma.</p>
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Visual vivo</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {DESIGN_THEMES.map((theme) => {
+                      const selected = (company?.theme_key || themeKey) === theme.key;
+
+                      return (
+                        <button
+                          key={theme.key}
+                          type="button"
+                          onClick={() => {
+                            setCompany((prev) => (prev ? { ...prev, theme_key: theme.key } : null));
+                            setThemeKey(theme.key);
+                          }}
+                          className={`group w-full text-left border rounded-xl p-4 transition duration-200 ${
+                            selected ? 'border-blue-600 shadow-[0_10px_30px_rgba(37,99,235,0.18)] bg-blue-50' : 'border-gray-200 hover:border-blue-400'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div>
+                              <p className="text-xs uppercase tracking-[0.2em] text-gray-500">{theme.name}</p>
+                              <p className="text-sm text-gray-700 leading-relaxed mt-1">{theme.description}</p>
+                            </div>
+                            {selected && <span className="text-xs font-semibold text-blue-700">Aplicado</span>}
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {theme.palette.map((color) => (
+                              <span key={color} className="h-10 w-10 rounded-lg border border-gray-200" style={{ backgroundColor: color }} />
+                            ))}
+                            <div className="flex-1 flex items-center justify-end gap-2">
+                              <span className="bauhaus-pill bg-white text-gray-800 border-gray-900">UI</span>
+                              <span className="bauhaus-pill bg-black text-white border-black">Dash</span>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div>
                   <Label htmlFor="primary_color" className="font-light text-gray-700">Cor Primária</Label>
                   <Input

@@ -124,14 +124,15 @@ function ConversasPageContent() {
     }
   }, [selectedConversa, fetchMensagens]);
 
-  const filteredConversas = conversas.filter(c => {
-    if (!searchTerm) return true;
-    const search = searchTerm.toLowerCase();
-    return (
-      c.lead_id?.name?.toLowerCase().includes(search) ||
-      c.whatsapp_number?.includes(search)
-    );
-  });
+    const filteredConversas = conversas.filter(c => {
+      if (!searchTerm) return true;
+      const search = searchTerm.toLowerCase();
+
+      return (
+        c.lead_id?.name?.toLowerCase().includes(search) ||
+        c.whatsapp_number?.includes(search)
+      );
+    });
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversa) return;
@@ -144,27 +145,30 @@ function ConversasPageContent() {
     }, 1000);
   };
 
-  const formatTime = (date: string) => {
-    return new Date(date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  };
+    const formatTime = (date: string) => {
 
-  const formatDate = (date: string) => {
-    const d = new Date(date);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+      return new Date(date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    };
 
-    if (d.toDateString() === today.toDateString()) return 'Hoje';
-    if (d.toDateString() === yesterday.toDateString()) return 'Ontem';
-    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-  };
+    const formatDate = (date: string) => {
+      const d = new Date(date);
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
 
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
-    );
+      if (d.toDateString() === today.toDateString()) return 'Hoje';
+      if (d.toDateString() === yesterday.toDateString()) return 'Ontem';
+
+      return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+    };
+
+    if (authLoading) {
+
+      return (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        </div>
+      );
   }
 
   return (

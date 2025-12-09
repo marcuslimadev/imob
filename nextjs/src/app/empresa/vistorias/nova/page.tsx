@@ -91,11 +91,13 @@ export default function NovaVistoriaPage() {
     
     if (!user?.company_id) {
       setError('Erro de autenticação');
+
       return;
     }
 
     if (!formData.property_id) {
       setError('Selecione um imóvel');
+
       return;
     }
 

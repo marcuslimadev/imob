@@ -53,6 +53,12 @@ interface FetchPropertiesOptions {
         companySlug?: string;
         featuredOnly?: boolean;
         limit?: number;
+        searchTerm?: string;
+        propertyType?: string;
+        transactionType?: string;
+        city?: string;
+        state?: string;
+        publishedOnly?: boolean;
 }
 
 const buildCompanyFilter = (companySlug?: string) =>
@@ -72,20 +78,70 @@ export async function fetchCompanyBySlug(slug: string): Promise<Company | null> 
         return companies?.[0] ?? null;
 }
 
-export async function fetchProperties({ companySlug, featuredOnly, limit }: FetchPropertiesOptions = {}): Promise<Property[]> {
-	const { directus } = useDirectus();
+export async function fetchProperties({
+        companySlug,
+        featuredOnly,
+        limit,
+        searchTerm,
+        propertyType,
+        transactionType,
+        city,
+        state,
+        publishedOnly = true,
+}: FetchPropertiesOptions = {}): Promise<Property[]> {
+        const { directus } = useDirectus();
 
-	const filters: any = {
-		...(buildCompanyFilter(companySlug) || {}),
-	};
+        const filters: any = {};
 
-	if (featuredOnly) {
-		filters.featured = { _eq: true };
-	}
+        const andFilters: any[] = [];
 
-	return directus.request(
-		readItems('properties', {
-			fields: propertyFields as any,
+        const companyFilter = buildCompanyFilter(companySlug);
+        if (companyFilter) {
+                andFilters.push(companyFilter);
+        }
+
+        if (publishedOnly) {
+                andFilters.push({ status: { _eq: 'published' } });
+        }
+
+        if (featuredOnly) {
+                andFilters.push({ featured: { _eq: true } });
+        }
+
+        if (propertyType) {
+                andFilters.push({ property_type: { _eq: propertyType } });
+        }
+
+        if (transactionType) {
+                andFilters.push({ transaction_type: { _eq: transactionType } });
+        }
+
+        if (city) {
+                andFilters.push({ city: { _ilike: city } });
+        }
+
+        if (state) {
+                andFilters.push({ state: { _eq: state } });
+        }
+
+        if (searchTerm) {
+                andFilters.push({
+                        _or: [
+                                { title: { _ilike: `%${searchTerm}%` } },
+                                { description: { _ilike: `%${searchTerm}%` } },
+                                { neighborhood: { _ilike: `%${searchTerm}%` } },
+                                { city: { _ilike: `%${searchTerm}%` } },
+                        ],
+                });
+        }
+
+        if (andFilters.length > 0) {
+                filters._and = andFilters;
+        }
+
+        return directus.request(
+                readItems('properties', {
+                        fields: propertyFields as any,
 			filter: filters,
 			sort: ['-featured', '-id'],
 			limit,

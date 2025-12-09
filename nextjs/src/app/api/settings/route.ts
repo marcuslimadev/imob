@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const token = cookieStore.get('directus_token')?.value;
 
     if (!token) {
+
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
@@ -18,6 +19,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!userResponse.ok) {
+
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 401 });
     }
 
@@ -25,6 +27,7 @@ export async function GET(request: NextRequest) {
     const companyId = userData.data.company_id;
 
     if (!companyId) {
+
       return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 400 });
     }
 
@@ -37,6 +40,7 @@ export async function GET(request: NextRequest) {
     );
 
     if (!settingsResponse.ok) {
+
       return NextResponse.json({ external_api_url: '', external_api_token: '' });
     }
 
@@ -49,6 +53,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('[API /settings GET] Erro:', error);
+
     return NextResponse.json(
       { error: error.message || 'Erro ao buscar configurações' },
       { status: 500 }
@@ -62,6 +67,7 @@ export async function POST(request: NextRequest) {
     const token = cookieStore.get('directus_token')?.value;
 
     if (!token) {
+
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
@@ -71,6 +77,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!userResponse.ok) {
+
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 401 });
     }
 
@@ -78,6 +85,7 @@ export async function POST(request: NextRequest) {
     const companyId = userData.data.company_id;
 
     if (!companyId) {
+
       return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 400 });
     }
 
@@ -149,6 +157,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('[API /settings POST] Erro:', error);
+
     return NextResponse.json(
       { error: error.message || 'Erro ao salvar configurações' },
       { status: 500 }

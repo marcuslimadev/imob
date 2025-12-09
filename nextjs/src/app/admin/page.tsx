@@ -58,6 +58,7 @@ async function getDashboardStats(): Promise<DashboardStats> {
     };
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
+
     return {
       totalCompanies: 0,
       activeSubscriptions: 0,
@@ -79,6 +80,7 @@ async function getRecentCompanies() {
     );
   } catch (error) {
     console.error('Error fetching recent companies:', error);
+
     return [];
   }
 }

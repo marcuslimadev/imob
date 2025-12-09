@@ -3,6 +3,8 @@ import '@/styles/fonts.css';
 import '@/lib/suppressConsoleErrors';
 import { ReactNode } from 'react';
 import { Metadata } from 'next';
+import Script from 'next/script';
+import { cookies } from 'next/headers';
 
 import VisualEditingLayout from '@/components/layout/VisualEditingLayout';
 import { ThemeProvider } from '@/components/ui/ThemeProvider';
@@ -10,6 +12,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import SuppressConsoleErrors from '@/components/SuppressConsoleErrors';
 import { fetchSiteData } from '@/lib/directus/fetchers';
 import { getDirectusAssetURL } from '@/lib/directus/directus-utils';
+import { DEFAULT_DESIGN_THEME } from '@/lib/design-themes';
 
 export async function generateMetadata(): Promise<Metadata> {
 	try {
@@ -58,14 +61,28 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 		console.log('Running in offline mode - Directus data unavailable');
 	}
 
-	const accentColor = globals?.accent_color || '#6644ff';
+        const accentColor = globals?.accent_color || '#d90429';
+        const themeCookie = cookies().get('design-theme')?.value;
+        const initialDesignTheme = themeCookie || DEFAULT_DESIGN_THEME;
 
 	return (
-		<html lang="pt-BR" style={{ '--accent-color': accentColor } as React.CSSProperties} suppressHydrationWarning>
-			<body className="antialiased font-sans flex flex-col min-h-screen">
-				<SuppressConsoleErrors />
-				<ThemeProvider>
-					<AuthProvider>
+                <html
+                        lang="pt-BR"
+                        data-theme={initialDesignTheme}
+                        style={{ '--accent-color': accentColor } as React.CSSProperties}
+                        suppressHydrationWarning
+                >
+                        <body className="antialiased font-sans flex flex-col min-h-screen">
+                                <Script
+                                        id="design-theme-init"
+                                        strategy="beforeInteractive"
+                                        dangerouslySetInnerHTML={{
+                                                __html: `(() => { try { const fallback = ${JSON.stringify(DEFAULT_DESIGN_THEME)}; const cookieTheme = (document.cookie || '').split('; ').find((row) => row.startsWith('design-theme='))?.split('=')[1]; const stored = localStorage.getItem('design-theme'); document.documentElement.setAttribute('data-theme', stored || cookieTheme || fallback); } catch (error) { document.documentElement.setAttribute('data-theme', ${JSON.stringify(DEFAULT_DESIGN_THEME)}); } })();`,
+                                        }}
+                                />
+                                <SuppressConsoleErrors />
+                                <ThemeProvider>
+                                        <AuthProvider>
 						<VisualEditingLayout
 							headerNavigation={headerNavigation}
 							footerNavigation={footerNavigation}

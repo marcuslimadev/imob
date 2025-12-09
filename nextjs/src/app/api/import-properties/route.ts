@@ -66,9 +66,10 @@ export async function POST(request: NextRequest) {
 
     if (!externalResponse.ok) {
       console.error('[API /import-properties] Erro na API externa:', externalResponse.status);
-      return NextResponse.json({ 
+
+      return NextResponse.json({
         error: 'Falha ao conectar com API externa',
-        status: externalResponse.status 
+        status: externalResponse.status
       }, { status: 502 });
     }
 
@@ -76,7 +77,8 @@ export async function POST(request: NextRequest) {
     const properties = externalData.data || externalData.imoveis || externalData;
 
     if (!Array.isArray(properties)) {
-      return NextResponse.json({ 
+
+      return NextResponse.json({
         error: 'Formato de resposta inválido da API externa',
         received: typeof properties
       }, { status: 400 });
@@ -169,6 +171,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error('[API /import-properties] Erro geral:', error);
+
     return NextResponse.json({
       success: false,
       error: error.message || 'Erro ao importar imóveis'

@@ -31,17 +31,18 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
-function getPropertyTypeLabel(type: string): string {
-  const types: Record<string, string> = {
-    apartment: 'Apartamento',
-    house: 'Casa',
-    commercial: 'Comercial',
-    land: 'Terreno',
-    farm: 'Fazenda',
-    penthouse: 'Cobertura'
-  };
-  return types[type] || type;
-}
+  function getPropertyTypeLabel(type: string): string {
+    const types: Record<string, string> = {
+      apartment: 'Apartamento',
+      house: 'Casa',
+      commercial: 'Comercial',
+      land: 'Terreno',
+      farm: 'Fazenda',
+      penthouse: 'Cobertura'
+    };
+
+    return types[type] || type;
+  }
 
 export default async function PropertyDetailPage({ params }: PropertyPageProps) {
   const property = await getProperty(params.id);
@@ -54,275 +55,285 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
   const prop: any = property;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--background-color)] text-[var(--foreground-color)]">
       {/* Header */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
+      <div className="border-b-[3px] border-[var(--foreground-color)] bg-[var(--background-color-muted)]/80">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link
             href="/vitrine"
-            className="text-blue-600 hover:text-blue-700 flex items-center gap-2"
+            className="bauhaus-chip bg-[var(--background-color)] hover:bg-[var(--accent-color-soft)]"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Voltar para listagem
+            ← Voltar à vitrine
           </Link>
+          <div className="flex items-center gap-3 text-xs uppercase tracking-[0.16em] font-semibold">
+            <span className="bauhaus-pill bg-[var(--accent-color)] text-white">Curadoria</span>
+            <span className="bauhaus-pill bg-[var(--accent-color-light)]">Imóvel</span>
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 py-10 lg:py-14">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-10">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Image Gallery Placeholder */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="relative h-96 bg-gray-200 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-32 w-32 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                  />
-                </svg>
+          <div className="space-y-8">
+            <div className="relative">
+              <div className="absolute -left-6 -top-6 h-16 w-16 rounded-full bg-[var(--accent-color-soft)] border-[4px] border-[var(--foreground-color)]" />
+              <div className="absolute -right-8 -bottom-8 h-24 w-24 bg-[var(--accent-color-light)] border-[4px] border-[var(--foreground-color)] rotate-6" />
+              <div className="bauhaus-card p-7 md:p-9 relative z-10 space-y-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="bauhaus-pill bg-[var(--accent-color)] text-white">
+                    {getPropertyTypeLabel(prop.property_type)}
+                  </span>
+                  <span className="bauhaus-pill bg-[var(--background-color-muted)] text-[var(--foreground-color)]">
+                    {property.transaction_type === 'sale'
+                      ? 'Venda'
+                      : property.transaction_type === 'rent'
+                        ? 'Aluguel'
+                        : 'Venda + Aluguel'}
+                  </span>
+                  <span className="bauhaus-pill bg-[var(--accent-color-light)] text-[var(--foreground-color)]">
+                    {property.city}, {property.state}
+                  </span>
+                </div>
+                <h1 className="text-4xl md:text-5xl font-black leading-tight">{prop.title}</h1>
+                <div className="flex items-start gap-3 text-[var(--muted-foreground)]">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  <span>
+                    {property.address && `${property.address}, `}
+                    {property.neighborhood && `${property.neighborhood}, `}
+                    {property.city}, {property.state}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Property Info */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="mb-4">
-                <span className="text-sm font-semibold text-blue-600 uppercase">
-                  {getPropertyTypeLabel(prop.property_type)}
-                </span>
-              </div>
-
-              <h1 className="text-3xl font-bold mb-4">{prop.title}</h1>
-
-              <div className="flex items-center gap-2 text-gray-600 mb-6">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span>
-                  {property.address && `${property.address}, `}
-                  {property.neighborhood && `${property.neighborhood}, `}
-                  {property.city}, {property.state}
-                </span>
-              </div>
-
-              {/* Price */}
-              <div className="mb-6">
-                {property.transaction_type === 'sale' && property.price_sale > 0 && (
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Valor de Venda</p>
-                    <p className="text-4xl font-bold text-gray-900">
-                      {formatPrice(property.price_sale)}
-                    </p>
+            {/* Image Gallery Placeholder */}
+            <div className="bauhaus-surface overflow-hidden">
+              <div className="relative h-[420px] bg-[var(--background-color-muted)] bauhaus-stripe flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[rgba(0,0,0,0.08)]" />
+                <div className="relative flex items-center justify-center h-32 w-32 rounded-full border-[5px] border-[var(--foreground-color)] bg-[var(--background-color)]">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-16 w-16 text-[var(--foreground-color)]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                    />
+                  </svg>
+                </div>
+                {property.featured && (
+                  <div className="absolute top-4 right-4 bauhaus-chip bg-[var(--accent-color)] text-white">
+                    Destaque
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* Price + Highlights */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bauhaus-card p-6 space-y-4">
+                <p className="uppercase tracking-[0.16em] text-xs font-semibold">Investimento</p>
+                {property.transaction_type === 'sale' && property.price_sale > 0 && (
+                  <p className="text-4xl font-black">{formatPrice(property.price_sale)}</p>
+                )}
                 {property.transaction_type === 'rent' && property.price_rent > 0 && (
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Valor do Aluguel</p>
-                    <p className="text-4xl font-bold text-gray-900">
-                      {formatPrice(property.price_rent)}
-                      <span className="text-lg font-normal text-gray-500">/mês</span>
-                    </p>
-                    {property.price_condo > 0 && (
-                      <p className="text-sm text-gray-600 mt-2">
-                        + Condomínio: {formatPrice(property.price_condo)}
-                      </p>
-                    )}
-                    {property.price_iptu > 0 && (
-                      <p className="text-sm text-gray-600">
-                        + IPTU: {formatPrice(property.price_iptu)}
-                      </p>
-                    )}
+                  <div className="space-y-1">
+                    <p className="text-4xl font-black">{formatPrice(property.price_rent)}</p>
+                    <p className="text-sm font-semibold text-[var(--muted-foreground)]">/mês</p>
                   </div>
                 )}
                 {property.transaction_type === 'both' && (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {property.price_sale > 0 && (
                       <div>
-                        <p className="text-sm text-gray-600">Venda</p>
-                        <p className="text-3xl font-bold text-gray-900">
-                          {formatPrice(property.price_sale)}
-                        </p>
+                        <p className="text-xs uppercase tracking-[0.18em] font-semibold">Venda</p>
+                        <p className="text-3xl font-black">{formatPrice(property.price_sale)}</p>
                       </div>
                     )}
                     {property.price_rent > 0 && (
                       <div>
-                        <p className="text-sm text-gray-600">Aluguel</p>
-                        <p className="text-2xl font-bold text-gray-900">
-                          {formatPrice(property.price_rent)}/mês
-                        </p>
+                        <p className="text-xs uppercase tracking-[0.18em] font-semibold">Aluguel</p>
+                        <p className="text-2xl font-black">{formatPrice(property.price_rent)}</p>
+                        <p className="text-xs font-semibold text-[var(--muted-foreground)]">/mês</p>
                       </div>
                     )}
                   </div>
                 )}
-              </div>
-
-              {/* Features */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                {property.bedrooms > 0 && (
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">{property.bedrooms}</p>
-                    <p className="text-sm text-gray-600">Quartos</p>
-                  </div>
-                )}
-                {property.bathrooms > 0 && (
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">{property.bathrooms}</p>
-                    <p className="text-sm text-gray-600">Banheiros</p>
-                  </div>
-                )}
-                {property.suites > 0 && (
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">{property.suites}</p>
-                    <p className="text-sm text-gray-600">Suítes</p>
-                  </div>
-                )}
-                {property.parking_spaces > 0 && (
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">{property.parking_spaces}</p>
-                    <p className="text-sm text-gray-600">Vagas</p>
-                  </div>
-                )}
-                {property.area_total > 0 && (
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">{property.area_total}</p>
-                    <p className="text-sm text-gray-600">m² Total</p>
-                  </div>
-                )}
-                {property.area_built > 0 && (
-                  <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <p className="text-2xl font-bold text-gray-900">{property.area_built}</p>
-                    <p className="text-sm text-gray-600">m² Construída</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Description */}
-              {property.description && (
-                <div>
-                  <h2 className="text-xl font-bold mb-3">Descrição</h2>
-                  <p className="text-gray-700 whitespace-pre-wrap">
-                    {property.description}
-                  </p>
+                <div className="grid grid-cols-2 gap-3 text-sm font-semibold uppercase tracking-[0.14em]">
+                  {property.price_condo > 0 && (
+                    <div className="bauhaus-pill bg-[var(--background-color-muted)] justify-center">Condomínio {formatPrice(property.price_condo)}</div>
+                  )}
+                  {property.price_iptu > 0 && (
+                    <div className="bauhaus-pill bg-[var(--background-color-muted)] justify-center">IPTU {formatPrice(property.price_iptu)}</div>
+                  )}
                 </div>
-              )}
+              </div>
+
+              <div className="bauhaus-surface p-6 space-y-4">
+                <p className="uppercase tracking-[0.16em] text-xs font-semibold">Ritmo do espaço</p>
+                <div className="grid grid-cols-2 gap-3 text-center text-sm font-semibold uppercase tracking-[0.14em]">
+                  {property.bedrooms > 0 && (
+                    <div className="p-3 bg-[var(--accent-color-soft)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
+                      <p className="text-2xl font-black">{property.bedrooms}</p>
+                      <p>Quartos</p>
+                    </div>
+                  )}
+                  {property.suites > 0 && (
+                    <div className="p-3 bg-[var(--background-color)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
+                      <p className="text-2xl font-black">{property.suites}</p>
+                      <p>Suítes</p>
+                    </div>
+                  )}
+                  {property.bathrooms > 0 && (
+                    <div className="p-3 bg-[var(--background-color)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
+                      <p className="text-2xl font-black">{property.bathrooms}</p>
+                      <p>Banheiros</p>
+                    </div>
+                  )}
+                  {property.parking_spaces > 0 && (
+                    <div className="p-3 bg-[var(--accent-color-light)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
+                      <p className="text-2xl font-black">{property.parking_spaces}</p>
+                      <p>Vagas</p>
+                    </div>
+                  )}
+                  {property.area_total > 0 && (
+                    <div className="p-3 bg-[var(--background-color-muted)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
+                      <p className="text-2xl font-black">{property.area_total}</p>
+                      <p>m² Total</p>
+                    </div>
+                  )}
+                  {property.area_built > 0 && (
+                    <div className="p-3 bg-[var(--background-color)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
+                      <p className="text-2xl font-black">{property.area_built}</p>
+                      <p>m² Construída</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
+
+            {/* Description */}
+            {property.description && (
+              <div className="bauhaus-card p-6 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-black">Descrição detalhada</h2>
+                  <div className="h-10 w-10 rounded-full bg-[var(--accent-color)] border-[3px] border-[var(--foreground-color)]" />
+                </div>
+                <p className="text-base leading-relaxed text-[var(--muted-foreground)] whitespace-pre-wrap">
+                  {property.description}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-6 lg:sticky lg:top-6 h-fit">
             {/* Contact Form */}
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
-              <h3 className="text-xl font-bold mb-4">Interessado?</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                Preencha o formulário abaixo e entraremos em contato
+            <div className="bauhaus-surface p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-black">Interessado?</h3>
+                <div className="h-10 w-10 rounded-full bg-[var(--accent-color)] border-[3px] border-[var(--foreground-color)]" />
+              </div>
+              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                Preencha e entraremos em contato. Ritmo claro, resposta rápida e sem ruído.
               </p>
 
               <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nome completo
-                  </label>
+                <div className="space-y-1">
+                  <label className="text-xs uppercase tracking-[0.16em] font-semibold">Nome completo</label>
                   <input
                     type="text"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--input-color)] px-3 py-2"
                     placeholder="Seu nome"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    E-mail
-                  </label>
+                <div className="space-y-1">
+                  <label className="text-xs uppercase tracking-[0.16em] font-semibold">E-mail</label>
                   <input
                     type="email"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--input-color)] px-3 py-2"
                     placeholder="seu@email.com"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Telefone
-                  </label>
+                <div className="space-y-1">
+                  <label className="text-xs uppercase tracking-[0.16em] font-semibold">Telefone</label>
                   <input
                     type="tel"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--input-color)] px-3 py-2"
                     placeholder="(00) 00000-0000"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Mensagem
-                  </label>
+                <div className="space-y-1">
+                  <label className="text-xs uppercase tracking-[0.16em] font-semibold">Mensagem</label>
                   <textarea
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Gostaria de mais informações sobre este imóvel..."
+                    className="w-full rounded-none border-[3px] border-[var(--foreground-color)] bg-[var(--input-color)] px-3 py-2"
+                    placeholder="Quero saber mais sobre este imóvel..."
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition-colors"
+                  className="w-full bg-[var(--accent-color)] text-white font-semibold py-3 border-[3px] border-[var(--foreground-color)] shadow-[8px_8px_0_#0c0c0c] uppercase tracking-[0.16em]"
                 >
-                  Enviar Mensagem
+                  Enviar mensagem
                 </button>
               </form>
 
               {/* Company Info */}
-              <div className="mt-6 pt-6 border-t">
-                <p className="text-xs text-gray-500 mb-2">Anunciado por:</p>
-                <p className="font-semibold text-gray-900">
+              <div className="pt-4 border-t-[3px] border-[var(--foreground-color)]">
+                <p className="text-xs uppercase tracking-[0.16em] font-semibold mb-2">Anunciado por</p>
+                <p className="font-black text-lg">
                   {property.company_id?.name || 'Imobiliária'}
                 </p>
                 {property.company_id?.phone && (
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-[var(--muted-foreground)] mt-1">
                     {property.company_id.phone}
                   </p>
                 )}
               </div>
+            </div>
+
+            <div className="bauhaus-card p-5 space-y-3">
+              <p className="uppercase tracking-[0.18em] text-xs font-semibold">compasso do imóvel</p>
+              <div className="flex items-center gap-3">
+                <div className="h-4 w-full bg-[var(--background-color-muted)] border-[3px] border-[var(--foreground-color)]" />
+                <div className="h-4 w-12 bg-[var(--accent-color)] border-[3px] border-[var(--foreground-color)]" />
+              </div>
+              <p className="text-sm text-[var(--muted-foreground)]">
+                Bloco lateral para reforçar o ritmo gráfico: bordas fortes, cores primárias e contraste marcante.
+              </p>
             </div>
           </div>
         </div>

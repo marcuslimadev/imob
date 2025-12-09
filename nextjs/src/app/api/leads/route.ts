@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error creating lead:', error);
+
     return NextResponse.json(
       { error: 'Erro ao processar sua solicitação. Tente novamente.' },
       { status: 500 }

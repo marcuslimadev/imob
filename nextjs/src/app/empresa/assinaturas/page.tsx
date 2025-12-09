@@ -128,39 +128,42 @@ export default function AssinaturasPage() {
     }
   }, [user?.company_id, statusFilter, fetchDocumentos]);
 
-  const filteredDocumentos = documentos.filter(d => {
-    if (!searchTerm) return true;
-    const search = searchTerm.toLowerCase();
-    return (
-      d.codigo?.toLowerCase().includes(search) ||
-      d.assunto?.toLowerCase().includes(search) ||
-      d.property_id?.title?.toLowerCase().includes(search) ||
-      d.lead_id?.name?.toLowerCase().includes(search)
-    );
-  });
+    const filteredDocumentos = documentos.filter(d => {
+      if (!searchTerm) return true;
+      const search = searchTerm.toLowerCase();
+
+      return (
+        d.codigo?.toLowerCase().includes(search) ||
+        d.assunto?.toLowerCase().includes(search) ||
+        d.property_id?.title?.toLowerCase().includes(search) ||
+        d.lead_id?.name?.toLowerCase().includes(search)
+      );
+    });
 
   // Estatísticas
-  const stats = {
-    total: documentos.length,
-    pendentes: documentos.filter(d => ['pending', 'partial', 'sent'].includes(d.status)).length,
-    assinados: documentos.filter(d => d.status === 'signed').length,
-    expirados: documentos.filter(d => d.status === 'expired').length,
-  };
+    const stats = {
+      total: documentos.length,
+      pendentes: documentos.filter(d => ['pending', 'partial', 'sent'].includes(d.status)).length,
+      assinados: documentos.filter(d => d.status === 'signed').length,
+      expirados: documentos.filter(d => d.status === 'expired').length,
+    };
 
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
+    if (authLoading) {
 
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Acesso negado</h2>
-          <Link href="/" className="text-indigo-600 hover:underline">
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        </div>
+      );
+    }
+
+    if (!user) {
+
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Acesso negado</h2>
+            <Link href="/" className="text-indigo-600 hover:underline">
             Fazer login
           </Link>
         </div>
@@ -324,6 +327,7 @@ export default function AssinaturasPage() {
                 <tbody className="divide-y">
                   {filteredDocumentos.map((documento) => {
                     const StatusIcon = statusConfig[documento.status]?.icon || FileCheck;
+
                     return (
                       <tr key={documento.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">

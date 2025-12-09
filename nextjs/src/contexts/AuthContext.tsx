@@ -1,6 +1,14 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useDesignTheme } from '@/components/ui/ThemeProvider';
+import { DEFAULT_DESIGN_THEME } from '@/lib/design-themes';
+
+interface Company {
+  id: string;
+  name?: string;
+  theme_key?: string | null;
+}
 
 interface User {
   id: string;
@@ -9,6 +17,7 @@ interface User {
   last_name?: string;
   role: string;
   company_id?: string;
+  company?: Company;
 }
 
 interface AuthContextType {
@@ -24,6 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { setThemeKey } = useDesignTheme();
 
   useEffect(() => {
     checkAuth();
@@ -34,7 +44,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await fetch('/api/auth/me');
       if (response.ok) {
         const data = await response.json();
-        setUser(data.user);
+        const company = data.user?.company_id && typeof data.user.company_id === 'object'
+          ? (data.user.company_id as Company)
+          : undefined;
+
+        const normalizedUser: User = {
+          ...data.user,
+          company_id: company?.id || data.user?.company_id,
+          company,
+        };
+
+        setUser(normalizedUser);
+
+        if (company?.theme_key) {
+          setThemeKey(company.theme_key);
+        }
       } else {
         setUser(null);
       }
@@ -69,6 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
+      setThemeKey(DEFAULT_DESIGN_THEME);
     } catch (error) {
       setUser(null);
     }
@@ -94,5 +119,6 @@ export function useAuth() {
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+
   return context;
 }
