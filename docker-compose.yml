@@ -1,0 +1,180 @@
+services:
+  # PostgreSQL com PostGIS
+  database:
+    image: postgis/postgis:16-master
+    container_name: imobi-database
+    platform: linux/amd64
+    volumes:
+      - ./directus/data/database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus
+      POSTGRES_DB: directus
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'directus', '-d', 'directus', '-h', 'localhost']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - imobi-network
+
+  # Redis Cache
+  cache:
+    image: redis:6
+    container_name: imobi-redis
+    healthcheck:
+      test: ['CMD-SHELL', "[ $$(redis-cli ping) = 'PONG' ]"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - imobi-network
+
+  # Directus CMS (Backend)
+  directus:
+    image: directus/directus:11.12.0
+    container_name: imobi-directus
+    ports:
+      - "8055:8055"
+    volumes:
+      - ./directus/uploads:/directus/uploads
+      - ./directus/extensions:/directus/extensions
+      - ./directus/setup-simple.js:/scripts/setup-simple.js:ro
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    environment:
+      SECRET: '1234567890abcdef1234567890abcdef'
+      
+      DB_CLIENT: 'pg'
+      DB_HOST: 'database'
+      DB_PORT: '5432'
+      DB_DATABASE: 'directus'
+      DB_USER: 'directus'
+      DB_PASSWORD: 'directus'
+      DB_POOL_MIN: '2'
+      DB_POOL_MAX: '10'
+      
+      CACHE_ENABLED: 'true'
+      CACHE_AUTO_PURGE: 'true'
+      CACHE_STORE: 'redis'
+      CACHE_TTL: '10m'
+      REDIS: 'redis://cache:6379'
+      
+      RATE_LIMITER_ENABLED: 'true'
+      RATE_LIMITER_POINTS: '50'
+      RATE_LIMITER_DURATION: '1'
+      
+      ADMIN_EMAIL: 'marcus@admin.com'
+      ADMIN_PASSWORD: 'Teste@123'
+      
+      WEBSOCKETS_ENABLED: 'true'
+      
+      PUBLIC_URL: 'http://localhost:8055'
+      
+      CORS_ENABLED: 'true'
+      CORS_ORIGIN: 'http://localhost:4000,http://localhost:3000'
+      CORS_CREDENTIALS: 'true'
+      
+      REFRESH_TOKEN_COOKIE_SECURE: 'false'
+      REFRESH_TOKEN_COOKIE_SAME_SITE: 'lax'
+      
+      SESSION_COOKIE_SECURE: 'false'
+      SESSION_COOKIE_SAME_SITE: 'lax'
+      
+      EXTENSIONS_PATH: './extensions'
+      EXTENSIONS_AUTO_RELOAD: 'true'
+      
+      CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC: "'self' https://www.youtube.com"
+      CONTENT_SECURITY_POLICY_DIRECTIVES__SCRIPT_SRC: "'self' 'unsafe-eval' https://cdn.tailwindcss.com"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "node", "-e", "require('http').get('http://localhost:8055/server/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - imobi-network
+
+  # Setup - Criação de Collections e Seed de Dados
+  setup:
+    image: node:20-alpine
+    container_name: imobi-setup
+    working_dir: /app
+    volumes:
+      - ./directus:/app
+    depends_on:
+      directus:
+        condition: service_healthy
+    environment:
+      DIRECTUS_URL: 'http://directus:8055'
+      ADMIN_EMAIL: 'marcus@admin.com'
+      ADMIN_PASSWORD: 'Teste@123'
+    command: >
+      sh -c "
+        echo '⏳ Aguardando Directus ficar pronto...' &&
+        sleep 10 &&
+        echo '📦 Instalando dependências...' &&
+        npm install axios dotenv @directus/sdk &&
+        echo '🏗️  Criando collections...' &&
+        node register-collections.js &&
+        echo '📝 Registrando campos...' &&
+        node register-fields.js &&
+        echo '🌱 Populando dados iniciais...' &&
+        node seed-data.js &&
+        echo '✅ Setup concluído!'
+      "
+    networks:
+      - imobi-network
+
+  # Next.js Frontend (Development mode)
+  nextjs:
+    build:
+      context: ./nextjs
+      dockerfile: Dockerfile.dev
+    container_name: imobi-nextjs
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./nextjs:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      directus:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_DIRECTUS_URL: 'http://localhost:8055'
+      DIRECTUS_URL: 'http://directus:8055'
+      DIRECTUS_ADMIN_TOKEN: 'change-this-token'
+      NODE_OPTIONS: '--max-old-space-size=2048'
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+        reservations:
+          memory: 1G
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:4000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    networks:
+      - imobi-network
+
+networks:
+  imobi-network:
+    driver: bridge
+
+volumes:
+  database-data:
+  uploads-data:

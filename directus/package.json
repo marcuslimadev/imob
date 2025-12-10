@@ -1,0 +1,26 @@
+{
+  "name": "directus",
+  "version": "1.0.0",
+  "main": "import-tables.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "register": "node register-collections.js && node register-fields.js",
+    "import:properties": "node workers/import-properties.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@directus/sdk": "^20.3.0",
+    "axios": "^1.13.2",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
+    "node-fetch": "^3.3.2",
+    "p-queue": "^9.0.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "@playwright/test": "^1.57.0"
+  }
+}

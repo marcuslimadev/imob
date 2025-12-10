@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgis/postgis:16-3.4
+    container_name: directus-db-prod
+    restart: unless-stopped
+    volumes:
+      - ./data/database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: directus_prod
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U directus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - directus-network
+
+  cache:
+    image: redis:7-alpine
+    container_name: directus-cache-prod
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - directus-network
+
+  directus:
+    image: directus/directus:11.2.2
+    container_name: directus-cms-prod
+    restart: unless-stopped
+    ports:
+      - "8055:8055"
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+    environment:
+      # Database
+      DB_CLIENT: postgres
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: directus_prod
+      DB_USER: directus
+      DB_PASSWORD: ${DB_PASSWORD}
+      
+      # Cache
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      CACHE_ENABLED: "true"
+      CACHE_STORE: redis
+      CACHE_REDIS: redis://cache:6379
+      
+      # Core
+      KEY: ${KEY}
+      SECRET: ${SECRET}
+      PUBLIC_URL: ${PUBLIC_URL}
+      
+      # CORS
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      CORS_METHODS: GET,POST,PATCH,DELETE
+      CORS_ALLOWED_HEADERS: Content-Type,Authorization,X-Company-Id,X-Company-Slug
+      
+      # Admin
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      
+      # Email (opcional - configurar depois)
+      EMAIL_FROM: ${ADMIN_EMAIL}
+      EMAIL_TRANSPORT: smtp
+      EMAIL_SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      EMAIL_SMTP_PORT: ${SMTP_PORT:-587}
+      EMAIL_SMTP_USER: ${SMTP_USER}
+      EMAIL_SMTP_PASSWORD: ${SMTP_PASSWORD}
+      
+      # Rate Limiting
+      RATE_LIMITER_ENABLED: "true"
+      RATE_LIMITER_POINTS: 50
+      RATE_LIMITER_DURATION: 1
+      
+      # Assets
+      ASSETS_CACHE_TTL: 30d
+      ASSETS_TRANSFORM_MAX_CONCURRENT: 4
+      
+      # File Upload
+      FILES_MAX_UPLOAD_SIZE: 100mb
+      
+      # Extensions
+      EXTENSIONS_PATH: ./extensions
+      
+      # Logs
+      LOG_LEVEL: info
+      LOG_STYLE: pretty
+      
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    networks:
+      - directus-network
+
+networks:
+  directus-network:
+    driver: bridge

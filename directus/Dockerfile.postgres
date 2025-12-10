@@ -1,0 +1,17 @@
+FROM postgis/postgis:16-master
+
+# Configurar timezone
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Otimizações de performance
+RUN echo "shared_buffers = 256MB" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "effective_cache_size = 1GB" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "maintenance_work_mem = 64MB" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "checkpoint_completion_target = 0.9" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "wal_buffers = 16MB" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "default_statistics_target = 100" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "random_page_cost = 1.1" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "effective_io_concurrency = 200" >> /usr/share/postgresql/postgresql.conf.sample
+
+EXPOSE 5432

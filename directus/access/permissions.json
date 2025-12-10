@@ -1,0 +1,1187 @@
+{
+  "version": "1.0",
+  "exported_at": "2025-11-28T14:33:55.494Z",
+  "directus_version": "11.12.0",
+  "roles": [
+    {
+      "id": "0dd2c43d-0a50-4e06-bf49-8a06d36575b2",
+      "name": "SaaS Admin",
+      "icon": "shield",
+      "description": "Backoffice do produto (acesso total)",
+      "parent": null,
+      "children": [],
+      "policies": [
+        "87e7a9bd-c275-4b68-87fb-61def58f5d7d"
+      ],
+      "users": [
+        "43496c7d-f4af-49f5-bbea-843c98dbb6c6"
+      ]
+    },
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "name": "Company Admin",
+      "icon": "business",
+      "description": "Administrador de imobiliária",
+      "parent": null,
+      "children": [],
+      "policies": [
+        "7e852a00-eded-410f-918d-2fa4b86fe8f7"
+      ],
+      "users": [
+        "787d4e70-657c-445a-8779-ce5e0c94803a"
+      ]
+    },
+    {
+      "id": "18528f9e-17c0-46bd-805c-f02916a80705",
+      "name": "Usuário Imobiliária",
+      "icon": "person",
+      "description": "Usuário/corretor de imobiliária",
+      "parent": null,
+      "children": [],
+      "policies": [],
+      "users": [
+        "35679820-0eeb-44af-abd1-398716ac8f43"
+      ]
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "name": "Corretor",
+      "icon": "person",
+      "description": "Corretor/vendedor",
+      "parent": null,
+      "children": [],
+      "policies": [
+        "43538f35-88ee-435b-8380-948d14aa54ba"
+      ],
+      "users": [
+        "cab95a2b-436d-41b9-9208-203879c1033c"
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "name": "Public",
+      "icon": "public",
+      "description": "Acesso público",
+      "parent": null,
+      "children": [],
+      "policies": [],
+      "users": []
+    },
+    {
+      "id": "5a5e951f-e11e-4832-85ba-f0a7f22a548d",
+      "name": "Admin Imobiliária",
+      "icon": "business",
+      "description": "Administrador de uma imobiliária",
+      "parent": null,
+      "children": [],
+      "policies": [],
+      "users": [
+        "be425643-4762-46d4-ba33-06d97d7e6820",
+        "eba87d3e-e8b6-470d-8b2c-daddf9c9f458"
+      ]
+    },
+    {
+      "id": "d72d0994-906f-46a8-8d21-f5998eac5b20",
+      "name": "SaaS Finance",
+      "icon": "attach_money",
+      "description": "Financeiro/atendimento do SaaS",
+      "parent": null,
+      "children": [],
+      "policies": [
+        "4f648bae-1130-45d6-b6e0-3f74f3c600ba"
+      ],
+      "users": [
+        "01e9eab5-234b-4bb5-9be2-0499208b0d13"
+      ]
+    },
+    {
+      "id": "e4650a77-fa9d-4301-b43b-a79fed5cfd0a",
+      "name": "Administrator",
+      "icon": "verified",
+      "description": "$t:admin_description",
+      "parent": null,
+      "children": [],
+      "policies": [
+        "e7915226-ee74-4bdc-8ebb-99eb6efd9a78"
+      ],
+      "users": [
+        "98815344-9beb-404f-ba88-07cf5333162e",
+        "c38dae91-6424-4cb6-bf02-dfc68e799bd1"
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "id": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8",
+      "name": "Company Admin Policy",
+      "icon": "business",
+      "description": "Acesso API da imobiliaria (frontend)",
+      "ip_access": null,
+      "enforce_tfa": false,
+      "admin_access": false,
+      "app_access": false,
+      "permissions": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "users": [
+        "7e852a00-eded-410f-918d-2fa4b86fe8f7"
+      ],
+      "roles": [
+        "7e852a00-eded-410f-918d-2fa4b86fe8f7"
+      ]
+    },
+    {
+      "id": "2bac4967-d6eb-4316-b51d-0a44aabd42c3",
+      "name": "Administrator",
+      "icon": "verified",
+      "description": "$t:admin_description",
+      "ip_access": null,
+      "enforce_tfa": false,
+      "admin_access": true,
+      "app_access": true,
+      "permissions": [],
+      "users": [
+        "e7915226-ee74-4bdc-8ebb-99eb6efd9a78"
+      ],
+      "roles": [
+        "e7915226-ee74-4bdc-8ebb-99eb6efd9a78"
+      ]
+    },
+    {
+      "id": "4c6ba742-31ec-40da-8946-9f65a163818e",
+      "name": "Corretor Policy",
+      "icon": "user",
+      "description": "Acesso corretor via API",
+      "ip_access": null,
+      "enforce_tfa": false,
+      "admin_access": false,
+      "app_access": false,
+      "permissions": [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "users": [
+        "43538f35-88ee-435b-8380-948d14aa54ba"
+      ],
+      "roles": [
+        "43538f35-88ee-435b-8380-948d14aa54ba"
+      ]
+    },
+    {
+      "id": "8e9a7929-0b50-4a88-9157-9d8c619d5015",
+      "name": "SaaS Finance Policy",
+      "icon": "attach_money",
+      "description": "Financeiro/atendimento SaaS",
+      "ip_access": null,
+      "enforce_tfa": false,
+      "admin_access": false,
+      "app_access": true,
+      "permissions": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "users": [
+        "4f648bae-1130-45d6-b6e0-3f74f3c600ba"
+      ],
+      "roles": [
+        "4f648bae-1130-45d6-b6e0-3f74f3c600ba"
+      ]
+    },
+    {
+      "id": "abf8a154-5b1c-4a46-ac9c-7300570f4f17",
+      "name": "$t:public_label",
+      "icon": "public",
+      "description": "$t:public_description",
+      "ip_access": null,
+      "enforce_tfa": false,
+      "admin_access": false,
+      "app_access": false,
+      "permissions": [
+        25,
+        26
+      ],
+      "users": [
+        "66fce2d0-0a3a-45d9-b41b-218430b4329e"
+      ],
+      "roles": [
+        "66fce2d0-0a3a-45d9-b41b-218430b4329e"
+      ]
+    },
+    {
+      "id": "af0b7bdd-faef-4776-b56a-c882514d8b1b",
+      "name": "SaaS Admin Policy",
+      "icon": "shield",
+      "description": "Acesso total ao backoffice",
+      "ip_access": null,
+      "enforce_tfa": false,
+      "admin_access": true,
+      "app_access": true,
+      "permissions": [],
+      "users": [
+        "87e7a9bd-c275-4b68-87fb-61def58f5d7d"
+      ],
+      "roles": [
+        "87e7a9bd-c275-4b68-87fb-61def58f5d7d"
+      ]
+    }
+  ],
+  "permissions": [
+    {
+      "id": 1,
+      "collection": "companies",
+      "action": "read",
+      "permissions": null,
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "8e9a7929-0b50-4a88-9157-9d8c619d5015"
+    },
+    {
+      "id": 2,
+      "collection": "companies",
+      "action": "update",
+      "permissions": null,
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "subscription_status",
+        "subscription_plan",
+        "subscription_expires_at",
+        "status",
+        "notes"
+      ],
+      "policy": "8e9a7929-0b50-4a88-9157-9d8c619d5015"
+    },
+    {
+      "id": 3,
+      "collection": "directus_users",
+      "action": "read",
+      "permissions": null,
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "status",
+        "role",
+        "company_id"
+      ],
+      "policy": "8e9a7929-0b50-4a88-9157-9d8c619d5015"
+    },
+    {
+      "id": 4,
+      "collection": "directus_users",
+      "action": "update",
+      "permissions": null,
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "status",
+        "company_id",
+        "role"
+      ],
+      "policy": "8e9a7929-0b50-4a88-9157-9d8c619d5015"
+    },
+    {
+      "id": 5,
+      "collection": "companies",
+      "action": "read",
+      "permissions": {
+        "id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 6,
+      "collection": "companies",
+      "action": "update",
+      "permissions": {
+        "id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "nome_fantasia",
+        "email",
+        "telefone",
+        "logo",
+        "primary_color",
+        "secondary_color",
+        "custom_domain"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 7,
+      "collection": "properties",
+      "action": "create",
+      "permissions": {},
+      "validation": null,
+      "presets": {
+        "company_id": "$CURRENT_USER.company_id"
+      },
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 8,
+      "collection": "properties",
+      "action": "read",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 9,
+      "collection": "properties",
+      "action": "update",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 10,
+      "collection": "properties",
+      "action": "delete",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": null,
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 11,
+      "collection": "leads",
+      "action": "create",
+      "permissions": {},
+      "validation": null,
+      "presets": {
+        "company_id": "$CURRENT_USER.company_id"
+      },
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 12,
+      "collection": "leads",
+      "action": "read",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 13,
+      "collection": "leads",
+      "action": "update",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 14,
+      "collection": "lead_activities",
+      "action": "create",
+      "permissions": {},
+      "validation": null,
+      "presets": {
+        "company_id": "$CURRENT_USER.company_id"
+      },
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 15,
+      "collection": "lead_activities",
+      "action": "read",
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 16,
+      "collection": "lead_activities",
+      "action": "update",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 17,
+      "collection": "property_media",
+      "action": "create",
+      "permissions": {},
+      "validation": null,
+      "presets": {
+        "company_id": "$CURRENT_USER.company_id"
+      },
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 18,
+      "collection": "property_media",
+      "action": "read",
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 19,
+      "collection": "property_media",
+      "action": "delete",
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": null,
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 20,
+      "collection": "companies",
+      "action": "read",
+      "permissions": {
+        "id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "id",
+        "name",
+        "slug",
+        "primary_color",
+        "secondary_color",
+        "logo"
+      ],
+      "policy": "4c6ba742-31ec-40da-8946-9f65a163818e"
+    },
+    {
+      "id": 21,
+      "collection": "properties",
+      "action": "read",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "4c6ba742-31ec-40da-8946-9f65a163818e"
+    },
+    {
+      "id": 22,
+      "collection": "leads",
+      "action": "read",
+      "permissions": {
+        "_and": [
+          {
+            "company_id": {
+              "_eq": "$CURRENT_USER.company_id"
+            }
+          },
+          {
+            "assigned_to": {
+              "_eq": "$CURRENT_USER"
+            }
+          }
+        ]
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "4c6ba742-31ec-40da-8946-9f65a163818e"
+    },
+    {
+      "id": 23,
+      "collection": "lead_activities",
+      "action": "create",
+      "permissions": null,
+      "validation": null,
+      "presets": {
+        "company_id": "$CURRENT_USER.company_id"
+      },
+      "fields": [
+        "*"
+      ],
+      "policy": "4c6ba742-31ec-40da-8946-9f65a163818e"
+    },
+    {
+      "id": 24,
+      "collection": "lead_activities",
+      "action": "read",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "4c6ba742-31ec-40da-8946-9f65a163818e"
+    },
+    {
+      "id": 25,
+      "collection": "properties",
+      "action": "read",
+      "permissions": {
+        "status": {
+          "_eq": "active"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "id",
+        "title",
+        "city",
+        "state",
+        "price_sale",
+        "price_rent",
+        "cover_image",
+        "company_id"
+      ],
+      "policy": "abf8a154-5b1c-4a46-ac9c-7300570f4f17"
+    },
+    {
+      "id": 26,
+      "collection": "companies",
+      "action": "read",
+      "permissions": null,
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "id",
+        "name",
+        "slug",
+        "logo",
+        "primary_color",
+        "secondary_color"
+      ],
+      "policy": "abf8a154-5b1c-4a46-ac9c-7300570f4f17"
+    },
+    {
+      "id": 27,
+      "collection": "leads",
+      "action": "delete",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": null,
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 28,
+      "collection": "conversas",
+      "action": "create",
+      "permissions": {},
+      "validation": null,
+      "presets": {
+        "company_id": "$CURRENT_USER.company_id"
+      },
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 29,
+      "collection": "conversas",
+      "action": "read",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 30,
+      "collection": "conversas",
+      "action": "update",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 31,
+      "collection": "mensagens",
+      "action": "create",
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 32,
+      "collection": "mensagens",
+      "action": "read",
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 33,
+      "collection": "app_settings",
+      "action": "read",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 34,
+      "collection": "app_settings",
+      "action": "update",
+      "permissions": {
+        "company_id": {
+          "_eq": "$CURRENT_USER.company_id"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 35,
+      "collection": "directus_files",
+      "action": "create",
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 36,
+      "collection": "directus_files",
+      "action": "read",
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 37,
+      "collection": "directus_files",
+      "action": "update",
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "id": 38,
+      "collection": "directus_files",
+      "action": "delete",
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": null,
+      "policy": "19392e3a-e95f-4c3b-b9c8-dc903905f4d8"
+    },
+    {
+      "policy": null,
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_collections",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_fields",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_relations",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_translations",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "user": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_activity",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "user_created": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_comments",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {},
+      "validation": {
+        "comment": {
+          "_nnull": true
+        }
+      },
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_comments",
+      "action": "create"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "user_created": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "comment"
+      ],
+      "system": true,
+      "collection": "directus_comments",
+      "action": "update"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "user_created": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_comments",
+      "action": "delete"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "_or": [
+          {
+            "user": {
+              "_eq": "$CURRENT_USER"
+            }
+          },
+          {
+            "_and": [
+              {
+                "user": {
+                  "_null": true
+                }
+              },
+              {
+                "role": {
+                  "_eq": "$CURRENT_ROLE"
+                }
+              }
+            ]
+          },
+          {
+            "_and": [
+              {
+                "user": {
+                  "_null": true
+                }
+              },
+              {
+                "role": {
+                  "_null": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_presets",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {},
+      "validation": {
+        "user": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_presets",
+      "action": "create"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "user": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": {
+        "user": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_presets",
+      "action": "update"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "user": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_presets",
+      "action": "delete"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "id": {
+          "_in": "$CURRENT_ROLES"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_roles",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_settings",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {},
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_translations",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "recipient": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_notifications",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "recipient": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "status"
+      ],
+      "system": true,
+      "collection": "directus_notifications",
+      "action": "update"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "user_created": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "*"
+      ],
+      "system": true,
+      "collection": "directus_shares",
+      "action": "read"
+    },
+    {
+      "policy": null,
+      "permissions": {
+        "id": {
+          "_eq": "$CURRENT_USER"
+        }
+      },
+      "validation": null,
+      "presets": null,
+      "fields": [
+        "id",
+        "first_name",
+        "last_name",
+        "last_page",
+        "email",
+        "password",
+        "location",
+        "title",
+        "description",
+        "tags",
+        "preferences_divider",
+        "avatar",
+        "language",
+        "appearance",
+        "theme_light",
+        "theme_dark",
+        "tfa_secret",
+        "status",
+        "role"
+      ],
+      "system": true,
+      "collection": "directus_users",
+      "action": "read"
+    }
+  ]
+}

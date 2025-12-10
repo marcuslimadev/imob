@@ -1,0 +1,83 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    name: Deploy Exclusiva to Production
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🔑 Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2_key
+        chmod 600 ~/.ssh/ec2_key
+
+    - name: 🔐 Add EC2 to known_hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: 🚀 Deploy to EC2
+      env:
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        EC2_USER: ${{ secrets.EC2_USER }}
+      run: |
+        ssh -i ~/.ssh/ec2_key ${EC2_USER}@${EC2_HOST} << 'ENDSSH'
+          set -e
+          
+          echo "📂 Navegando para diretório do projeto..."
+          cd ~/exclusiva-prod/imob
+          
+          echo "🔄 Atualizando código (git pull)..."
+          git pull origin main
+          
+          echo "🐳 Atualizando Directus (Docker)..."
+          cd directus
+          docker-compose -f docker-compose.production.yml pull
+          docker-compose -f docker-compose.production.yml up -d --build --force-recreate
+          
+          echo "⏳ Aguardando Directus inicializar..."
+          sleep 30
+          
+          echo "📦 Atualizando Next.js..."
+          cd ../nextjs
+          pnpm install --frozen-lockfile
+          pnpm build
+          
+          echo "🔄 Reiniciando PM2..."
+          pm2 reload ecosystem.config.js --env production
+          
+          echo "✅ Deploy concluído com sucesso!"
+          
+          echo "📊 Status dos serviços:"
+          docker ps --format "table {{.Names}}\t{{.Status}}"
+          pm2 list
+        ENDSSH
+
+    - name: 🧪 Health Check
+      env:
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+      run: |
+        echo "Aguardando serviços estabilizarem (30s)..."
+        sleep 30
+        
+        echo "Testando Directus..."
+        curl -f https://directus.exclusivalarimoveis.com.br/server/health || exit 1
+        
+        echo "Testando Next.js..."
+        curl -f https://exclusivalarimoveis.com.br || exit 1
+        
+        echo "✅ Todos os health checks passaram!"
+
+    - name: 📢 Notify on Failure
+      if: failure()
+      run: |
+        echo "❌ Deploy falhou! Verifique os logs acima."

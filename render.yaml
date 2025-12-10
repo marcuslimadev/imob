@@ -1,0 +1,100 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: imobi-postgres
+    env: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./directus/Dockerfile.postgres
+    envVars:
+      - key: POSTGRES_DB
+        value: directus
+      - key: POSTGRES_USER
+        value: directus
+      - key: POSTGRES_PASSWORD
+        generateValue: true
+    disk:
+      name: postgres-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 10
+
+  # Redis Cache
+  - type: redis
+    name: imobi-redis
+    plan: starter
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+
+  # Directus Backend
+  - type: web
+    name: imobi-directus
+    env: docker
+    region: oregon
+    plan: starter
+    dockerfilePath: ./directus/Dockerfile
+    envVars:
+      - key: SECRET
+        generateValue: true
+      - key: DB_CLIENT
+        value: pg
+      - key: DB_HOST
+        fromService:
+          type: pserv
+          name: imobi-postgres
+          property: host
+      - key: DB_PORT
+        fromService:
+          type: pserv
+          name: imobi-postgres
+          property: port
+      - key: DB_DATABASE
+        value: directus
+      - key: DB_USER
+        value: directus
+      - key: DB_PASSWORD
+        fromService:
+          type: pserv
+          name: imobi-postgres
+          envVarKey: POSTGRES_PASSWORD
+      - key: CACHE_ENABLED
+        value: true
+      - key: CACHE_STORE
+        value: redis
+      - key: REDIS
+        fromService:
+          type: redis
+          name: imobi-redis
+          property: connectionString
+      - key: ADMIN_EMAIL
+        value: marcus@admin.com
+      - key: ADMIN_PASSWORD
+        value: Teste@123
+      - key: WEBSOCKETS_ENABLED
+        value: true
+      - key: PUBLIC_URL
+        fromService:
+          type: web
+          name: imobi-directus
+          property: host
+      - key: CORS_ENABLED
+        value: true
+      - key: CORS_ORIGIN
+        value: "*"
+    healthCheckPath: /server/health
+
+  # Next.js Frontend
+  - type: web
+    name: imobi-frontend
+    env: node
+    region: oregon
+    plan: starter
+    buildCommand: cd nextjs && npm install && npm run build
+    startCommand: cd nextjs && npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: imobi-directus
+          property: host
+      - key: NODE_ENV
+        value: production

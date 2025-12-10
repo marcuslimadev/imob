@@ -1,0 +1,26 @@
+FROM node:20-alpine
+
+# Instalar dependências do sistema e Chromium
+RUN apk add --no-cache libc6-compat chromium nss freetype harfbuzz ca-certificates ttf-freefont ffmpeg
+
+# Tell Playwright to use system Chromium
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+WORKDIR /app
+
+# Copiar arquivos de dependências
+COPY package.json pnpm-lock.yaml* ./
+
+# Instalar pnpm e dependências
+RUN npm install -g pnpm && \
+    pnpm install --frozen-lockfile
+
+# Copiar código fonte
+COPY . .
+
+# Expor porta
+EXPOSE 4000
+
+# Comando de desenvolvimento
+CMD ["pnpm", "dev"]

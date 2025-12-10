@@ -1,0 +1,69 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]: manifesto bauhaus
+          - link "Vitrine" [ref=e9] [cursor=pointer]:
+            - /url: /home
+        - generic [ref=e10]:
+          - generic [ref=e11]: CRM geométrico
+          - heading "IMOBI, reimaginado no ritmo geométrico." [level=1] [ref=e12]:
+            - text: IMOBI, reimaginado
+            - generic [ref=e13]: no ritmo geométrico.
+          - paragraph [ref=e14]: Formas primárias, contrastes ousados e tipografia geométrica criam uma experiência de login totalmente nova. Minimalismo funcional com personalidade.
+          - generic [ref=e15]:
+            - generic [ref=e16]:
+              - generic [ref=e17]: "01"
+              - generic [ref=e18]: Contraste puro
+            - generic [ref=e19]:
+              - generic [ref=e20]: "02"
+              - generic [ref=e21]: Geometria
+            - generic [ref=e22]:
+              - generic [ref=e23]: "03"
+              - generic [ref=e24]: Ritmo visual
+        - generic [ref=e25]:
+          - generic [ref=e26]: Ateliê
+          - generic [ref=e27]: "1925"
+          - generic [ref=e28]: Geometria
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - generic [ref=e35]:
+              - generic [ref=e36]: iM
+              - generic [ref=e37]:
+                - paragraph [ref=e38]: plataforma
+                - paragraph [ref=e39]: IMOBI CRM
+            - generic [ref=e40]: versão 2.0
+          - generic [ref=e41]:
+            - generic [ref=e42]: IA
+            - generic [ref=e43]:
+              - paragraph [ref=e44]: Entrada segura
+              - paragraph [ref=e45]: Entre no painel geométrico
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - generic [ref=e48]: E-mail
+            - textbox "E-mail" [ref=e51]:
+              - /placeholder: seu@email.com
+          - generic [ref=e52]:
+            - generic [ref=e53]: Senha
+            - textbox "Senha" [ref=e56]:
+              - /placeholder: ••••••••
+          - button "Entrar agora" [ref=e57] [cursor=pointer]:
+            - generic [ref=e58]:
+              - img [ref=e59]
+              - text: Entrar agora
+        - generic [ref=e62]:
+          - link "Esqueceu sua senha?" [ref=e63] [cursor=pointer]:
+            - /url: "#"
+            - text: Esqueceu sua senha?
+          - link "Cadastre-se agora" [ref=e65] [cursor=pointer]:
+            - /url: "#"
+            - text: Cadastre-se agora
+  - button "Open Next.js Dev Tools" [ref=e72] [cursor=pointer]:
+    - img [ref=e73]
+  - alert [ref=e76]
+```

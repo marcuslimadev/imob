@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* Legacy fallback fonts kept for environments without webfont access */
+@font-face {
+        font-family: 'Inter';
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/fonts/inter.woff2') format('woff2');
+}
+
+@font-face {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/poppins-400.woff2') format('woff2');
+}
+
+@font-face {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('/fonts/poppins-700.woff2') format('woff2');
+}
+
+html {
+        font-family: 'Space Grotesk', 'Manrope', 'Inter', 'Poppins', sans-serif;
+}
