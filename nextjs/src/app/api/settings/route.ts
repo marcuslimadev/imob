@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+const DIRECTUS_URL = process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,25 +31,46 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 400 });
     }
 
-    // Buscar configurações da empresa
+    // Buscar configurações da empresa (campos usados na UI)
     const settingsResponse = await fetch(
       `${DIRECTUS_URL}/items/app_settings?filter[company_id][_eq]=${companyId}&limit=1`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
     if (!settingsResponse.ok) {
 
-      return NextResponse.json({ external_api_url: '', external_api_token: '' });
+      return NextResponse.json({
+        external_api_url: '',
+        external_api_token: '',
+        imobibrasil_url: '',
+        imobibrasil_token: '',
+        chavesnamao_token: '',
+        xml_url: '',
+        twilio_account_sid: '',
+        twilio_auth_token: '',
+        twilio_whatsapp_number: '',
+        openai_api_key: '',
+        openai_model: 'gpt-4o-mini',
+        clicksign_access_token: '',
+      });
     }
 
     const settingsData = await settingsResponse.json();
-    const settings = settingsData.data[0] || {};
+    const settings = settingsData.data?.[0] || {};
 
     return NextResponse.json({
       external_api_url: settings.external_api_url || '',
       external_api_token: settings.external_api_token || '',
+      imobibrasil_url: settings.imobibrasil_url || settings.external_api_url || '',
+      imobibrasil_token: settings.imobibrasil_token || settings.external_api_token || '',
+      chavesnamao_token: settings.chavesnamao_token || '',
+      xml_url: settings.xml_url || '',
+      twilio_account_sid: settings.twilio_account_sid || '',
+      twilio_auth_token: settings.twilio_auth_token || '',
+      twilio_whatsapp_number: settings.twilio_whatsapp_number || '',
+      openai_api_key: settings.openai_api_key || '',
+      openai_model: settings.openai_model || 'gpt-4o-mini',
+      clicksign_access_token: settings.clicksign_access_token || '',
     });
   } catch (error: any) {
     console.error('[API /settings GET] Erro:', error);
@@ -90,7 +111,20 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { external_api_url, external_api_token } = body;
+    const {
+      external_api_url,
+      external_api_token,
+      imobibrasil_url,
+      imobibrasil_token,
+      chavesnamao_token,
+      xml_url,
+      twilio_account_sid,
+      twilio_auth_token,
+      twilio_whatsapp_number,
+      openai_api_key,
+      openai_model,
+      clicksign_access_token,
+    } = body;
 
     // Verificar se já existe configuração
     const existingResponse = await fetch(
@@ -116,6 +150,16 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           external_api_url,
           external_api_token,
+          imobibrasil_url: imobibrasil_url || external_api_url,
+          imobibrasil_token: imobibrasil_token || external_api_token,
+          chavesnamao_token,
+          xml_url,
+          twilio_account_sid,
+          twilio_auth_token,
+          twilio_whatsapp_number,
+          openai_api_key,
+          openai_model,
+          clicksign_access_token,
         }),
       });
 
@@ -137,6 +181,16 @@ export async function POST(request: NextRequest) {
           company_id: companyId,
           external_api_url,
           external_api_token,
+          imobibrasil_url: imobibrasil_url || external_api_url,
+          imobibrasil_token: imobibrasil_token || external_api_token,
+          chavesnamao_token,
+          xml_url,
+          twilio_account_sid,
+          twilio_auth_token,
+          twilio_whatsapp_number,
+          openai_api_key,
+          openai_model,
+          clicksign_access_token,
         }),
       });
 

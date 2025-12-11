@@ -1,0 +1,12 @@
+{
+  "name": "imobi-import-scheduler",
+  "version": "1.0.0",
+  "description": "Cron scheduler for automatic property import",
+  "main": "scheduler.js",
+  "scripts": {
+    "start": "node scheduler.js"
+  },
+  "dependencies": {
+    "node-cron": "^3.0.3"
+  }
+}

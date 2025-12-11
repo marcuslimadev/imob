@@ -86,3 +86,38 @@ services:
       EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT}
       EMAIL_SMTP_USER: ${EMAIL_SMTP_USER}
       EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD}
+
+  nextjs:
+    build:
+      context: ../nextjs
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4000:4000"
+    depends_on:
+      directus:
+        condition: service_started
+    environment:
+      - NODE_ENV=development
+      - DIRECTUS_URL=http://directus:8055
+      - NEXT_PUBLIC_DIRECTUS_URL=http://localhost:8055
+      - DIRECTUS_STATIC_TOKEN=${DIRECTUS_STATIC_TOKEN}
+    volumes:
+      - ../nextjs:/app
+      - /app/node_modules
+      - /app/.next
+    command: pnpm dev
+
+  import-scheduler:
+    build:
+      context: .
+      dockerfile: cron/Dockerfile
+    depends_on:
+      directus:
+        condition: service_started
+    environment:
+      - NODE_ENV=production
+      - DIRECTUS_URL=http://directus:8055
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - COMPANY_ID=a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d
+    restart: unless-stopped

@@ -74,6 +74,7 @@ const fieldsDefinitions = {
         { field: 'clicksign_access_token', type: 'string', meta: { interface: 'input', width: 'half', note: 'ClickSign Access Token (assinaturas)' } },
         { field: 'external_api_url', type: 'string', meta: { interface: 'input', width: 'half', note: 'URL da API externa de imóveis' } },
         { field: 'external_api_key', type: 'string', meta: { interface: 'input', width: 'half', note: 'Chave da API externa' } },
+        { field: 'xml_url', type: 'text', meta: { interface: 'input', width: 'full', note: 'URL pública do XML de imóveis para Chaves na Mão (ex: https://exclusiva.imobi.com.br/api/xml/imoveis)', readonly: true } },
         
         // Configurações
         { field: 'subscription_plan', type: 'string', meta: { interface: 'select-dropdown', width: 'half', options: { choices: [

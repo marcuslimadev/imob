@@ -13,12 +13,21 @@ async function getCompanyProperties(companyId: string) {
     // @ts-ignore - Custom schema
     return await directusServer.request(
       readItems('properties', {
-        filter: {
-          company_id: { _eq: companyId }
-        },
-        // @ts-ignore
-        sort: ['-created_at'],
-        fields: ['*']
+        filter: { company_id: { _eq: companyId } },
+        fields: [
+          'id',
+          'titulo',
+          'tipo',
+          'finalidade',
+          'valor_venda',
+          'valor_locacao',
+          'bairro',
+          'cidade',
+          'estado',
+          'status',
+          'quartos',
+          'banheiros'
+        ]
       })
     );
   } catch (error) {
@@ -34,7 +43,11 @@ function getPropertyTypeLabel(type: string): string {
     commercial: 'Comercial',
     land: 'Terreno',
     farm: 'Fazenda',
-    penthouse: 'Cobertura'
+    penthouse: 'Cobertura',
+    apartamento: 'Apartamento',
+    casa: 'Casa',
+    comercial: 'Comercial',
+    terreno: 'Terreno'
   };
   return types[type] || type;
 }
@@ -52,7 +65,11 @@ function getStatusBadgeClass(status: string): string {
     active: 'bg-green-600 text-white font-bold',
     sold: 'bg-red-600 text-white font-bold',
     rented: 'bg-blue-600 text-white font-bold',
-    inactive: 'bg-gray-600 text-white font-bold'
+    inactive: 'bg-gray-600 text-white font-bold',
+    ativo: 'bg-green-600 text-white font-bold',
+    vendido: 'bg-red-600 text-white font-bold',
+    alugado: 'bg-blue-600 text-white font-bold',
+    inativo: 'bg-gray-600 text-white font-bold'
   };
   return classes[status] || classes.inactive;
 }
@@ -62,7 +79,11 @@ function getStatusLabel(status: string): string {
     active: 'Ativo',
     sold: 'Vendido',
     rented: 'Alugado',
-    inactive: 'Inativo'
+    inactive: 'Inativo',
+    ativo: 'Ativo',
+    vendido: 'Vendido',
+    alugado: 'Alugado',
+    inativo: 'Inativo'
   };
   return labels[status] || status;
 }
@@ -102,17 +123,17 @@ export default async function CompanyPropertiesPage() {
           />
           <BauhausStatCard 
             label="Ativos" 
-            value={properties.filter((p: any) => p.status === 'active').length}
+            value={properties.filter((p: any) => ['active', 'ativo'].includes(p.status)).length}
             color="green"
           />
           <BauhausStatCard 
             label="Vendidos" 
-            value={properties.filter((p: any) => p.status === 'sold').length}
+            value={properties.filter((p: any) => ['sold', 'vendido'].includes(p.status)).length}
             color="red"
           />
           <BauhausStatCard 
             label="Alugados" 
-            value={properties.filter((p: any) => p.status === 'rented').length}
+            value={properties.filter((p: any) => ['rented', 'alugado'].includes(p.status)).length}
             color="blue"
           />
         </div>
@@ -208,51 +229,48 @@ export default async function CompanyPropertiesPage() {
                     <tr key={property.id} className="hover:bg-blue-50 transition-colors">
                       <td className="px-6 py-5">
                         <div className="flex items-center">
-                          {property.featured && (
-                            <span className="mr-2 text-xl" title="Destaque">⭐</span>
-                          )}
                           <div>
                             <p className="font-semibold text-gray-900 text-base">
-                              {property.title}
+                              {property.titulo || 'Sem título'}
                             </p>
                             <p className="text-sm text-gray-600 mt-1">
-                              {property.bedrooms} qtos • {property.bathrooms} banheiros
+                              {property.quartos || 0} qtos • {property.banheiros || 0} banheiros
                             </p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-5 whitespace-nowrap">
                         <span className="text-sm font-medium text-gray-800">
-                          {getPropertyTypeLabel(property.property_type)}
+                          {getPropertyTypeLabel(property.tipo)}
                         </span>
                       </td>
                       <td className="px-6 py-5 whitespace-nowrap">
                         <span className="text-sm font-medium text-gray-800">
-                          {property.city}, {property.state}
+                          {property.cidade}, {property.estado}
                         </span>
                       </td>
                       <td className="px-6 py-5 whitespace-nowrap">
                         <div className="text-sm">
-                          {property.transaction_type === 'sale' && property.price_sale > 0 && (
+                          {['sale', 'venda'].includes(property.finalidade) && property.valor_venda > 0 && (
                             <p className="font-bold text-gray-900 text-base">
-                              {formatPrice(property.price_sale)}
+                              {formatPrice(property.valor_venda)}
                             </p>
                           )}
-                          {property.transaction_type === 'rent' && property.price_rent > 0 && (
+                          {['rent', 'locacao', 'locação'].includes(property.finalidade) && property.valor_locacao > 0 && (
                             <p className="font-bold text-gray-900 text-base">
-                              {formatPrice(property.price_rent)}/mês
+                              {formatPrice(property.valor_locacao)}/mês
                             </p>
                           )}
-                          {property.transaction_type === 'both' && (
+                          {['both', 'ambos'].includes(property.finalidade) && (
                             <>
-                              {property.price_sale > 0 && (
+                              {property.valor_venda > 0 && (
                                 <p className="font-bold text-gray-900 text-base">
-                                  {formatPrice(property.price_sale)}
+                                  {formatPrice(property.valor_venda)}
                                 </p>
                               )}
-                              {property.price_rent > 0 && (
+                              {property.valor_locacao > 0 && (
                                 <p className="text-xs text-gray-600 font-medium">
-                                  {formatPrice(property.price_rent)}/mês
+                                  {formatPrice(property.valor_locacao)}/mês
                                 </p>
                               )}
                             </>
@@ -269,7 +287,7 @@ export default async function CompanyPropertiesPage() {
                         </span>
                       </td>
                       <td className="px-6 py-5 whitespace-nowrap text-sm font-semibold text-gray-700">
-                        {property.views_count || 0}
+                        0
                       </td>
                       <td className="px-6 py-5 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center gap-3">
