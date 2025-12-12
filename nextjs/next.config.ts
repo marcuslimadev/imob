@@ -18,10 +18,26 @@ const ContentSecurityPolicy = `
 `;
 
 const nextConfig: NextConfig = {
-	webpack: (config) => {
+	webpack: (config, { isServer }) => {
 		config.cache = false;
-
+		// Reduzir uso de memória
+		config.optimization = {
+			...config.optimization,
+			minimize: false,
+		};
+		// Desabilitar watchpack em desenvolvimento
+		if (!isServer) {
+			config.watchOptions = {
+				poll: 3000,
+				aggregateTimeout: 300,
+				ignored: /node_modules|\.next/,
+			};
+		}
 		return config;
+	},
+	// Otimizações para reduzir uso de memória
+	experimental: {
+		webpackMemoryOptimizations: true,
 	},
 	// Configuração para rodar na porta 4000
 	serverRuntimeConfig: {

@@ -18,6 +18,18 @@ function log(level, message, data = {}) {
   console.log(`[${timestamp}] [${level.toUpperCase()}] ${message}`, data);
 }
 
+// Parser seguro para números (aceita string com vírgula, número ou null)
+function parseNumber(value) {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    const normalized = value.replace(',', '.');
+    const parsed = parseFloat(normalized);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+  return null;
+}
+
 // Função de importação
 async function runImport() {
   const startTime = Date.now();
@@ -132,12 +144,12 @@ async function runImport() {
           valor_venda:
             details.finalidadeImovel === 'Venda' ||
             details.finalidadeImovel === 'Venda/Locação'
-              ? details.valorEsperado
+              ? parseNumber(details.valorEsperado)
               : null,
           valor_locacao:
             details.finalidadeImovel === 'Locação' ||
             details.finalidadeImovel === 'Venda/Locação'
-              ? details.valorEsperado
+              ? parseNumber(details.valorEsperado)
               : null,
           endereco: details.endereco?.logradouro || null,
           numero: details.endereco?.numero || null,
@@ -146,18 +158,10 @@ async function runImport() {
           cidade: details.endereco?.cidade || null,
           estado: details.endereco?.estado || null,
           cep: details.endereco?.cep || null,
-          area_total: details.area?.total?.valor
-            ? parseFloat(details.area.total.valor.replace(',', '.'))
-            : null,
-          area_construida: details.area?.construida?.valor
-            ? parseFloat(details.area.construida.valor.replace(',', '.'))
-            : null,
-          area_terreno: details.area?.terreno?.valor
-            ? parseFloat(details.area.terreno.valor.replace(',', '.'))
-            : null,
-          area_privativa: details.area?.privativa?.valor
-            ? parseFloat(details.area.privativa.valor.replace(',', '.'))
-            : null,
+          area_total: parseNumber(details.area?.total?.valor),
+          area_construida: parseNumber(details.area?.construida?.valor),
+          area_terreno: parseNumber(details.area?.terreno?.valor),
+          area_privativa: parseNumber(details.area?.privativa?.valor),
           quartos: details.dormitorios || null,
           suites: details.suites || null,
           banheiros: details.banheiros || null,

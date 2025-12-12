@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDirectus, rest, createItem } from '@directus/sdk';
 
-const directus = createDirectus(process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055')
+const directus = createDirectus(process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055')
   .with(rest());
 
 export async function POST(request: NextRequest) {

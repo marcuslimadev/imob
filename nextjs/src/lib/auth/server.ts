@@ -16,11 +16,15 @@ export async function getAuthenticatedCompanyId(): Promise<string> {
   }
 
   try {
+    // Usa DIRECTUS_URL para server-side (Docker network) ou fallback para localhost
+    const directusUrl = process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+    
     // Faz requisição direta à API do Directus com o token
-    const response = await fetch(`${process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/users/me?fields=id,email,first_name,last_name,company_id`, {
+    const response = await fetch(`${directusUrl}/users/me?fields=id,email,first_name,last_name,company_id`, {
       headers: {
         'Authorization': `Bearer ${authToken}`
-      }
+      },
+      cache: 'no-store' // Evita cache em Server Components
     });
 
     if (!response.ok) {
@@ -55,10 +59,13 @@ export async function getAuthenticatedUser() {
   }
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055'}/users/me?fields=*`, {
+    const directusUrl = process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+    
+    const response = await fetch(`${directusUrl}/users/me?fields=*`, {
       headers: {
         'Authorization': `Bearer ${authToken}`
-      }
+      },
+      cache: 'no-store'
     });
 
     if (!response.ok) {

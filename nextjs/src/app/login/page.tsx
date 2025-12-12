@@ -16,11 +16,21 @@ export default function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    console.log('[LoginPage] Form submitted', { email });
     setError('');
     setLoading(true);
 
+    if (!login) {
+      console.error('[LoginPage] login function is undefined!');
+      setError('Erro: sistema de autenticação não carregado');
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log('[LoginPage] Calling login...');
       await login(email, password);
+      console.log('[LoginPage] Login successful');
       // Wait a bit to ensure cookie is set before redirect
       await new Promise(resolve => setTimeout(resolve, 500));
       // Force a full page reload to ensure authentication state is updated

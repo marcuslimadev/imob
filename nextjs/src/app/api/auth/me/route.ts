@@ -9,7 +9,7 @@ const DESIGN_THEME_COOKIE_OPTIONS = {
   path: '/',
 };
 
-const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+const directusUrl = process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
 
 export async function GET(request: NextRequest) {
   try {
@@ -79,7 +79,13 @@ export async function GET(request: NextRequest) {
     }
 
     const result = await response.json();
-    console.log('[API /auth/me] Usuário encontrado:', result.data?.email);
+    console.log('[API /auth/me] Usuário encontrado:', result.data?.email, 'ID:', result.data?.id);
+    console.log('[API /auth/me] Company:', result.data?.company_id);
+
+    if (!result.data) {
+      console.error('[API /auth/me] result.data está undefined!');
+      return NextResponse.json({ user: null }, { status: 401 });
+    }
 
     const companyTheme = typeof result.data?.company_id === 'object'
       ? result.data.company_id?.theme_key

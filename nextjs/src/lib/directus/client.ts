@@ -1,14 +1,24 @@
 import { createDirectus, rest, authentication, staticToken } from '@directus/sdk';
 import type { Schema } from './types';
 
-const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+// Para Server Components, usar DIRECTUS_URL (rede interna Docker)
+// Para Client Components, usar NEXT_PUBLIC_DIRECTUS_URL (localhost do navegador)
+const directusUrl = typeof window === 'undefined'
+  ? (process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055')
+  : (process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055');
+
+// Usa token estático padrão para evitar falhas no middleware quando a env não está setada
+const adminToken =
+  process.env.DIRECTUS_ADMIN_TOKEN ||
+  process.env.NEXT_PUBLIC_DIRECTUS_STATIC_TOKEN ||
+  'admin-static-token-2024';
 
 /**
  * Cliente Directus para uso no servidor (com token estático)
  * Usar em Server Components, API Routes, Server Actions
  */
 export const directusServer = createDirectus<Schema>(directusUrl)
-  .with(staticToken(process.env.DIRECTUS_ADMIN_TOKEN || ''))
+  .with(staticToken(adminToken))
   .with(rest());
 
 /**

@@ -154,14 +154,17 @@ services:
       NODE_ENV: development
       NEXT_PUBLIC_DIRECTUS_URL: 'http://localhost:8055'
       DIRECTUS_URL: 'http://directus:8055'
-      DIRECTUS_ADMIN_TOKEN: 'change-this-token'
-      NODE_OPTIONS: '--max-old-space-size=2048'
+      DIRECTUS_ADMIN_TOKEN: 'admin-static-token-2024'
+      NEXT_PUBLIC_DIRECTUS_STATIC_TOKEN: 'admin-static-token-2024'
+      NODE_OPTIONS: '--max-old-space-size=6144'
+      WATCHPACK_POLLING: 'true'
+      CHOKIDAR_USEPOLLING: 'true'
     deploy:
       resources:
         limits:
-          memory: 3G
+          memory: 8G
         reservations:
-          memory: 1G
+          memory: 3G
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:4000 || exit 1"]
       interval: 30s

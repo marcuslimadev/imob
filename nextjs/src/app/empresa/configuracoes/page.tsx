@@ -287,7 +287,17 @@ export default function ConfiguracoesPage() {
           <TabsContent value="integracoes" className="space-y-8">
             <div className="max-w-2xl">
               <h2 className="text-2xl font-light text-gray-900 mb-6">Configurações de API</h2>
-              {company?.id && <ApiSettings companyId={company.id} />}
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                </div>
+              ) : !company?.id ? (
+                <div className="text-center py-12 text-gray-500">
+                  Empresa não encontrada
+                </div>
+              ) : (
+                <ApiSettings companyId={company.id} />
+              )}
             </div>
           </TabsContent>
 

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DEFAULT_DESIGN_THEME } from '@/lib/design-themes';
 import { createDirectus, rest, authentication } from '@directus/sdk';
 
-const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+// Use DIRECTUS_URL for server-side requests (inside Docker network)
+const directusUrl = process.env.DIRECTUS_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
 
 const DESIGN_THEME_COOKIE_OPTIONS = {
   httpOnly: false,

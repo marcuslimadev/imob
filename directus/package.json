@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "register": "node register-collections.js && node register-fields.js",
-    "import:properties": "node workers/import-properties.js"
+    "import:properties": "node workers/import-properties.js",
+    "start": "npx directus start",
+    "bootstrap": "npx directus bootstrap"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +18,7 @@
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
+    "node-cron": "^4.2.1",
     "node-fetch": "^3.3.2",
     "p-queue": "^9.0.1"
   },
