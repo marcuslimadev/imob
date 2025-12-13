@@ -110,7 +110,9 @@ Cada empresa cliente tem:
 
 ## 🚀 Quick Start
 
-### 1. Iniciar Directus (Backend)
+### Local Development
+
+#### 1. Iniciar Directus (Backend)
 
 ```powershell
 cd directus
@@ -121,7 +123,7 @@ docker compose up -d
 - **Login:** marcus@admin.com
 - **Senha:** Teste@123
 
-### 2. Iniciar Next.js (Frontend)
+#### 2. Iniciar Next.js (Frontend)
 
 ```powershell
 cd nextjs
@@ -130,6 +132,34 @@ npm run dev
 ```
 
 **Acesso:** http://localhost:3000/home
+
+### AWS Production Deployment (UPDATED - Fixed)
+
+**New unified deployment** - Fixes CloudFormation resource conflicts:
+
+```bash
+cd aws
+
+# 1. Validate prerequisites
+./validate-deployment.sh production sa-east-1
+
+# 2. Clean up any failed stacks
+./cleanup-failed-stacks.sh sa-east-1
+
+# 3. Deploy infrastructure (VPC, RDS, ECS, ALB, S3)
+./deploy-unified.sh production sa-east-1
+
+# 4. Build and push Docker images
+./build-and-push.sh production sa-east-1
+```
+
+**Duration:** ~20 minutes | **Cost:** ~$73/month
+
+**Documentation:**
+- 📖 **Quick Start:** [`aws/QUICK_START.md`](./aws/QUICK_START.md)
+- 📘 **Complete Guide:** [`AWS_DEPLOYMENT_GUIDE.md`](./AWS_DEPLOYMENT_GUIDE.md)
+- 🔧 **Troubleshooting:** [`AWS_TROUBLESHOOTING.md`](./AWS_TROUBLESHOOTING.md)
+- 📂 **Scripts Overview:** [`aws/README.md`](./aws/README.md)
 
 ---
 
