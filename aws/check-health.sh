@@ -122,13 +122,15 @@ fi
 # Check S3 Bucket
 echo ""
 echo "5. S3 Uploads Bucket"
-S3_EXISTS=$(aws s3 ls s3://${ENVIRONMENT}-imobi-uploads-* --region $AWS_REGION 2>/dev/null || echo "NOT_FOUND")
 
-if [ "$S3_EXISTS" != "NOT_FOUND" ]; then
-  BUCKET_NAME=$(aws s3 ls | grep ${ENVIRONMENT}-imobi-uploads | awk '{print $3}')
-  echo "   ✅ Bucket: $BUCKET_NAME"
+# Get AWS Account ID and construct bucket name
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+EXPECTED_BUCKET_NAME="${ENVIRONMENT}-imobi-uploads-${AWS_ACCOUNT_ID}"
+
+if aws s3 ls "s3://${EXPECTED_BUCKET_NAME}" --region $AWS_REGION &> /dev/null; then
+  echo "   ✅ Bucket: $EXPECTED_BUCKET_NAME"
 else
-  echo "   ❌ Bucket not found"
+  echo "   ❌ Bucket not found: $EXPECTED_BUCKET_NAME"
   ERRORS=$((ERRORS + 1))
 fi
 

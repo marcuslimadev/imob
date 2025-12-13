@@ -23,27 +23,42 @@ echo ""
 echo "⚠️  WARNING: This script will delete FAILED stacks only (ROLLBACK_COMPLETE, CREATE_FAILED, etc.)"
 echo ""
 
-# Check for imobi-rds stack in ROLLBACK_COMPLETE state
-IMOBI_RDS_STATUS=$(aws cloudformation describe-stacks \
-  --stack-name imobi-rds \
+# Get all failed stacks
+FAILED_STACKS=$(aws cloudformation list-stacks \
   --region $AWS_REGION \
-  --query "Stacks[0].StackStatus" \
-  --output text 2>/dev/null || echo "DOES_NOT_EXIST")
+  --query "StackSummaries[?StackStatus=='ROLLBACK_COMPLETE' || StackStatus=='CREATE_FAILED' || StackStatus=='UPDATE_ROLLBACK_COMPLETE'].StackName" \
+  --output text)
 
-if [ "$IMOBI_RDS_STATUS" = "ROLLBACK_COMPLETE" ]; then
-  echo "🗑️  Deleting failed stack: imobi-rds"
-  aws cloudformation delete-stack \
-    --stack-name imobi-rds \
-    --region $AWS_REGION
-  
-  echo "⏳ Waiting for stack deletion to complete..."
-  aws cloudformation wait stack-delete-complete \
-    --stack-name imobi-rds \
-    --region $AWS_REGION
-  
-  echo "✅ Stack imobi-rds deleted successfully"
+if [ -z "$FAILED_STACKS" ]; then
+  echo "✅ No failed stacks found. Nothing to clean up!"
 else
-  echo "ℹ️  Stack imobi-rds status: $IMOBI_RDS_STATUS (no action needed)"
+  echo "Found failed stacks to delete:"
+  for stack in $FAILED_STACKS; do
+    echo "   - $stack"
+  done
+  echo ""
+  
+  read -p "Delete these stacks? (y/N): " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    for stack in $FAILED_STACKS; do
+      echo "🗑️  Deleting stack: $stack"
+      aws cloudformation delete-stack \
+        --stack-name $stack \
+        --region $AWS_REGION
+      
+      echo "⏳ Waiting for stack deletion to complete..."
+      aws cloudformation wait stack-delete-complete \
+        --stack-name $stack \
+        --region $AWS_REGION || echo "⚠️  Timeout or error waiting for $stack deletion"
+      
+      echo "✅ Stack $stack deleted"
+      echo ""
+    done
+  else
+    echo "❌ Cleanup cancelled by user"
+    exit 1
+  fi
 fi
 
 echo ""

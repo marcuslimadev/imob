@@ -189,7 +189,7 @@ Resources:
     Properties:
       DBInstanceIdentifier: !Sub ${Environment}-imobi-postgres
       Engine: postgres
-      EngineVersion: '15.5'
+      EngineVersion: '16.1'
       DBInstanceClass: !If [IsProduction, db.t3.small, db.t3.micro]
       AllocatedStorage: !If [IsProduction, 50, 20]
       StorageType: gp3

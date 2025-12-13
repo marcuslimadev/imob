@@ -48,9 +48,16 @@ if [ "$STACK_EXISTS" != "DOES_NOT_EXIST" ]; then
 fi
 
 # Prompt for database password
-read -sp "🔑 Enter RDS PostgreSQL password (default: iMobiSecurePass2025!): " DB_PASSWORD
+echo "🔑 Database Password Configuration:"
+echo "   For production, use a strong password (min 8 chars)"
+echo "   For dev/testing, you can use the default"
+echo ""
+read -sp "Enter RDS PostgreSQL password (or press Enter for default): " DB_PASSWORD
 echo
-DB_PASSWORD=${DB_PASSWORD:-iMobiSecurePass2025!}
+if [ -z "$DB_PASSWORD" ]; then
+  DB_PASSWORD="iMobiSecurePass2025!"
+  echo "⚠️  Using default password (change this in production!)"
+fi
 
 # Deploy CloudFormation stack
 echo ""

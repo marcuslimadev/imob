@@ -40,18 +40,20 @@ if [ ! -f "Dockerfile" ]; then
   exit 1
 fi
 
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+
 docker build -t ${ENVIRONMENT}-imobi-directus:latest .
 docker tag ${ENVIRONMENT}-imobi-directus:latest \
   ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-directus:latest
 docker tag ${ENVIRONMENT}-imobi-directus:latest \
-  ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-directus:$(date +%Y%m%d-%H%M%S)
+  ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-directus:${TIMESTAMP}
 
 echo "✅ Directus image built"
 echo ""
 
 echo "⬆️  Step 3: Pushing Directus to ECR..."
 docker push ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-directus:latest
-docker push ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-directus:$(date +%Y%m%d-%H%M%S)
+docker push ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-directus:${TIMESTAMP}
 echo "✅ Directus image pushed"
 echo ""
 
@@ -69,14 +71,14 @@ docker build -t ${ENVIRONMENT}-imobi-frontend:latest .
 docker tag ${ENVIRONMENT}-imobi-frontend:latest \
   ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-frontend:latest
 docker tag ${ENVIRONMENT}-imobi-frontend:latest \
-  ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-frontend:$(date +%Y%m%d-%H%M%S)
+  ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-frontend:${TIMESTAMP}
 
 echo "✅ Frontend image built"
 echo ""
 
 echo "⬆️  Step 5: Pushing Frontend to ECR..."
 docker push ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-frontend:latest
-docker push ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-frontend:$(date +%Y%m%d-%H%M%S)
+docker push ${ECR_REGISTRY}/${ENVIRONMENT}-imobi-frontend:${TIMESTAMP}
 echo "✅ Frontend image pushed"
 echo ""
 

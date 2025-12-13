@@ -72,15 +72,18 @@ fi
 echo ""
 echo "📂 Checking project structure..."
 
+# Get script directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 # Check CloudFormation template
-if [ ! -f "cloudformation-unified.yaml" ]; then
-  echo "❌ cloudformation-unified.yaml not found"
+if [ ! -f "$SCRIPT_DIR/cloudformation-unified.yaml" ]; then
+  echo "❌ cloudformation-unified.yaml not found in $SCRIPT_DIR"
   ERRORS=$((ERRORS + 1))
 else
   echo "✅ CloudFormation template found"
   
   # Validate template
-  if aws cloudformation validate-template --template-body file://cloudformation-unified.yaml --region $AWS_REGION &> /dev/null; then
+  if aws cloudformation validate-template --template-body file://$SCRIPT_DIR/cloudformation-unified.yaml --region $AWS_REGION &> /dev/null; then
     echo "✅ CloudFormation template is valid"
   else
     echo "❌ CloudFormation template validation failed"
