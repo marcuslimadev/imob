@@ -91,16 +91,19 @@ else
   fi
 fi
 
-# Check Dockerfiles
-if [ ! -f "../directus/Dockerfile" ]; then
-  echo "❌ directus/Dockerfile not found"
+# Check Dockerfiles (relative to script location)
+DIRECTUS_DOCKERFILE="$SCRIPT_DIR/../directus/Dockerfile"
+NEXTJS_DOCKERFILE="$SCRIPT_DIR/../nextjs/Dockerfile"
+
+if [ ! -f "$DIRECTUS_DOCKERFILE" ]; then
+  echo "❌ directus/Dockerfile not found at $DIRECTUS_DOCKERFILE"
   ERRORS=$((ERRORS + 1))
 else
   echo "✅ Directus Dockerfile found"
 fi
 
-if [ ! -f "../nextjs/Dockerfile" ]; then
-  echo "❌ nextjs/Dockerfile not found"
+if [ ! -f "$NEXTJS_DOCKERFILE" ]; then
+  echo "❌ nextjs/Dockerfile not found at $NEXTJS_DOCKERFILE"
   ERRORS=$((ERRORS + 1))
 else
   echo "✅ Next.js Dockerfile found"

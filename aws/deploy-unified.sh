@@ -10,6 +10,9 @@ ENVIRONMENT=${1:-production}
 AWS_REGION=${2:-sa-east-1}
 STACK_NAME="${ENVIRONMENT}-imobi-unified"
 
+# Get script directory for proper path resolution
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 echo "🚀 iMOBI Unified AWS Deployment"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Environment: $ENVIRONMENT"
@@ -25,7 +28,7 @@ echo ""
 # Validate CloudFormation template
 echo "🔍 Step 1: Validating CloudFormation template..."
 aws cloudformation validate-template \
-  --template-body file://cloudformation-unified.yaml \
+  --template-body file://$SCRIPT_DIR/cloudformation-unified.yaml \
   --region $AWS_REGION > /dev/null
 echo "✅ Template is valid"
 echo ""
@@ -49,14 +52,29 @@ fi
 
 # Prompt for database password
 echo "🔑 Database Password Configuration:"
-echo "   For production, use a strong password (min 8 chars)"
-echo "   For dev/testing, you can use the default"
-echo ""
-read -sp "Enter RDS PostgreSQL password (or press Enter for default): " DB_PASSWORD
-echo
-if [ -z "$DB_PASSWORD" ]; then
-  DB_PASSWORD="iMobiSecurePass2025!"
-  echo "⚠️  Using default password (change this in production!)"
+if [ "$ENVIRONMENT" = "production" ]; then
+  echo "   ⚠️  PRODUCTION environment detected!"
+  echo "   You MUST provide a strong password (min 12 chars, mixed case, numbers, symbols)"
+  echo ""
+  read -sp "Enter RDS PostgreSQL password: " DB_PASSWORD
+  echo
+  if [ -z "$DB_PASSWORD" ]; then
+    echo "❌ Error: Password is required for production environments"
+    exit 1
+  fi
+  if [ ${#DB_PASSWORD} -lt 12 ]; then
+    echo "❌ Error: Password must be at least 12 characters for production"
+    exit 1
+  fi
+else
+  echo "   For dev/testing, you can use the default or provide your own"
+  echo ""
+  read -sp "Enter RDS PostgreSQL password (or press Enter for default): " DB_PASSWORD
+  echo
+  if [ -z "$DB_PASSWORD" ]; then
+    DB_PASSWORD="iMobiSecurePass2025!"
+    echo "⚠️  Using default password (OK for dev/testing only)"
+  fi
 fi
 
 # Deploy CloudFormation stack
@@ -66,7 +84,7 @@ echo "   This may take 10-15 minutes (RDS creation is slow)"
 echo ""
 
 aws cloudformation deploy \
-  --template-file cloudformation-unified.yaml \
+  --template-file $SCRIPT_DIR/cloudformation-unified.yaml \
   --stack-name $STACK_NAME \
   --parameter-overrides \
     Environment=$ENVIRONMENT \

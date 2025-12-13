@@ -19,8 +19,12 @@ echo ""
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
+# Generate timestamp once for consistency across all images
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+
 echo "AWS Account: $AWS_ACCOUNT_ID"
 echo "ECR Registry: $ECR_REGISTRY"
+echo "Build Timestamp: $TIMESTAMP"
 echo ""
 
 # Login to ECR
@@ -39,8 +43,6 @@ if [ ! -f "Dockerfile" ]; then
   echo "❌ Error: Dockerfile not found in directus/"
   exit 1
 fi
-
-TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 
 docker build -t ${ENVIRONMENT}-imobi-directus:latest .
 docker tag ${ENVIRONMENT}-imobi-directus:latest \
