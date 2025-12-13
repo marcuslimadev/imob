@@ -5,9 +5,9 @@
 
 const axios = require('axios');
 
-const DIRECTUS_URL = 'http://localhost:8055';
-const ADMIN_EMAIL = 'marcus@admin.com';
-const ADMIN_PASSWORD = 'Teste@123';
+const DIRECTUS_URL = process.env.DIRECTUS_URL || 'http://localhost:8055';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'marcus@admin.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Teste@123';
 
 let accessToken = '';
 
@@ -362,6 +362,92 @@ const fieldsDefinitions = {
         { field: 'error', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
         { field: 'created_at', type: 'timestamp', meta: { interface: 'datetime', width: 'half', readonly: true } },
         { field: 'updated_at', type: 'timestamp', meta: { interface: 'datetime', width: 'half', readonly: true } },
+    ],
+    
+    contratos: [
+        { field: 'company_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'imovel_id', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'lead_id', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'tipo', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'status', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'valor', type: 'decimal', meta: { interface: 'input', width: 'half' } },
+        { field: 'data_inicio', type: 'date', meta: { interface: 'datetime', width: 'half' } },
+        { field: 'data_fim', type: 'date', meta: { interface: 'datetime', width: 'half' } },
+        { field: 'observacoes', type: 'text', meta: { interface: 'input-rich-text-html', width: 'full' } },
+    ],
+    
+    subscription_plans: [
+        { field: 'name', type: 'string', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'description', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
+        { field: 'price', type: 'decimal', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'billing_period', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'max_properties', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'max_users', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'features', type: 'json', meta: { interface: 'list', width: 'full' } },
+        { field: 'active', type: 'boolean', meta: { interface: 'boolean', width: 'half' } },
+    ],
+    
+    tenant_subscriptions: [
+        { field: 'company_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'plan_id', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'status', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'started_at', type: 'timestamp', meta: { interface: 'datetime', width: 'half' } },
+        { field: 'expires_at', type: 'timestamp', meta: { interface: 'datetime', width: 'half' } },
+    ],
+    
+    vistorias: [
+        { field: 'company_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'imovel_id', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'contrato_id', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'tipo', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'status', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'data_agendada', type: 'timestamp', meta: { interface: 'datetime', width: 'half' } },
+        { field: 'data_realizada', type: 'timestamp', meta: { interface: 'datetime', width: 'half' } },
+        { field: 'observacoes', type: 'text', meta: { interface: 'input-rich-text-html', width: 'full' } },
+    ],
+    
+    vistoria_itens: [
+        { field: 'vistoria_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'comodo', type: 'string', meta: { interface: 'input', width: 'half' } },
+        { field: 'item', type: 'string', meta: { interface: 'input', width: 'half' } },
+        { field: 'estado', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'observacoes', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
+        { field: 'fotos', type: 'json', meta: { interface: 'list', width: 'full' } },
+    ],
+    
+    documentos_assinatura: [
+        { field: 'company_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'assunto', type: 'string', meta: { interface: 'input', width: 'full', required: true } },
+        { field: 'status', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'documento_url', type: 'string', meta: { interface: 'input', width: 'full' } },
+        { field: 'clicksign_document_key', type: 'string', meta: { interface: 'input', width: 'half' } },
+        { field: 'data_envio', type: 'timestamp', meta: { interface: 'datetime', width: 'half' } },
+        { field: 'data_conclusao', type: 'timestamp', meta: { interface: 'datetime', width: 'half' } },
+    ],
+    
+    documentos_signatarios: [
+        { field: 'documento_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'nome', type: 'string', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'email', type: 'string', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'cpf', type: 'string', meta: { interface: 'input', width: 'half' } },
+        { field: 'status', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'data_assinatura', type: 'timestamp', meta: { interface: 'datetime', width: 'half' } },
+    ],
+    
+    lead_activities: [
+        { field: 'company_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'lead_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'tipo', type: 'string', meta: { interface: 'select-dropdown', width: 'half' } },
+        { field: 'descricao', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
+        { field: 'user_id', type: 'uuid', meta: { interface: 'input', width: 'half' } },
+    ],
+    
+    property_views: [
+        { field: 'company_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'property_id', type: 'integer', meta: { interface: 'input', width: 'half', required: true } },
+        { field: 'lead_id', type: 'integer', meta: { interface: 'input', width: 'half' } },
+        { field: 'ip_address', type: 'string', meta: { interface: 'input', width: 'half' } },
+        { field: 'user_agent', type: 'text', meta: { interface: 'input-multiline', width: 'full' } },
     ],
 };
 

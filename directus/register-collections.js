@@ -5,9 +5,9 @@
 
 const axios = require('axios');
 
-const DIRECTUS_URL = 'http://localhost:8055';
-const ADMIN_EMAIL = 'marcus@admin.com';
-const ADMIN_PASSWORD = 'Teste@123';
+const DIRECTUS_URL = process.env.DIRECTUS_URL || 'http://localhost:8055';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'marcus@admin.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Teste@123';
 
 let accessToken = '';
 
@@ -258,6 +258,93 @@ const collections = {
             accountability: 'all',
             color: '#F59E0B',
             sort: 100
+        }
+    },
+    contratos: {
+        meta: {
+            collection: 'contratos',
+            icon: 'description',
+            note: 'Contratos de locação e venda',
+            display_template: '{{tipo}} - {{imovel_id}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#0EA5E9',
+            sort: 13
+        }
+    },
+    subscription_plans: {
+        meta: {
+            collection: 'subscription_plans',
+            icon: 'credit_card',
+            note: 'Planos de assinatura SaaS',
+            display_template: '{{name}} - R$ {{price}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#06B6D4',
+            sort: 97
+        }
+    },
+    tenant_subscriptions: {
+        meta: {
+            collection: 'tenant_subscriptions',
+            icon: 'receipt',
+            note: 'Assinaturas dos tenants',
+            display_template: '{{company_id}} - {{status}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#0891B2',
+            sort: 98
+        }
+    },
+    vistorias: {
+        meta: {
+            collection: 'vistorias',
+            icon: 'fact_check',
+            note: 'Vistorias de entrada/saída',
+            display_template: '{{tipo}} - {{imovel_id}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#A855F7',
+            sort: 14
+        }
+    },
+    vistoria_itens: {
+        meta: {
+            collection: 'vistoria_itens',
+            icon: 'checklist',
+            note: 'Itens verificados na vistoria',
+            display_template: '{{comodo}} - {{item}}',
+            hidden: true,
+            singleton: false,
+            sort: 15
+        }
+    },
+    documentos_assinatura: {
+        meta: {
+            collection: 'documentos_assinatura',
+            icon: 'draw',
+            note: 'Documentos para assinatura eletrônica',
+            display_template: '{{assunto}} - {{status}}',
+            hidden: false,
+            singleton: false,
+            accountability: 'all',
+            color: '#D946EF',
+            sort: 16
+        }
+    },
+    documentos_signatarios: {
+        meta: {
+            collection: 'documentos_signatarios',
+            icon: 'person_add',
+            note: 'Signatários dos documentos',
+            display_template: '{{nome}} - {{status}}',
+            hidden: true,
+            singleton: false,
+            sort: 17
         }
     }
 };

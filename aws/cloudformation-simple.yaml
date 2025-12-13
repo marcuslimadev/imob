@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'IMOBI SaaS Platform - Simplified Infrastructure (ECS + ECR)'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: Environment name
+
+Resources:
+  # ECR Repositories
+  DirectusECRRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: imobi-directus
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [{
+              "rulePriority": 1,
+              "description": "Keep last 10 images",
+              "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 10
+              },
+              "action": { "type": "expire" }
+            }]
+          }
+
+  FrontendECRRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: imobi-frontend
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [{
+              "rulePriority": 1,
+              "description": "Keep last 10 images",
+              "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 10
+              },
+              "action": { "type": "expire" }
+            }]
+          }
+
+  # ECS Cluster
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub ${EnvironmentName}-imobi-cluster
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+
+  # S3 Bucket for Uploads
+  UploadsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${EnvironmentName}-imobi-uploads-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins: ['*']
+            AllowedMethods: [GET, PUT, POST, DELETE, HEAD]
+            AllowedHeaders: ['*']
+            MaxAge: 3000
+
+  # Bucket Policy for Public Read
+  UploadsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref UploadsBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub '${UploadsBucket.Arn}/*'
+
+Outputs:
+  ECSClusterName:
+    Description: ECS Cluster Name
+    Value: !Ref ECSCluster
+    Export:
+      Name: !Sub ${EnvironmentName}-imobi-ecs-cluster
+
+  DirectusECRRepositoryUri:
+    Description: Directus ECR Repository URI
+    Value: !GetAtt DirectusECRRepository.RepositoryUri
+    Export:
+      Name: !Sub ${EnvironmentName}-imobi-directus-ecr
+
+  FrontendECRRepositoryUri:
+    Description: Frontend ECR Repository URI
+    Value: !GetAtt FrontendECRRepository.RepositoryUri
+    Export:
+      Name: !Sub ${EnvironmentName}-imobi-frontend-ecr
+
+  UploadsBucketName:
+    Description: S3 Uploads Bucket
+    Value: !Ref UploadsBucket
+    Export:
+      Name: !Sub ${EnvironmentName}-imobi-uploads-bucket

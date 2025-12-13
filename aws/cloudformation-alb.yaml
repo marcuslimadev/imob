@@ -1,0 +1,155 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'iMOBI - Application Load Balancer + ECS Services'
+
+Resources:
+  # Application Load Balancer
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: imobi-alb
+      Type: application
+      Scheme: internet-facing
+      IpAddressType: ipv4
+      Subnets:
+        - subnet-09996da9ce9a08f16  # sa-east-1a
+        - subnet-05b32a2ccfcba6c5c  # sa-east-1b
+      SecurityGroups:
+        - !Ref ALBSecurityGroup
+
+  # Security Group para ALB
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: imobi-alb-sg
+      GroupDescription: Allow HTTP/HTTPS to ALB
+      VpcId: vpc-0b2b8e9042bff6233
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+  # Security Group para ECS Tasks (modificar existente não é possível, criar novo)
+  ECSTaskSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: imobi-ecs-tasks-sg
+      GroupDescription: Allow traffic from ALB to ECS tasks
+      VpcId: vpc-0b2b8e9042bff6233
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8055
+          ToPort: 8055
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 4000
+          ToPort: 4000
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+
+  # Target Group para Directus
+  DirectusTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: imobi-directus-tg
+      Port: 8055
+      Protocol: HTTP
+      VpcId: vpc-0b2b8e9042bff6233
+      TargetType: ip
+      HealthCheckEnabled: true
+      HealthCheckPath: /server/health
+      HealthCheckProtocol: HTTP
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+
+  # Target Group para Frontend (preparado para quando subir)
+  FrontendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: imobi-frontend-tg
+      Port: 4000
+      Protocol: HTTP
+      VpcId: vpc-0b2b8e9042bff6233
+      TargetType: ip
+      HealthCheckEnabled: true
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+
+  # Listener HTTP (porta 80)
+  ALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref FrontendTargetGroup
+
+  # Listener Rule para Directus (/admin, /auth, /items, etc)
+  DirectusListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref ALBListener
+      Priority: 1
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - /admin*
+            - /auth/*
+            - /items/*
+            - /collections/*
+            - /fields/*
+            - /server/*
+            - /assets/*
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref DirectusTargetGroup
+
+  # ECS Service para Directus
+  DirectusService:
+    Type: AWS::ECS::Service
+    DependsOn: ALBListener
+    Properties:
+      ServiceName: imobi-directus-service
+      Cluster: production-imobi-cluster
+      TaskDefinition: imobi-directus-postgres:1
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets:
+            - subnet-09996da9ce9a08f16
+          SecurityGroups:
+            - !Ref ECSTaskSecurityGroup
+      LoadBalancers:
+        - ContainerName: imobi-directus
+          ContainerPort: 8055
+          TargetGroupArn: !Ref DirectusTargetGroup
+
+Outputs:
+  LoadBalancerDNS:
+    Description: DNS do Application Load Balancer
+    Value: !GetAtt ApplicationLoadBalancer.DNSName
+    Export:
+      Name: imobi-alb-dns
+  
+  DirectusURL:
+    Description: URL do Directus via ALB
+    Value: !Sub 'http://${ApplicationLoadBalancer.DNSName}/admin'
+  
+  ECSTaskSecurityGroupId:
+    Description: Security Group ID para ECS Tasks
+    Value: !Ref ECSTaskSecurityGroup
+    Export:
+      Name: imobi-ecs-tasks-sg

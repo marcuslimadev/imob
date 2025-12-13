@@ -1,0 +1,86 @@
+{
+  "family": "imobi-directus-postgres",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::575098225472:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "directus",
+      "image": "575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8055,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "DB_CLIENT",
+          "value": "pg"
+        },
+        {
+          "name": "ADMIN_EMAIL",
+          "value": "marcus@admin.com"
+        },
+        {
+          "name": "ADMIN_PASSWORD",
+          "value": "Teste@123"
+        },
+        {
+          "name": "KEY",
+          "value": "9jGemQLwJRgHky1Ct2B7dsT5Zir8YM34"
+        },
+        {
+          "name": "SECRET",
+          "value": "PRBqIAFZ9SG7Trhgjdfywm2X6kMoHCQO"
+        },
+        {
+          "name": "CORS_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "CORS_ORIGIN",
+          "value": "true"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "info"
+        },
+        {
+          "name": "STORAGE_LOCATIONS",
+          "value": "s3"
+        },
+        {
+          "name": "STORAGE_S3_DRIVER",
+          "value": "s3"
+        },
+        {
+          "name": "STORAGE_S3_REGION",
+          "value": "sa-east-1"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/imobi-directus-prod",
+          "awslogs-region": "sa-east-1",
+          "awslogs-stream-prefix": "directus"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://localhost:8055/server/health || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}
