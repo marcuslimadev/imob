@@ -133,6 +133,14 @@ npm run dev
 
 ---
 
+## 🔁 Deploy automático na AWS
+
+- **Como dispara:** qualquer `git push` para os branches `main` ou `master` executa o workflow [deploy.yml](.github/workflows/deploy.yml), que conecta na EC2, faz `git pull`, reconstrói Directus (Docker Compose) e Next.js (pnpm) e reinicia o PM2 com zero-downtime.
+- **Pré-requisitos:** secrets `EC2_SSH_KEY`, `EC2_HOST` e `EC2_USER` configurados no repositório do GitHub, Node 20 + pnpm + PM2 instalados na EC2 e o projeto clonado em `/home/ubuntu/exclusiva-prod/imob`.
+- **Ver status:** acompanhe a execução em **Actions → Deploy to AWS EC2**. Falhas aparecem no log e o health check valida Directus e Next.js ao final.
+
+---
+
 ## 📦 Extensões Directus
 
 ### 1. OpenAI Service (`/openai`)

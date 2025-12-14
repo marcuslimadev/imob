@@ -85,11 +85,11 @@ cd imob
 ### 5. Criar .env de Produção
 ```bash
 cd /home/ubuntu/exclusiva-prod/imob/directus
-cp .env.production.template .env.production
+cp .env.production.example .env.production
 nano .env.production
 ```
 
-- [ ] Copiar template
+- [ ] Copiar template `.env.production.example`
 - [ ] Gerar `DB_PASSWORD`: `openssl rand -base64 32`
 - [ ] Gerar `DIRECTUS_KEY`: `openssl rand -base64 32`
 - [ ] Gerar `DIRECTUS_SECRET`: `openssl rand -base64 32`
@@ -139,11 +139,11 @@ node -e "$(cat scripts/register-exclusiva-company.js)"
 ### 9. Criar .env de Produção
 ```bash
 cd /home/ubuntu/exclusiva-prod/imob/nextjs
-cp .env.production.template .env.production
+cp .env.production.example .env.production
 nano .env.production
 ```
 
-- [ ] Copiar template
+- [ ] Copiar template `.env.production.example`
 - [ ] Gerar `NEXTAUTH_SECRET`: `openssl rand -base64 32`
 - [ ] Ajustar `WHATSAPP_NUMBER` para número da Exclusiva
 - [ ] **PENDENTE**: Obter `DIRECTUS_STATIC_TOKEN` (fazer após Nginx+SSL)

@@ -31,6 +31,13 @@ cat exclusiva-key.pem
 # Cole no GitHub Secret EC2_SSH_KEY
 ```
 
+### Pré-requisitos no servidor (somente na primeira configuração)
+- Criar os arquivos de ambiente de produção a partir dos templates:
+  - `directus/.env.production.example` → `directus/.env.production`
+  - `nextjs/.env.production.example` → `nextjs/.env.production`
+- Garantir que o Node.js 20, pnpm e PM2 já estão instalados (ver checklist de deploy).
+- Posicionar o repositório em `/home/ubuntu/exclusiva-prod/imob` para os caminhos usados no workflow.
+
 ### Como Usar
 
 #### Fluxo de Deploy Simples:
