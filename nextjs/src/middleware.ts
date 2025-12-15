@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+// Middleware roda no edge - usa URL interna se disponível
+const directusUrl = process.env.DIRECTUS_INTERNAL_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
 
 const AUTH_COOKIE_OPTIONS = {
   httpOnly: true,

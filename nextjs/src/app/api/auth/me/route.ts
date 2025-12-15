@@ -3,13 +3,14 @@ import { DEFAULT_DESIGN_THEME } from '@/lib/design-themes';
 
 const DESIGN_THEME_COOKIE_OPTIONS = {
   httpOnly: false,
-  secure: process.env.NODE_ENV === 'production',
+  secure: false, // HTTP por enquanto
   sameSite: 'lax' as const,
   maxAge: 60 * 60 * 24 * 365,
   path: '/',
 };
 
-const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+// Server-side: use internal URL if available
+const directusUrl = process.env.DIRECTUS_INTERNAL_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
 
 export async function GET(request: NextRequest) {
   try {

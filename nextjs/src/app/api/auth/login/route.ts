@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DEFAULT_DESIGN_THEME } from '@/lib/design-themes';
 import { createDirectus, rest, authentication } from '@directus/sdk';
 
-const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+// Server-side: use internal URL if available, otherwise public URL
+const directusUrl = process.env.DIRECTUS_INTERNAL_URL || process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
 // Use secure cookies only when HTTPS is configured
 const useSecureCookies = process.env.COOKIE_SECURE === 'true';
 
