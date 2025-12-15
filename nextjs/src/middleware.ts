@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { directusServer } from '@/lib/directus/client';
-import { readItems } from '@directus/sdk';
 
 const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
 
 const AUTH_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
+  secure: false, // HTTP por enquanto
   sameSite: 'lax' as const,
   path: '/'
 };
@@ -89,77 +87,14 @@ export async function middleware(request: NextRequest) {
   }
   
   // Detectar company por subdomínio ou custom domain
+  // SIMPLIFICADO: Por enquanto não fazer queries ao Directus no middleware
+  // A detecção de company será feita após login no AuthContext
   const hostname = request.headers.get('host') || '';
-  let companySlug: string | null = null;
-  let companyId: string | null = null;
   
-  // 1. Tentar detectar por subdomínio (slug.imobi.com.br)
+  // Headers informativos apenas
   if (hostname.includes('.imobi.com.br') && !hostname.startsWith('www.')) {
-    companySlug = hostname.split('.')[0];
-  }
-  // 2. Para desenvolvimento local, aceitar slug via query param (?company=exclusiva)
-  else if (hostname.includes('localhost')) {
-    const url = new URL(request.url);
-    companySlug = url.searchParams.get('company');
-  }
-  
-  // 3. Buscar company no Directus
-  if (companySlug) {
-    try {
-      const companies = await directusServer.request(
-        readItems('companies', {
-          filter: {
-            slug: { _eq: companySlug },
-            status: { _eq: 'active' }
-          },
-          limit: 1
-        })
-      );
-      
-      if (companies.length > 0) {
-        companyId = companies[0].id;
-      }
-    } catch (error) {
-      console.error('Erro ao buscar company:', error);
-    }
-  }
-  
-  // 4. Se não encontrou por slug, tentar por custom domain
-  if (!companyId && !hostname.includes('localhost') && !hostname.includes('.imobi.com.br')) {
-    try {
-      const companies = await directusServer.request(
-        readItems('companies', {
-          filter: {
-            custom_domain: { _eq: hostname },
-            status: { _eq: 'active' }
-          },
-          limit: 1
-        })
-      );
-      
-      if (companies.length > 0) {
-        companyId = companies[0].id;
-        companySlug = companies[0].slug;
-      }
-    } catch (error) {
-      console.error('Erro ao buscar company por custom domain:', error);
-    }
-  }
-  
-  // 5. Injetar company no header para uso nos componentes
-  if (companyId && companySlug) {
-    response.headers.set('x-company-id', companyId);
+    const companySlug = hostname.split('.')[0];
     response.headers.set('x-company-slug', companySlug);
-  }
-  
-  // 6. Para rotas /empresa, não exigir company_id (será detectado após login)
-  // Para outras rotas, redirecionar se não tiver company
-  if (!companyId && 
-      pathname !== '/login' && 
-      pathname !== '/home' && 
-      !pathname.startsWith('/admin') && 
-      !pathname.startsWith('/empresa')) {
-    return NextResponse.redirect(new URL('/login', request.url));
   }
   
   return response;
@@ -167,13 +102,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
