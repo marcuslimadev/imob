@@ -177,3 +177,4 @@ src/
 ```
 
 ---
+# Deploy automático configurado
