@@ -1,0 +1,72 @@
+name: Deploy Frontend to AWS ECS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'nextjs/**'
+      - '.github/workflows/deploy-ecs.yml'
+
+env:
+  AWS_REGION: sa-east-1
+  ECR_REPOSITORY: imobi-frontend
+  ECS_CLUSTER: production-imobi-cluster
+  ECS_SERVICE: production-imobi-frontend
+
+jobs:
+  deploy:
+    name: Build and Deploy to ECS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🔐 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 🔑 Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: 🏗️ Build, tag, and push image to ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          cd nextjs
+          docker build -f Dockerfile.prod -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: 🚀 Deploy to ECS
+        run: |
+          aws ecs update-service \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
+            --force-new-deployment
+
+      - name: ⏳ Wait for deployment
+        run: |
+          echo "Aguardando deploy estabilizar..."
+          aws ecs wait services-stable \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE
+          echo "✅ Deploy concluído!"
+
+      - name: 🧪 Health Check
+        run: |
+          sleep 30
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com:3000/login)
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            echo "✅ Frontend respondendo corretamente (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Frontend retornou HTTP $HTTP_CODE"
+          fi
