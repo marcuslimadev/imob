@@ -3,10 +3,12 @@ import { DEFAULT_DESIGN_THEME } from '@/lib/design-themes';
 import { createDirectus, rest, authentication } from '@directus/sdk';
 
 const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+// Use secure cookies only when HTTPS is configured
+const useSecureCookies = process.env.COOKIE_SECURE === 'true';
 
 const DESIGN_THEME_COOKIE_OPTIONS = {
   httpOnly: false,
-  secure: process.env.NODE_ENV === 'production',
+  secure: useSecureCookies,
   sameSite: 'lax' as const,
   maxAge: 60 * 60 * 24 * 365,
   path: '/',
@@ -40,10 +42,11 @@ export async function POST(request: NextRequest) {
     });
 
     // Definir cookie de autenticação
+    // secure: false temporariamente até configurar HTTPS
     if (result.data?.access_token) {
       apiResponse.cookies.set('directus_token', result.data.access_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7 dias
         path: '/',
@@ -54,7 +57,7 @@ export async function POST(request: NextRequest) {
     if (result.data?.refresh_token) {
       apiResponse.cookies.set('directus_refresh_token', result.data.refresh_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 30, // 30 dias
         path: '/',

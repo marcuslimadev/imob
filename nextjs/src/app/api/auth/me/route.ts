@@ -16,9 +16,10 @@ export async function GET(request: NextRequest) {
     let token = request.cookies.get('directus_token')?.value;
     const refreshToken = request.cookies.get('directus_refresh_token')?.value;
 
+    // secure: false temporariamente até configurar HTTPS
     const authCookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax' as const,
       path: '/'
     };
