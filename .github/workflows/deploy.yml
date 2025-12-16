@@ -1,10 +1,12 @@
-name: Deploy to AWS EC2
+name: Deploy to AWS EC2 (DEPRECATED - USE deploy-ecs.yml)
 
 on:
-  push:
-    branches:
-      - main
-      - master
+  # Desabilitado - projeto usa ECS, não EC2
+  # push:
+  #   branches:
+  #     - main
+  #     - master
+  workflow_dispatch:
 
 jobs:
   deploy:
