@@ -38,6 +38,8 @@ Purpose: make AI agents productive fast in this multi-tenant Directus + Next.js 
 - This prevents prompt overflow and allows reviewing long outputs systematically.
 
 **Deploy notes**
-- Push to `main`/`master` triggers GitHub Action deploy (EC2 pull, rebuild Directus via Docker Compose, rebuild Next.js with pnpm + PM2). See [.github/workflows/deploy.yml](.github/workflows/deploy.yml) and [DEPLOY_PRODUCAO_AWS.md](DEPLOY_PRODUCAO_AWS.md).
+- Push to `main` com mudanças em `nextjs/**` dispara GitHub Action [deploy-ecs.yml](.github/workflows/deploy-ecs.yml) que faz build da imagem Docker, push para ECR e force-new-deployment no ECS.
+- Infraestrutura AWS: ECS Fargate com cluster `production-imobi-cluster`, serviços `production-imobi-directus` e `production-imobi-frontend`, ALB, RDS PostgreSQL.
+- Deploy manual: `cd aws && ./build-and-push.sh production sa-east-1` depois `aws ecs update-service --cluster production-imobi-cluster --service production-imobi-frontend --force-new-deployment`.
 
 If anything is unclear, ask to expand (local setup, Directus extensions, tenant patterns, or specific files).
