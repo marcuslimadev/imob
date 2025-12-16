@@ -1,0 +1,13 @@
+[main a54232d] feat: landing page SociMob + logo update (sem secrets)
+ Date: Tue Dec 16 14:49:18 2025 -0300
+ 12 files changed, 643 insertions(+), 25 deletions(-)
+ create mode 100644 aws/alb-saas.txt
+ create mode 100644 aws/alb-socimob.txt
+ delete mode 100644 aws/company-check.txt
+ create mode 100644 aws/fe-deploy4.txt
+ create mode 100644 aws/fe-push3.txt
+ create mode 100644 aws/git-status.txt
+ delete mode 100644 aws/github-credentials.txt
+ delete mode 100644 aws/update-company.txt
+ create mode 100644 nextjs/src/app/(landing)/layout.tsx
+ create mode 100644 nextjs/src/app/(landing)/page.tsx

@@ -1,6 +1,2 @@
-import { redirect } from 'next/navigation';
-
-export default function HomePage() {
-  // Sempre redireciona para login - o middleware handle auth check
-  redirect('/login');
-}
+// Re-exporta a landing page como página raiz
+export { default } from './(landing)/page';

@@ -1,0 +1,6 @@
+[
+    "production-imobi-frontend",
+    1,
+    1,
+    "PRIMARY"
+]

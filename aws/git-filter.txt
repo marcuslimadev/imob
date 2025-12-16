@@ -1,0 +1,15 @@
+WARNING: git-filter-branch has a glut of gotchas generating mangled history
+	 rewrites.  Hit Ctrl-C before proceeding to abort, then use an
+	 alternative filtering tool such as 'git filter-repo'
+	 (https://github.com/newren/git-filter-repo/) instead.  See the
+	 filter-branch manual page for more details; to squelch this warning,
+	 set FILTER_BRANCH_SQUELCH_WARNING=1.
+Proceeding with filter-branch...
+
+
+Rewrite a606dd06939d1a52d81f9fb2c4da19820e9df2be (1/2) (1 seconds passed, remaining 1 predicted)    rm 'aws/company-check.txt'
+rm 'aws/github-credentials.txt'
+rm 'aws/update-company.txt'
+
+Rewrite a54232db0c6b34f323e5c21c4727494d805a376c (1/2) (1 seconds passed, remaining 1 predicted)    
+Ref 'refs/heads/main' was rewritten

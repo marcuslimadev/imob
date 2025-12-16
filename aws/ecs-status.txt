@@ -1,5 +1,6 @@
-{
-    "status": "ACTIVE",
-    "running": 2,
-    "pending": 0
-}
+--------------------------------------------------------
+|                   DescribeServices                   |
++----------------------------+----+----+---------------+
+|  production-imobi-frontend |  1 |  1 |  IN_PROGRESS  |
+|  production-imobi-directus |  1 |  1 |  COMPLETED    |
++----------------------------+----+----+---------------+

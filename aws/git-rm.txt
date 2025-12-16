@@ -1,0 +1,3 @@
+rm 'aws/company-check.txt'
+rm 'aws/github-credentials.txt'
+rm 'aws/update-company.txt'

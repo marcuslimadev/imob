@@ -1,0 +1,9 @@
+[main 613684c] feat: landing page SociMob + logo update + ALB rules
+ 8 files changed, 640 insertions(+), 2 deletions(-)
+ create mode 100644 aws/alb-saas.txt
+ create mode 100644 aws/alb-socimob.txt
+ create mode 100644 aws/fe-deploy4.txt
+ create mode 100644 aws/fe-push3.txt
+ create mode 100644 aws/git-status.txt
+ create mode 100644 nextjs/src/app/(landing)/layout.tsx
+ create mode 100644 nextjs/src/app/(landing)/page.tsx

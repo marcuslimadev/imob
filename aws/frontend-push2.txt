@@ -1,0 +1,40 @@
+The push refers to repository [575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-frontend]
+c0b6cb6bb281: Waiting
+4745102427f1: Waiting
+014e56e61396: Waiting
+62ec8676838a: Waiting
+5f9eea0444d0: Waiting
+b9b992ae23a0: Waiting
+4752b3231f77: Waiting
+c3d44997010d: Waiting
+2e4fafc9c573: Waiting
+c0b6cb6bb281: Waiting
+4745102427f1: Waiting
+014e56e61396: Waiting
+62ec8676838a: Waiting
+5f9eea0444d0: Waiting
+b9b992ae23a0: Waiting
+4752b3231f77: Waiting
+c3d44997010d: Waiting
+2e4fafc9c573: Waiting
+c0b6cb6bb281: Waiting
+4745102427f1: Waiting
+014e56e61396: Waiting
+62ec8676838a: Waiting
+5f9eea0444d0: Waiting
+b9b992ae23a0: Waiting
+4752b3231f77: Layer already exists
+c3d44997010d: Waiting
+2e4fafc9c573: Waiting
+4745102427f1: Layer already exists
+014e56e61396: Layer already exists
+62ec8676838a: Waiting
+5f9eea0444d0: Layer already exists
+b9b992ae23a0: Layer already exists
+c3d44997010d: Layer already exists
+2e4fafc9c573: Layer already exists
+c0b6cb6bb281: Waiting
+62ec8676838a: Waiting
+62ec8676838a: Pushed
+c0b6cb6bb281: Pushed
+latest: digest: sha256:7ef0cf1c357d4445cae666edf12075c6550fd1170ad1f2ac53b34999b932c502 size: 856

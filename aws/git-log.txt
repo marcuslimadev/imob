@@ -1,0 +1,5 @@
+a54232d feat: landing page SociMob + logo update (sem secrets)
+a606dd0 tudo
+530683b fix: remove todos os fetch do middleware
+76959cf fix: usar DIRECTUS_INTERNAL_URL para comunica├º├úo interna ECS
+9fdcf15 docs: adiciona documenta├º├úo e scripts de deploy do PR #23

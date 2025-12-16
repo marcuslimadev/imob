@@ -1,2 +1,60 @@
+remote: error: GH013: Repository rule violations found for refs/heads/main.        
+remote: 
+remote: - GITHUB PUSH PROTECTION        
+remote:   ÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇö        
+remote:     Resolve the following violations before pushing again        
+remote: 
+remote:     - Push cannot contain secrets        
+remote: 
+remote:             
+remote:      (?) Learn how to resolve a blocked push        
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push        
+remote:             
+remote:      (?) This repository does not have Secret Scanning enabled, but is eligible. Enable Secret Scanning to view and manage detected secrets.        
+remote:      Visit the repository settings page, https://github.com/marcuslimadev/imob/settings/security_analysis        
+remote:             
+remote:             
+remote:       ÔÇöÔÇö Amazon AWS Access Key ID ÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇö        
+remote:        locations:        
+remote:          - commit: a606dd06939d1a52d81f9fb2c4da19820e9df2be        
+remote:            path: aws/github-credentials.txt:4        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/marcuslimadev/imob/security/secret-scanning/unblock-secret/36w9uMzNakjQVZoJR6gn11m85iD        
+remote:             
+remote:             
+remote:       ÔÇöÔÇö Amazon AWS Secret Access Key ÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇö        
+remote:        locations:        
+remote:          - commit: a606dd06939d1a52d81f9fb2c4da19820e9df2be        
+remote:            path: aws/github-credentials.txt:6        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/marcuslimadev/imob/security/secret-scanning/unblock-secret/36w9uQFdy6x7EbcyCdJ47rBRuh5        
+remote:             
+remote:             
+remote:       ÔÇöÔÇö Twilio Account String Identifier ÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇö        
+remote:        locations:        
+remote:          - commit: a606dd06939d1a52d81f9fb2c4da19820e9df2be        
+remote:            path: aws/company-check.txt:7        
+remote:          - commit: a606dd06939d1a52d81f9fb2c4da19820e9df2be        
+remote:            path: aws/update-company.txt:7        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/marcuslimadev/imob/security/secret-scanning/unblock-secret/36w9uQOo5qzvFwMugSloL9y4prC        
+remote:             
+remote:             
+remote:       ÔÇöÔÇö OpenAI API Key ÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇöÔÇö        
+remote:        locations:        
+remote:          - commit: a606dd06939d1a52d81f9fb2c4da19820e9df2be        
+remote:            path: aws/company-check.txt:7        
+remote:          - commit: a606dd06939d1a52d81f9fb2c4da19820e9df2be        
+remote:            path: aws/update-company.txt:7        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/marcuslimadev/imob/security/secret-scanning/unblock-secret/36w9uMz0kfF58qgUuA97UUunWJp        
+remote:             
+remote: 
+remote: 
 To https://github.com/marcuslimadev/imob.git
-   76959cf..530683b  main -> main
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/marcuslimadev/imob.git'

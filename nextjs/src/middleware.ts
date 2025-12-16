@@ -13,6 +13,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Rotas públicas que não requerem autenticação
+  const publicRoutes = ['/', '/login', '/vitrine', '/imoveis'];
+  const isPublicRoute = publicRoutes.some(route => 
+    pathname === route || pathname.startsWith('/imoveis/')
+  );
+
+  if (isPublicRoute) {
+    return NextResponse.next();
+  }
+
   // Verificar autenticação para rotas protegidas
   const protectedRoutes = ['/empresa', '/admin', '/leads', '/conversas'];
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
