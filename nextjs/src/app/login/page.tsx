@@ -21,8 +21,18 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
+      await login(email, password);
       await new Promise(resolve => setTimeout(resolve, 500));
-      window.location.href = '/empresa/dashboard';
+
+      // Check for redirect param
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirectRel = searchParams.get('redirect');
+
+      if (redirectRel) {
+        window.location.href = redirectRel;
+      } else {
+        window.location.href = '/empresa/dashboard';
+      }
     } catch (err: any) {
       setError(err.message || 'Email ou senha inválidos');
     } finally {
@@ -40,13 +50,13 @@ export default function LoginPage() {
         <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-[#00a8e8] rounded-full translate-y-1/3" />
         <div className="absolute top-1/2 left-1/2 w-32 h-32 border-8 border-white rotate-45 -translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-[#fcbf49] rounded-full" />
-        
+
         {/* Logo centralizada */}
         <div className="relative z-10 flex items-center justify-center w-full">
-          <Image 
-            src="/images/logo-imobi.png" 
-            alt="iMOBI" 
-            width={320} 
+          <Image
+            src="/images/logo-imobi.png"
+            alt="iMOBI"
+            width={320}
             height={120}
             className="drop-shadow-2xl"
           />
@@ -58,10 +68,10 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-8">
           {/* Logo mobile */}
           <div className="lg:hidden flex justify-center mb-8">
-            <Image 
-              src="/images/logo-imobi.png" 
-              alt="iMOBI" 
-              width={200} 
+            <Image
+              src="/images/logo-imobi.png"
+              alt="iMOBI"
+              width={200}
               height={75}
             />
           </div>

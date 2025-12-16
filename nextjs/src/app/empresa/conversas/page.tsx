@@ -5,11 +5,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  MessageSquare, 
-  Search, 
-  Phone, 
-  Clock, 
+import {
+  MessageSquare,
+  Search,
+  Phone,
+  Clock,
   User,
   Send,
   Loader2,
@@ -124,19 +124,19 @@ function ConversasPageContent() {
     }
   }, [selectedConversa, fetchMensagens]);
 
-    const filteredConversas = conversas.filter(c => {
-      if (!searchTerm) return true;
-      const search = searchTerm.toLowerCase();
+  const filteredConversas = conversas.filter(c => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
 
-      return (
-        (c as any).lead?.name?.toLowerCase().includes(search) ||
-        (c as any).whatsapp_number?.includes(search)
-      );
-    });
+    return (
+      (c as any).lead?.name?.toLowerCase().includes(search) ||
+      (c as any).whatsapp_number?.includes(search)
+    );
+  });
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversa) return;
-    
+
     setSending(true);
     // TODO: Implementar envio via API
     setTimeout(() => {
@@ -145,30 +145,30 @@ function ConversasPageContent() {
     }, 1000);
   };
 
-    const formatTime = (date: string) => {
+  const formatTime = (date: string) => {
 
-      return new Date(date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    };
+    return new Date(date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  };
 
-    const formatDate = (date: string) => {
-      const d = new Date(date);
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
+  const formatDate = (date: string) => {
+    const d = new Date(date);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
 
-      if (d.toDateString() === today.toDateString()) return 'Hoje';
-      if (d.toDateString() === yesterday.toDateString()) return 'Ontem';
+    if (d.toDateString() === today.toDateString()) return 'Hoje';
+    if (d.toDateString() === yesterday.toDateString()) return 'Ontem';
 
-      return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-    };
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  };
 
-    if (authLoading) {
+  if (authLoading) {
 
-      return (
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-        </div>
-      );
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
   }
 
   return (
@@ -224,7 +224,7 @@ function ConversasPageContent() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <p className="font-medium text-gray-900 truncate">
-                          {(conversa as any).lead_id?.name || (conversa as any).whatsapp_number}
+                          {(conversa as any).lead?.name || (conversa as any).whatsapp_number}
                         </p>
                         <span className="text-xs text-gray-500">
                           {(conversa as any).last_message_at && formatDate((conversa as any).last_message_at)}
@@ -258,7 +258,7 @@ function ConversasPageContent() {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">
-                      {(selectedConversa as any).lead_id?.name || (selectedConversa as any).whatsapp_number}
+                      {(selectedConversa as any).lead?.name || (selectedConversa as any).whatsapp_number}
                     </p>
                     <p className="text-sm text-gray-500 flex items-center gap-1">
                       <Phone className="w-3 h-3" />
@@ -322,8 +322,8 @@ function ConversasPageContent() {
                     onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                     className="flex-1"
                   />
-                  <Button 
-                    onClick={handleSendMessage} 
+                  <Button
+                    onClick={handleSendMessage}
                     disabled={!newMessage.trim() || sending}
                   >
                     {sending ? (
