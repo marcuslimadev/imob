@@ -18,8 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
 	try {
 		const { globals } = await fetchSiteData();
 
-		const siteTitle = globals?.title || 'iMOBI - CRM Inteligente';
-		const siteDescription = globals?.description || 'CRM completo para imobiliárias com WhatsApp IA e automação de vendas.';
+		const siteTitle = globals?.title || 'SociMob - Atendente WhatsApp para Imobiliárias';
+		const siteDescription = globals?.description || 'Plataforma SaaS com atendente virtual WhatsApp, CRM de leads e gestão inteligente para imobiliárias.';
 		const faviconURL = '/logo.png'; // Use logo.png as favicon
 
 		return {

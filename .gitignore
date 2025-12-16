@@ -47,3 +47,6 @@ Thumbs.db
 # IDE / Editor Configs
 .idea
 .vscode
+aws/github-credentials.txt
+aws/company-check.txt
+aws/update-company.txt
