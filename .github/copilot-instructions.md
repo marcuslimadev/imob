@@ -1,79 +1,43 @@
 
-# iMOBI — Copilot instructions (concise)
+## iMOBI — Copilot instructions (concise)
 
-Purpose: help AI coding agents get productive quickly in this repo (multi-tenant Next.js + Directus).
+**IMPORTANTE: Sempre responda em português brasileiro.**
 
-Quick start (local, PowerShell):
-1. Start Directus (docker):
-   cd directus && docker compose up -d
-2. Apply schema & seed (first run):
-   node register-collections.js
-   node register-fields.js
-   node setup-roles.js
-   node seed-data.js
-3. Start frontend: cd ../nextjs && pnpm install && pnpm dev
+Purpose: make AI agents productive fast in this multi-tenant Directus + Next.js repo.
 
-Key project patterns (do these always):
-- Tenant isolation: every business collection is filtered by `company_id`. Do not hardcode company IDs.
-- Directus extensions: use CommonJS. Import helpers with `require('../../shared/company-settings.js')` and export with `module.exports = (router, context) => {}`.
-- Use `getCompanySettings()` in `directus/extensions/shared/company-settings.js` to load per-tenant creds (Twilio/OpenAI).
-- Schema changes: edit `directus/register-*.js` scripts, run them locally, then export permissions from Directus UI.
+**Quick start (local, PowerShell)**
+- Directus: `cd directus && docker compose up -d`
+- Apply schema/roles/seed on first run: `node register-collections.js && node register-fields.js && node setup-roles.js && node setup-role-permissions.js && node seed-data.js`
+- Frontend: `cd ../nextjs && pnpm install && pnpm dev` (default http://localhost:3000/home)
 
-Critical files to inspect when changing behavior:
-- [directus/extensions/shared/company-settings.js](directus/extensions/shared/company-settings.js)
-- [directus/register-collections.js](directus/register-collections.js)
-- [directus/register-fields.js](directus/register-fields.js)
-- [directus/setup-roles.js](directus/setup-roles.js)
-- [directus/extensions/endpoints/twilio/index.js](directus/extensions/endpoints/twilio/index.js) — known bug: use `config.accountSid`/`config.authToken` instead of undefined env constants.
-- [nextjs/src/middleware.ts](nextjs/src/middleware.ts) — tenant detection and header injection.
-- [nextjs/src/lib/directus/client.ts](nextjs/src/lib/directus/client.ts) — server vs client Directus clients.
+**Architecture to remember**
+- Data isolation is always by `company_id`; never hardcode IDs. Middleware detects tenant by host/subdomain and injects headers in [nextjs/src/middleware.ts](nextjs/src/middleware.ts).
+- Directus is the single backend. Custom endpoints are CommonJS and must load per-tenant credentials via [directus/extensions/shared/company-settings.js](directus/extensions/shared/company-settings.js) (`getCompanySettings*` helpers, maps WhatsApp numbers → company).
+- Frontend talks to Directus through typed SDK wrappers: [nextjs/src/lib/directus/client.ts](nextjs/src/lib/directus/client.ts) (server vs browser) and tenancy helpers in [nextjs/src/lib/directus/tenancy.ts](nextjs/src/lib/directus/tenancy.ts) if present.
+- Theme system is data-driven (company `theme_key`, CSS variables). See [nextjs/src/styles/globals.css](nextjs/src/styles/globals.css) and [nextjs/src/lib/design-themes.ts](nextjs/src/lib/design-themes.ts) when touching layout.
 
-Testing & useful commands:
-- Run Directus smoke tests: `node directus/test-backend.js` and `node directus/test-login.js`.
-- Import properties manually: `npm run import:properties` (runs `directus/workers/import-properties.js`).
-- Playwright E2E live in `nextjs/tests/e2e/` (currently broken; update selectors before running `pnpm test`).
+**Workflow conventions**
+- Schema or permission changes live in scripts, not ad-hoc UI edits: [directus/register-collections.js](directus/register-collections.js), [directus/register-fields.js](directus/register-fields.js), [directus/setup-roles.js](directus/setup-roles.js), [directus/setup-role-permissions.js](directus/setup-role-permissions.js). Run them then export permissions from Directus UI.
+- Directus extensions stay CommonJS (`module.exports = (router, context) => {}`); avoid ES modules. Shared config via company-settings helper only.
+- External integrations (Twilio/OpenAI/WhatsApp) must be invoked from Directus endpoints/flows or workers, never directly from Next.js.
+- Frontend pages still contain legacy mocks; replace with Directus queries filtered by authenticated `user.company_id` from AuthContext.
 
-Conventions & gotchas:
-- Do not edit Directus schema in production via UI — update register scripts instead.
-- Middleware should avoid heavy DB queries; caching is used to limit latency.
-- Many frontend pages still use mock data or hardcoded `company_id` — when fixing, add loading skeletons and filter by `user.company_id` from `AuthContext`.
+**Key hotspots / known pitfalls**
+- Twilio endpoint bug: in [directus/extensions/endpoints/twilio/index.js](directus/extensions/endpoints/twilio/index.js) `send-image` must use `config.accountSid`/`config.authToken`, not undefined env vars.
+- Tenant detection + refresh happens in [nextjs/src/middleware.ts](nextjs/src/middleware.ts) and auth renews via [nextjs/src/app/api/auth/me/route.ts](nextjs/src/app/api/auth/me/route.ts); keep them lightweight (no heavy DB calls).
+- Collections must include `company_id` (e.g., leads, properties, conversas/mensagens). When adding features, propagate filters and validations server-side.
 
-Integration notes:
-- Credentials are stored per-tenant in `app_settings` collection (`twilio_*`, `openai_api_key`, etc.).
-- WhatsApp webhook flow lives in `directus/extensions/endpoints/whatsapp/index.js` and uses `getCompanySettingsByWhatsApp()` to map numbers → company.
+**Useful commands**
+- Smoke tests: `node directus/test-backend.js` and `node directus/test-login.js`.
+- Import properties: `npm run import:properties` (runs [directus/workers/import-properties.js](directus/workers/import-properties.js)).
+- Generate Directus types (if configured): `pnpm run generate:types` inside nextjs.
 
-If you need more context, inspect `PLANO_CENTRAL.md` for priorities and `ARQUITETURA_SAAS_MULTI_TENANT.md` for architecture diagrams.
+**Command output handling**
+- Always redirect command output to txt files: `command > output.txt 2>&1` then read with `read_file`.
+- Store temporary outputs in root or dedicated folder (e.g., `temp/command-output.txt`).
+- This prevents prompt overflow and allows reviewing long outputs systematically.
 
-If anything above is unclear or missing, tell me which area to expand (local setup, Directus extensions, tenant patterns, or specific files).
+**Deploy notes**
+- Push to `main`/`master` triggers GitHub Action deploy (EC2 pull, rebuild Directus via Docker Compose, rebuild Next.js with pnpm + PM2). See [.github/workflows/deploy.yml](.github/workflows/deploy.yml) and [DEPLOY_PRODUCAO_AWS.md](DEPLOY_PRODUCAO_AWS.md).
 
-**Always call integrations from Directus Flows/Hooks or well-defined backend, NOT from frontend.**
-
-### API for Next.js
-
-- Assume Next.js consumes Directus API (REST or GraphQL) with proper authentication (JWT, static token)
-- Optimize queries (filters, selected fields, pagination) to avoid unnecessary traffic
-- Always respect `company_id` and roles in queries
-
-### Code Style
-
-- Clear, modular, maintainable, and extensible code
-- Name entities, collections, fields, and functions explicitly and coherent with real estate domain:
-  - `imovel`, `lead`, `contrato`, `locacao`, `venda`, `vistoria`, `corretor`
-- When suggesting code, always include collection structure AND permission definitions
-
-### Collections Naming Convention
-
-| Collection | Description |
-|------------|-------------|
-| `companies` | Tenants (real estate agencies) |
-| `properties` | Properties/listings |
-| `leads` | Leads and clients |
-| `conversas` | WhatsApp conversations |
-| `mensagens` | Individual messages |
-| `contratos` | Rental/sale contracts |
-| `vistorias` | Property inspections |
-| `documentos_assinatura` | e-Signature documents |
-| `atividades` | Activity/audit log |
-| `app_settings` | Per-tenant configuration |
-| `subscription_plans` | SaaS plans |
-| `tenant_subscriptions` | Tenant billing records |
+If anything is unclear, ask to expand (local setup, Directus extensions, tenant patterns, or specific files).
