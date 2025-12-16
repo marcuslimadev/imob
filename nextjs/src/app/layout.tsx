@@ -20,8 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 		const siteTitle = globals?.title || 'SociMob - Atendente WhatsApp para Imobiliárias';
 		const siteDescription = globals?.description || 'Plataforma SaaS com atendente virtual WhatsApp, CRM de leads e gestão inteligente para imobiliárias.';
-		const faviconURL = '/logo.png'; // Use logo.png as favicon
-
+		const faviconURL = '/images/logo-imobi.png'; // Use logo.png as favicon
 		return {
 			title: {
 				default: siteTitle,
@@ -41,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
 			},
 			description: 'CRM completo para imobiliárias com WhatsApp IA e automação de vendas.',
 			icons: {
-				icon: '/logo.png',
+				icon: '/images/logo-imobi.png',
 			},
 		};
 	}
@@ -61,29 +60,29 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 		console.log('Running in offline mode - Directus data unavailable');
 	}
 
-        const accentColor = globals?.accent_color || '#d90429';
-        const cookieStore = await cookies();
-        const themeCookie = cookieStore.get('design-theme')?.value;
-        const initialDesignTheme = themeCookie || DEFAULT_DESIGN_THEME;
+	const accentColor = globals?.accent_color || '#d90429';
+	const cookieStore = await cookies();
+	const themeCookie = cookieStore.get('design-theme')?.value;
+	const initialDesignTheme = themeCookie || DEFAULT_DESIGN_THEME;
 
 	return (
-                <html
-                        lang="pt-BR"
-                        data-theme={initialDesignTheme}
-                        style={{ '--accent-color': accentColor } as React.CSSProperties}
-                        suppressHydrationWarning
-                >
-                        <body className="antialiased font-sans flex flex-col min-h-screen">
-                                <Script
-                                        id="design-theme-init"
-                                        strategy="beforeInteractive"
-                                        dangerouslySetInnerHTML={{
-                                                __html: `(() => { try { const fallback = ${JSON.stringify(DEFAULT_DESIGN_THEME)}; const cookieTheme = (document.cookie || '').split('; ').find((row) => row.startsWith('design-theme='))?.split('=')[1]; const stored = localStorage.getItem('design-theme'); document.documentElement.setAttribute('data-theme', stored || cookieTheme || fallback); } catch (error) { document.documentElement.setAttribute('data-theme', ${JSON.stringify(DEFAULT_DESIGN_THEME)}); } })();`,
-                                        }}
-                                />
-                                <SuppressConsoleErrors />
-                                <ThemeProvider>
-                                        <AuthProvider>
+		<html
+			lang="pt-BR"
+			data-theme={initialDesignTheme}
+			style={{ '--accent-color': accentColor } as React.CSSProperties}
+			suppressHydrationWarning
+		>
+			<body className="antialiased font-sans flex flex-col min-h-screen">
+				<Script
+					id="design-theme-init"
+					strategy="beforeInteractive"
+					dangerouslySetInnerHTML={{
+						__html: `(() => { try { const fallback = ${JSON.stringify(DEFAULT_DESIGN_THEME)}; const cookieTheme = (document.cookie || '').split('; ').find((row) => row.startsWith('design-theme='))?.split('=')[1]; const stored = localStorage.getItem('design-theme'); document.documentElement.setAttribute('data-theme', stored || cookieTheme || fallback); } catch (error) { document.documentElement.setAttribute('data-theme', ${JSON.stringify(DEFAULT_DESIGN_THEME)}); } })();`,
+					}}
+				/>
+				<SuppressConsoleErrors />
+				<ThemeProvider>
+					<AuthProvider>
 						<VisualEditingLayout
 							headerNavigation={headerNavigation}
 							footerNavigation={footerNavigation}
