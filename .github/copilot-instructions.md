@@ -37,9 +37,8 @@ Purpose: make AI agents productive fast in this multi-tenant Directus + Next.js 
 - Store temporary outputs in root or dedicated folder (e.g., `temp/command-output.txt`).
 - This prevents prompt overflow and allows reviewing long outputs systematically.
 
-**Deploy notes**
-- Push to `main` com mudanças em `nextjs/**` dispara GitHub Action [deploy-ecs.yml](.github/workflows/deploy-ecs.yml) que faz build da imagem Docker, push para ECR e force-new-deployment no ECS.
-- Infraestrutura AWS: ECS Fargate com cluster `production-imobi-cluster`, serviços `production-imobi-directus` e `production-imobi-frontend`, ALB, RDS PostgreSQL.
-- Deploy manual: `cd aws && ./build-and-push.sh production sa-east-1` depois `aws ecs update-service --cluster production-imobi-cluster --service production-imobi-frontend --force-new-deployment`.
+**Deploy**
+- Push to `main` dispara GitHub Actions automaticamente. Ver workflows em [.github/workflows](.github/workflows).
+- Scripts de deploy AWS disponíveis em [aws/](aws/) (build-and-push.sh, deploy.sh).
 
 If anything is unclear, ask to expand (local setup, Directus extensions, tenant patterns, or specific files).
