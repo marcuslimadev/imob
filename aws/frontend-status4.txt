@@ -1,0 +1,23 @@
+{
+    "status": "ACTIVE",
+    "desired": 1,
+    "running": 1,
+    "pending": 0,
+    "events": [
+        {
+            "id": "e9973dbe-afd8-4905-8661-e8902709f203",
+            "createdAt": "2025-12-15T15:43:32.302000-03:00",
+            "message": "(service production-imobi-frontend) has reached a steady state."
+        },
+        {
+            "id": "3c110bea-faf5-4149-bd99-c56149c96d45",
+            "createdAt": "2025-12-15T15:43:32.301000-03:00",
+            "message": "(service production-imobi-frontend) (deployment ecs-svc/5610361864266897944) deployment completed."
+        },
+        {
+            "id": "1e0a5070-3e11-40ae-9366-1a859cdde319",
+            "createdAt": "2025-12-15T15:41:14.720000-03:00",
+            "message": "(service production-imobi-frontend, taskSet ecs-svc/5610361864266897944) has begun draining connections on 1 tasks."
+        }
+    ]
+}

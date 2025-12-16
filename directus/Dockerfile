@@ -4,8 +4,8 @@ FROM directus/directus:11.12.0
 ENV NODE_ENV=production
 ENV LOG_LEVEL=info
 
-# Copiar extensões customizadas (quando houver)
-# COPY ./extensions /directus/extensions
+# Copiar extensões customizadas
+COPY ./extensions /directus/extensions
 
 # Expor porta padrão
 EXPOSE 8055

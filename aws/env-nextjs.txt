@@ -1,0 +1,10 @@
+# Directus Configuration
+NEXT_PUBLIC_DIRECTUS_URL=http://production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com
+DIRECTUS_ADMIN_TOKEN=admin-static-token-imobi-2025
+
+# Application
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_NAME=IMOBI
+
+# Disable Next.js telemetry
+NEXT_TELEMETRY_DISABLED=1

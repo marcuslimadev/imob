@@ -1,0 +1,29 @@
+{
+  "cluster": "production-imobi-cluster",
+  "serviceName": "production-imobi-frontend",
+  "taskDefinition": "imobi-frontend:1",
+  "desiredCount": 1,
+  "launchType": "FARGATE",
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": [
+        "subnet-09996da9ce9a08f16",
+        "subnet-05b32a2ccfcba6c5c",
+        "subnet-07834e01856131bfc"
+      ],
+      "securityGroups": ["sg-0fc7e6e957369daf8"],
+      "assignPublicIp": "ENABLED"
+    }
+  },
+  "loadBalancers": [
+    {
+      "targetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e",
+      "containerName": "frontend",
+      "containerPort": 3000
+    }
+  ],
+  "deploymentConfiguration": {
+    "maximumPercent": 200,
+    "minimumHealthyPercent": 100
+  }
+}

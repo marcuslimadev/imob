@@ -1,0 +1,17 @@
+{
+    "status": "ACTIVE",
+    "runningCount": 1,
+    "desiredCount": 1,
+    "deployments": [
+        {
+            "status": "PRIMARY",
+            "runningCount": 1,
+            "desiredCount": 1
+        },
+        {
+            "status": "ACTIVE",
+            "runningCount": 0,
+            "desiredCount": 0
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "NODE_ENV",
+        "value": "production"
+    },
+    {
+        "name": "DIRECTUS_INTERNAL_URL",
+        "value": "http://172.31.7.78:8055"
+    },
+    {
+        "name": "DIRECTUS_ADMIN_TOKEN",
+        "value": "admin-static-token-imobi-2025"
+    },
+    {
+        "name": "PORT",
+        "value": "3000"
+    },
+    {
+        "name": "NEXT_PUBLIC_DIRECTUS_URL",
+        "value": "http://production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com"
+    },
+    {
+        "name": "NEXT_PUBLIC_API_URL",
+        "value": "http://production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com"
+    }
+]

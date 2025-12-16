@@ -1,0 +1,7 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   823  100   725  100    98    796    107 --:--:-- --:--:-- --:--:--   907
+{"data":{"id":"bf47533a-e0ab-4eb3-aeb7-3312018c9015","status":"active","user_created":null,"date_created":"2025-12-15T22:15:04.336Z","user_updated":null,"date_updated":null,"razao_social":null,"nome_fantasia":null,"cnpj":null,"slug":"exclusiva-lar","custom_domain":null,"logo_url":null,"primary_color":null,"telefone":null,"email":null,"endereco":null,"cidade":null,"estado":null,"cep":null,"twilio_account_sid":null,"twilio_auth_token":null,"twilio_whatsapp_number":null,"openai_api_key":null,"openai_model":"gpt-4o-mini","asaas_api_key":null,"clicksign_access_token":null,"external_api_url":null,"external_api_key":null,"subscription_plan":"basic","subscription_status":"active","trial_ends_at":null,"theme_key":"bauhaus"}}

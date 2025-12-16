@@ -1,0 +1,7 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  1075  100  1075    0     0   1139      0 --:--:-- --:--:-- --:--:--  1142
+{"data":[{"id":"387ce8ab-763e-436b-a798-9c0b9b989aee","name":"Company Admin","icon":"business","description":"Administrador da imobili├íria (usa s├│ frontend)","parent":null,"children":[],"policies":[],"users":["b4515077-bde6-4c1d-bd19-4b0bf9b2d5cd"]},{"id":"5c2059b5-a1c1-474f-9878-941c62e6ed56","name":"Corretor","icon":"user","description":"Corretor da imobili├íria (usa s├│ frontend)","parent":null,"children":[],"policies":[],"users":[]},{"id":"6772f9c6-c8db-44cb-9bf0-b63fef1900f2","name":"SaaS Finance","icon":"attach_money","description":"Financeiro/atendimento do SaaS","parent":null,"children":[],"policies":[],"users":[]},{"id":"d0747b5f-ca3a-4d9f-888a-414d3d4a5d20","name":"Administrator","icon":"verified","description":"$t:admin_description","parent":null,"children":[],"policies":["5e256b40-85fa-4f61-b951-07e8a594143d"],"users":["4244a5b0-694a-419a-ad4e-0d356080be50"]},{"id":"da45d2b4-2ce2-4683-9936-69219187a059","name":"SaaS Admin","icon":"shield","description":"Backoffice do produto (acesso total)","parent":null,"children":[],"policies":[],"users":[]}]}

@@ -1,0 +1,256 @@
+{
+    "events": [
+        {
+            "timestamp": 1765824120314,
+            "message": "  _eventsCount: 0,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _intervalCount: 0,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _intervalEnd: 0,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _pendingCount: 0,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _resolveEmpty: [Function: o],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _resolveIdle: [Function: o],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _carryoverConcurrencyCount: false,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _isIntervalIgnored: true,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _intervalCap: Infinity,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _interval: 0,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _queue: i { _queue: [] },",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _queueClass: [Function: i],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _concurrency: Infinity,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _intervalId: undefined,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _timeout: undefined,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _throwOnTimeout: false,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  _isPaused: true",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "}",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "},",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  dynamicIOEnabled: false,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  dev: false",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "},",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  [Symbol(kResourceStore)]: {",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  type: 'request',",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  phase: 'action',",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  implicitTags: [],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  url: { pathname: '/', search: '' },",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  rootParams: {},",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  headers: [Getter],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  cookies: [Getter/Setter],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  mutableCookies: [Getter],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  userspaceMutableCookies: [Getter],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  draftMode: [Getter],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  renderResumeDataCache: null,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  isHmrRefresh: false,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  serverComponentsHmrCache: undefined",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "}",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "},",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  resolve: [Function],",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  reject: [Function]",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "},",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  [Symbol(nodejs.webstream.controllerErrorFunction)]: [Function]",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "},",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  source: null,",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  length: null",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "}",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "},",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "  [Symbol(headers)]: Headers {  }",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "}",
+            "ingestionTime": 1765824124675
+        },
+        {
+            "timestamp": 1765824120314,
+            "message": "}",
+            "ingestionTime": 1765824124675
+        }
+    ],
+    "nextForwardToken": "f/39379193772541996896427311211027713490914713262492615151/s",
+    "nextBackwardToken": "b/39379193772541996896427311211027713490914713262492615102/s"
+}

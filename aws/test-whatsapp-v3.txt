@@ -1,0 +1,7 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100    76  100    76    0     0     91      0 --:--:-- --:--:-- --:--:--    91
+{"status":"ok","endpoint":"whatsapp","timestamp":"2025-12-16T11:08:00.906Z"}

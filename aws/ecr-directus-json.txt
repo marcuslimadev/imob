@@ -1,0 +1,120 @@
+{
+    "imageDetails": [
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:ef060a9d2ae3e330b4f20e669eb9b16b3e25a60fae4d78f15000f86b56003780",
+            "imageSizeInBytes": 174468454,
+            "imagePushedAt": "2025-12-12T13:11:57.819000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.manifest.v1+json",
+            "artifactMediaType": "application/vnd.oci.image.config.v1+json",
+            "lastRecordedPullTime": "2025-12-15T10:07:19.953000-03:00",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:8b6e1954385fb9c926ecdccbd0b1d8ae4544fa764387f929b07da93a4f4a5664",
+            "imageSizeInBytes": 1359,
+            "imagePushedAt": "2025-12-12T22:17:27.245000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.manifest.v1+json",
+            "artifactMediaType": "application/vnd.oci.image.config.v1+json",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:3b5c4836e04d0097bead3e2c929f377a46f61775d3ea8bbf5dcbaa346e637209",
+            "imageSizeInBytes": 207607525,
+            "imagePushedAt": "2025-12-15T19:03:43.585000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.index.v1+json",
+            "lastRecordedPullTime": "2025-12-15T19:04:32.131000-03:00",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:3343a85717ca7e664f93c4409e2ca643ed4e49cb092d7454b41eef91cf370442",
+            "imageSizeInBytes": 207608506,
+            "imagePushedAt": "2025-12-15T22:59:15.416000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.manifest.v1+json",
+            "artifactMediaType": "application/vnd.oci.image.config.v1+json",
+            "lastRecordedPullTime": "2025-12-16T07:25:55.385000-03:00",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:0605324fb7de11e57780beb8ceaade022deaced84817218b92d45263daa57e28",
+            "imageSizeInBytes": 1358,
+            "imagePushedAt": "2025-12-15T19:18:51.179000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.manifest.v1+json",
+            "artifactMediaType": "application/vnd.oci.image.config.v1+json",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:7e7987d910e1dfc885dd23b72174c9d623aa661bb01344497ccd6674f65b7e2b",
+            "imageSizeInBytes": 207607525,
+            "imagePushedAt": "2025-12-15T19:18:51.513000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.index.v1+json",
+            "lastRecordedPullTime": "2025-12-15T19:20:05.520000-03:00",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:e4bd628f0d6d18376fa6e16172e102e0f2cf223fe03141b139d0b222e9fe7c7d",
+            "imageSizeInBytes": 174468454,
+            "imagePushedAt": "2025-12-12T22:17:27.799000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.index.v1+json",
+            "lastRecordedPullTime": "2025-12-15T19:03:43.503000-03:00",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:a36a93546176db4f5d2e3049d9c9bd692a0de7e9fba6eaec6275877078dc80fd",
+            "imageSizeInBytes": 207607525,
+            "imagePushedAt": "2025-12-15T19:03:43.257000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.manifest.v1+json",
+            "artifactMediaType": "application/vnd.oci.image.config.v1+json",
+            "lastRecordedPullTime": "2025-12-15T19:04:32.216000-03:00",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:c219151eaf4f2ccb31e2844c6d845924213e1c52b3af15de9ad6a5dc5910c353",
+            "imageSizeInBytes": 1359,
+            "imagePushedAt": "2025-12-15T22:59:15.458000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.manifest.v1+json",
+            "artifactMediaType": "application/vnd.oci.image.config.v1+json",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:17a30544ffd8853380c531aff64692cf15641fb49c49e8eb42acbc96488eda32",
+            "imageSizeInBytes": 1358,
+            "imagePushedAt": "2025-12-15T19:03:43.253000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.manifest.v1+json",
+            "artifactMediaType": "application/vnd.oci.image.config.v1+json",
+            "imageStatus": "ACTIVE"
+        },
+        {
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "imageDigest": "sha256:25066e01f3cee7e753d4a26979ff672019e61484f5b32493ba3766f9b69670f2",
+            "imageTags": [
+                "latest"
+            ],
+            "imageSizeInBytes": 207608506,
+            "imagePushedAt": "2025-12-15T22:59:15.806000-03:00",
+            "imageManifestMediaType": "application/vnd.oci.image.index.v1+json",
+            "lastRecordedPullTime": "2025-12-16T07:25:55.098000-03:00",
+            "imageStatus": "ACTIVE"
+        }
+    ]
+}

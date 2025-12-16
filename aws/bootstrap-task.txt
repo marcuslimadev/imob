@@ -1,0 +1,72 @@
+{
+    "tasks": [
+        {
+            "attachments": [
+                {
+                    "id": "eb204d9f-c9c9-4874-bbbe-9ade052fd5a8",
+                    "type": "ElasticNetworkInterface",
+                    "status": "PRECREATED",
+                    "details": [
+                        {
+                            "name": "subnetId",
+                            "value": "subnet-05b32a2ccfcba6c5c"
+                        }
+                    ]
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "ecs.cpu-architecture",
+                    "value": "x86_64"
+                }
+            ],
+            "availabilityZone": "sa-east-1b",
+            "clusterArn": "arn:aws:ecs:sa-east-1:575098225472:cluster/production-imobi-cluster",
+            "containers": [
+                {
+                    "containerArn": "arn:aws:ecs:sa-east-1:575098225472:container/production-imobi-cluster/617ac5c5d79941508beaf92e1ce616b4/c555ffc3-28e4-47c0-866d-ae75bad816ce",
+                    "taskArn": "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/617ac5c5d79941508beaf92e1ce616b4",
+                    "name": "directus",
+                    "image": "575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus:latest",
+                    "lastStatus": "PENDING",
+                    "networkInterfaces": [],
+                    "cpu": "0"
+                }
+            ],
+            "cpu": "512",
+            "createdAt": "2025-12-15T11:01:54.611000-03:00",
+            "desiredStatus": "RUNNING",
+            "enableExecuteCommand": false,
+            "group": "family:production-imobi-directus",
+            "lastStatus": "PROVISIONING",
+            "launchType": "FARGATE",
+            "memory": "1024",
+            "overrides": {
+                "containerOverrides": [
+                    {
+                        "name": "directus",
+                        "command": [
+                            "/bin/sh",
+                            "-c",
+                            "npx directus bootstrap"
+                        ]
+                    }
+                ],
+                "inferenceAcceleratorOverrides": []
+            },
+            "platformVersion": "1.4.0",
+            "platformFamily": "Linux",
+            "tags": [],
+            "taskArn": "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/617ac5c5d79941508beaf92e1ce616b4",
+            "taskDefinitionArn": "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:4",
+            "version": 1,
+            "ephemeralStorage": {
+                "sizeInGiB": 20
+            },
+            "fargateEphemeralStorage": {
+                "sizeInGiB": 20
+            }
+        }
+    ],
+    "failures": []
+}

@@ -1,0 +1,9 @@
+---------------------------------------------------------------------------------
+|                              DescribeStackEvents                              |
++------------------------+----------------------+-------------------------------+
+|  DirectusService       |  CREATE_IN_PROGRESS  |  Resource creation Initiated  |
+|  DirectusService       |  CREATE_IN_PROGRESS  |  None                         |
+|  DirectusTaskDefinition|  CREATE_COMPLETE     |  None                         |
+|  DirectusTaskDefinition|  CREATE_IN_PROGRESS  |  Resource creation Initiated  |
+|  ALBListenerHTTP       |  CREATE_COMPLETE     |  None                         |
++------------------------+----------------------+-------------------------------+

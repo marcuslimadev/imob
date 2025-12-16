@@ -7,6 +7,14 @@ param(
 
 $ErrorActionPreference = "Continue"
 
+# região/conta (padrão sa-east-1)
+if (-not $env:AWS_REGION) { $env:AWS_REGION = 'sa-east-1' }
+$AWS_REGION = $env:AWS_REGION
+if (-not $env:AWS_ACCOUNT_ID) {
+    $env:AWS_ACCOUNT_ID = aws sts get-caller-identity --query Account --output text
+}
+$AWS_ACCOUNT_ID = $env:AWS_ACCOUNT_ID
+
 Write-Host "`n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host "🚀 iMOBI - Deploy Completo na AWS" -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" -ForegroundColor Cyan
@@ -15,13 +23,13 @@ Write-Host "━━━━━━━━━━━━━━━━━━━━━━�
 if (-not $SkipInfrastructure) {
     Write-Host "1️⃣  Verificando infraestrutura (CloudFormation)..." -ForegroundColor Yellow
     
-    $stackStatus = aws cloudformation describe-stacks --stack-name imobi-production --region sa-east-1 --query "Stacks[0].StackStatus" --output text 2>$null
+    $stackStatus = aws cloudformation describe-stacks --stack-name imobi-prod --region $AWS_REGION --query "Stacks[0].StackStatus" --output text 2>$null
     
     if ($stackStatus -eq "CREATE_IN_PROGRESS" -or $stackStatus -eq "UPDATE_IN_PROGRESS") {
         Write-Host "   Stack em criação. Aguardando..." -ForegroundColor Yellow
         Write-Host "   Isso pode levar 10-15 minutos (RDS PostgreSQL)`n" -ForegroundColor Gray
         
-        aws cloudformation wait stack-create-complete --stack-name imobi-production --region sa-east-1
+        aws cloudformation wait stack-create-complete --stack-name imobi-prod --region $AWS_REGION
         Write-Host "   ✅ Infraestrutura pronta!`n" -ForegroundColor Green
     }
     elseif ($stackStatus -eq "CREATE_COMPLETE" -or $stackStatus -eq "UPDATE_COMPLETE") {
@@ -29,14 +37,14 @@ if (-not $SkipInfrastructure) {
     }
     else {
         Write-Host "   ⚠️  Status do stack: $stackStatus" -ForegroundColor Yellow
-        Write-Host "   Execute: aws cloudformation describe-stack-events --stack-name imobi-production`n" -ForegroundColor Gray
+        Write-Host "   Execute: aws cloudformation describe-stack-events --stack-name imobi-prod`n" -ForegroundColor Gray
     }
 }
 
 # 2. Obter outputs da infraestrutura
 Write-Host "2️⃣  Obtendo informações da infraestrutura..." -ForegroundColor Yellow
 
-$outputs = aws cloudformation describe-stacks --stack-name imobi-production --region sa-east-1 --query "Stacks[0].Outputs" --output json | ConvertFrom-Json
+$outputs = aws cloudformation describe-stacks --stack-name imobi-prod --region $AWS_REGION --query "Stacks[0].Outputs" --output json | ConvertFrom-Json
 
 $albDNS = ($outputs | Where-Object { $_.OutputKey -eq "ALBDNSName" }).OutputValue
 $rdsEndpoint = ($outputs | Where-Object { $_.OutputKey -eq "RDSEndpoint" }).OutputValue
@@ -59,14 +67,18 @@ if (-not $SkipBackendBuild) {
     cd ..\directus
     
     Write-Host "   Login no ECR..." -ForegroundColor Gray
-    aws ecr get-login-password --region sa-east-1 | docker login --username AWS --password-stdin 575098225472.dkr.ecr.sa-east-1.amazonaws.com
+    if (-not $env:AWS_REGION) { $env:AWS_REGION = 'sa-east-1' }
+    if (-not $env:AWS_ACCOUNT_ID) { $env:AWS_ACCOUNT_ID = aws sts get-caller-identity --query Account --output text }
+    $AWS_REGION = $env:AWS_REGION
+    $AWS_ACCOUNT_ID = $env:AWS_ACCOUNT_ID
+    aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $($AWS_ACCOUNT_ID).dkr.ecr.$AWS_REGION.amazonaws.com
     
     Write-Host "   Building Directus image..." -ForegroundColor Gray
     docker build -t imobi-directus .
     
     Write-Host "   Pushing to ECR..." -ForegroundColor Gray
-    docker tag imobi-directus:latest 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus:latest
-    docker push 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus:latest
+    docker tag imobi-directus:latest $($AWS_ACCOUNT_ID).dkr.ecr.$AWS_REGION.amazonaws.com/imobi-directus:latest
+    docker push $($AWS_ACCOUNT_ID).dkr.ecr.$AWS_REGION.amazonaws.com/imobi-directus:latest
     
     Write-Host "   ✅ Directus image publicada`n" -ForegroundColor Green
 }
@@ -81,8 +93,8 @@ if (-not $SkipFrontendBuild) {
     docker build -t imobi-frontend .
     
     Write-Host "   Pushing to ECR..." -ForegroundColor Gray
-    docker tag imobi-frontend:latest 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-frontend:latest
-    docker push 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-frontend:latest
+    docker tag imobi-frontend:latest $($AWS_ACCOUNT_ID).dkr.ecr.$AWS_REGION.amazonaws.com/imobi-frontend:latest
+    docker push $($AWS_ACCOUNT_ID).dkr.ecr.$AWS_REGION.amazonaws.com/imobi-frontend:latest
     
     Write-Host "   ✅ Frontend image publicada`n" -ForegroundColor Green
 }
@@ -111,10 +123,6 @@ $directusTask.containerDefinitions[0].environment += @{
     value = "imobi_admin"
 }
 $directusTask.containerDefinitions[0].environment += @{
-    name = "DB_PASSWORD"
-    value = "iMobiSecurePass2025!"
-}
-$directusTask.containerDefinitions[0].environment += @{
     name = "PUBLIC_URL"
     value = "http://$albDNS"
 }
@@ -123,9 +131,32 @@ $directusTask.containerDefinitions[0].environment += @{
     value = $s3Bucket
 }
 
+# ensure secrets array exists
+if (-not ($directusTask.containerDefinitions[0].PSObject.Properties.Name -contains 'secrets')) {
+    $directusTask.containerDefinitions[0].secrets = @()
+}
+
+# attach secrets from Secrets Manager (must exist)
+$directusTask.containerDefinitions[0].secrets += @{
+    name = "DB_PASSWORD"
+    valueFrom = "arn:aws:secretsmanager:$($AWS_REGION):$($AWS_ACCOUNT_ID):secret:imobi/directus-db-password"
+}
+$directusTask.containerDefinitions[0].secrets += @{
+    name = "ADMIN_PASSWORD"
+    valueFrom = "arn:aws:secretsmanager:$($AWS_REGION):$($AWS_ACCOUNT_ID):secret:imobi/directus-admin-password"
+}
+$directusTask.containerDefinitions[0].secrets += @{
+    name = "KEY"
+    valueFrom = "arn:aws:secretsmanager:$($AWS_REGION):$($AWS_ACCOUNT_ID):secret:imobi/directus-key"
+}
+$directusTask.containerDefinitions[0].secrets += @{
+    name = "SECRET"
+    valueFrom = "arn:aws:secretsmanager:$($AWS_REGION):$($AWS_ACCOUNT_ID):secret:imobi/directus-secret"
+}
+
 $directusTask | ConvertTo-Json -Depth 10 | Out-File -FilePath task-definition-directus-final.json -Encoding UTF8
 
-aws ecs register-task-definition --cli-input-json file://task-definition-directus-final.json --region sa-east-1
+aws ecs register-task-definition --cli-input-json file://task-definition-directus-final.json --region $AWS_REGION
 
 Write-Host "   ✅ Task definitions registradas`n" -ForegroundColor Green
 
@@ -141,7 +172,7 @@ aws ecs create-service `
     --launch-type FARGATE `
     --network-configuration "awsvpcConfiguration={subnets=[$subnet1,$subnet2],securityGroups=[$ecsSG],assignPublicIp=ENABLED}" `
     --load-balancers "targetGroupArn=$directusTG,containerName=directus,containerPort=8055" `
-    --region sa-east-1
+    --region $AWS_REGION
 
 Write-Host "   ✅ Services criados`n" -ForegroundColor Green
 

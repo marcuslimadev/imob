@@ -31,7 +31,7 @@ async function getPeople(companyId: string, q?: string) {
             }
           : {}),
       },
-      sort: ["-updated_at", "-created_at"],
+      sort: ["-updated_at", "-created_at"] as any,
       fields: [
         "id",
         "nome",
@@ -44,15 +44,16 @@ async function getPeople(companyId: string, q?: string) {
         "state",
         "stage",
         "zip_code",
-      ],
+      ] as any,
       limit: 80,
     })
   );
 }
 
-export default async function PessoasPage({ searchParams }: { searchParams?: { q?: string } }) {
+export default async function PessoasPage({ searchParams }: { searchParams?: Promise<{ q?: string }> }) {
   const companyId = await getAuthenticatedCompanyId();
-  const q = searchParams?.q || "";
+  const params = await searchParams;
+  const q = params?.q || "";
   const people = await getPeople(companyId, q);
 
   return (

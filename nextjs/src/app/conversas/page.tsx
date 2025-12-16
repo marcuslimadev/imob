@@ -85,8 +85,8 @@ export default function ConversasPage() {
 						'telefone',
 						'archived',
 						'updated_at',
-						{ lead_id: ['id', 'name', 'phone'] }
-					],
+						{ lead: ['id', 'name', 'phone'] }
+					] as any,
 					sort: ['-updated_at'],
 					limit: -1
 				})
@@ -101,8 +101,8 @@ export default function ConversasPage() {
 								filter: {
 									conversa_id: { _eq: conv.id }
 								},
-								fields: ['content', 'created_at', 'direction', 'read_at'],
-								sort: ['-created_at'],
+								fields: ['content', 'created_at', 'direction', 'read_at'] as any,
+								sort: ['-created_at'] as any,
 								limit: 1
 							})
 						);
@@ -124,13 +124,13 @@ export default function ConversasPage() {
 						return {
 							id: conv.id,
 							lead_id: {
-								nome: conv.lead_id?.name || conv.whatsapp_name || 'Sem nome',
+								nome: (conv as any).lead?.name || conv.whatsapp_name || 'Sem nome',
 								telefone: conv.telefone
 							},
 							stage: conv.stage || 'novo',
 							last_message: lastMsg?.content || 'Sem mensagens',
 							last_message_time: formatTime(lastMsg?.created_at || conv.updated_at),
-							unread_count: unreadMessages.length > 0 ? unreadMessages[0].count.id : 0,
+							unread_count: unreadMessages.length > 0 ? (unreadMessages[0] as any).count : 0,
 							archived: conv.archived || false
 						};
                                         } catch (err) {
@@ -166,13 +166,13 @@ export default function ConversasPage() {
 						'status',
 						'created_at',
 						'read_at'
-					],
-					sort: ['created_at'],
+					] as any,
+					sort: ['created_at'] as any,
 					limit: -1
 				})
 			);
 
-			setMensagens(mensagensData as Mensagem[]);
+			setMensagens(mensagensData as unknown as Mensagem[]);
 
 			// Marcar mensagens incoming como lidas
 			const unreadIncoming = mensagensData.filter(
@@ -491,12 +491,12 @@ export default function ConversasPage() {
 								onKeyDown={(e) => {
 									if (e.key === 'Enter' && !e.shiftKey) {
 										e.preventDefault();
-										handleSendMessage();
+										sendMessage();
 									}
 								}}
 								className="border-[3px] border-[var(--foreground-color)]"
 							/>
-							<Button onClick={handleSendMessage} className="border-[3px] border-[var(--foreground-color)] bg-[var(--accent-color)] text-white">
+							<Button onClick={sendMessage} className="border-[3px] border-[var(--foreground-color)] bg-[var(--accent-color)] text-white">
 								<Send className="h-4 w-4 mr-2" />
 								Enviar
 							</Button>

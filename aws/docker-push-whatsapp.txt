@@ -1,0 +1,44 @@
+The push refers to repository [575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus]
+0143e7a18714: Waiting
+40633fe63dfe: Waiting
+0b584b8b8714: Waiting
+0737a1844ce8: Waiting
+6a088b2daae0: Waiting
+06db27e3f5b4: Waiting
+9824c27679d3: Waiting
+52719e552fdf: Waiting
+d1b669626f04: Waiting
+016c0e952111: Waiting
+9824c27679d3: Waiting
+52719e552fdf: Waiting
+d1b669626f04: Waiting
+016c0e952111: Waiting
+0143e7a18714: Waiting
+40633fe63dfe: Waiting
+0b584b8b8714: Waiting
+0737a1844ce8: Waiting
+6a088b2daae0: Waiting
+06db27e3f5b4: Waiting
+d1b669626f04: Waiting
+016c0e952111: Waiting
+0143e7a18714: Waiting
+40633fe63dfe: Waiting
+0b584b8b8714: Waiting
+0737a1844ce8: Waiting
+6a088b2daae0: Waiting
+06db27e3f5b4: Waiting
+9824c27679d3: Waiting
+52719e552fdf: Waiting
+6a088b2daae0: Layer already exists
+06db27e3f5b4: Layer already exists
+9824c27679d3: Layer already exists
+52719e552fdf: Layer already exists
+d1b669626f04: Layer already exists
+016c0e952111: Layer already exists
+0143e7a18714: Layer already exists
+40633fe63dfe: Waiting
+0b584b8b8714: Waiting
+0737a1844ce8: Layer already exists
+40633fe63dfe: Pushed
+0b584b8b8714: Pushed
+latest: digest: sha256:687251e033ea9ad4d9a57ac642f49d87489ed573b0461d5b773160f07f93af4d size: 856

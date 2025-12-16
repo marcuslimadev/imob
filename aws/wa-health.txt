@@ -1,0 +1,1 @@
+{"status":"ok","endpoint":"whatsapp","timestamp":"2025-12-16T14:12:49.247Z"}

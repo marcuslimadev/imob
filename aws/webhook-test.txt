@@ -1,0 +1,1 @@
+{"errors":[{"message":"Route /whatsapp-webhook/health doesn't exist.","extensions":{"path":"/whatsapp-webhook/health","code":"ROUTE_NOT_FOUND"}}]}

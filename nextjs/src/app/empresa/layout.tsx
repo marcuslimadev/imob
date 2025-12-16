@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { directusClient } from '@/lib/directus/client';
 import { readItems } from '@directus/sdk';
+import { VersionBadge } from '@/components/version-badge';
 
 const navigation = [
   { name: 'Dashboard', href: '/empresa/dashboard', icon: LayoutDashboard },
@@ -61,8 +62,8 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
           })
         );
 
-        const theme = companies[0]?.theme_key || 'bauhaus';
-        document.documentElement.setAttribute('data-theme', theme);
+        const theme = (companies[0] as any)?.theme_key || 'bauhaus';
+        document.documentElement.setAttribute('data-theme', theme as string);
       } catch (error) {
         console.error('Error fetching company theme:', error);
         // Fallback to bauhaus
@@ -231,6 +232,9 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
 
         {/* Page content */}
         <main className="p-4 lg:p-8">{children}</main>
+        
+        {/* Version badge */}
+        <VersionBadge />
       </div>
     </div>
   );

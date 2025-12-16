@@ -78,7 +78,7 @@ const tipoLabels: Record<string, string> = {
 };
 
 export default function AssinaturasPage() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [documentos, setDocumentos] = useState<Documento[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,7 +101,7 @@ export default function AssinaturasPage() {
       }
 
       const data = await directusClient.request(
-        readItems('documentos_assinatura', {
+        readItems('documentos_assinatura' as any, {
           filter,
           fields: [
             '*',

@@ -1,0 +1,18 @@
+{
+    "taskArns": [
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/00aa0090879d4448893abbc621011d06",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/0c5c93076f654354810aa3156d787a92",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/0e43c5d290a741ed8a64e3d0a515136d",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/2baae63ec6154909ab3a3e258f9ed4bd",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/41b3b9529665419a9fa96cf5a0ec3d54",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/4fcd001e52e346109f9cb04fe09e0f0a",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/51063de3b7e0448396af13f2bf706006",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/6416317e944847e8b4a8900a455b5136",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/6cd32722bb774f7394a154a29ca39c3d",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/6fa224fe34894241993edba1cbcc263a",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/8f475fd9fa2b4453864b3ed3a562d64d",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/c741b6d781c64ca38f2bb53cb32895a9",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/c788503b032247abaff75499c6dc82c4",
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/eae30410df074dc09d21ef500a4b2cf4"
+    ]
+}

@@ -1,0 +1,176 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.prod
+#1 transferring dockerfile: 1.47kB 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 DONE 1.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 238B 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [base 1/1] FROM docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f
+#6 resolve docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f 0.1s done
+#6 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 202.79kB 0.1s done
+#5 DONE 0.1s
+
+#7 [deps 1/4] RUN apk add --no-cache libc6-compat
+#7 CACHED
+
+#8 [deps 2/4] WORKDIR /app
+#8 CACHED
+
+#9 [deps 3/4] COPY package.json package-lock.json* ./
+#9 CACHED
+
+#10 [deps 4/4] RUN npm ci
+#10 CACHED
+
+#11 [builder 1/4] WORKDIR /app
+#11 CACHED
+
+#12 [builder 2/4] COPY --from=deps /app/node_modules ./node_modules
+#12 CACHED
+
+#13 [builder 3/4] COPY . .
+#13 DONE 0.4s
+
+#14 [builder 4/4] RUN npm run build
+#14 2.935 
+#14 2.935 > simple-cms-nextjs@1.0.0 build
+#14 2.935 > next build
+#14 2.935 
+#14 5.874    Ôû▓ Next.js 15.2.4
+#14 5.874 
+#14 5.944    Creating an optimized production build ...
+#14 36.53  Ô£ô Compiled successfully
+#14 36.54    Skipping validation of types
+#14 36.54    Skipping linting
+#14 37.17    Collecting page data ...
+#14 41.59    Generating static pages (0/36) ...
+#14 43.62 Error fetching dashboard stats: TypeError: fetch failed
+#14 43.62     at async Object.request (.next/server/chunks/7730.js:1:7855)
+#14 43.62     at async m (.next/server/app/admin/page.js:1:7556)
+#14 43.62     at async u (.next/server/app/admin/page.js:1:8428) {
+#14 43.62   [cause]: [AggregateError: ] { code: 'ECONNREFUSED' }
+#14 43.62 }
+#14 43.62 Error fetching recent companies: TypeError: fetch failed
+#14 43.62     at async Object.request (.next/server/chunks/7730.js:1:7855)
+#14 43.62     at async h (.next/server/app/admin/page.js:1:8265)
+#14 43.62     at async u (.next/server/app/admin/page.js:1:8440) {
+#14 43.62   [cause]: [AggregateError: ] { code: 'ECONNREFUSED' }
+#14 43.62 }
+#14 43.62    Generating static pages (9/36) 
+#14 43.80    Generating static pages (18/36) 
+#14 44.87    Generating static pages (27/36) 
+#14 47.20  Ô£ô Generating static pages (36/36)
+#14 48.67    Finalizing page optimization ...
+#14 48.67    Collecting build traces ...
+#14 70.22 
+#14 70.24 Route (app)                                 Size  First Load JS
+#14 70.24 Ôöî ãÆ /                                      170 B         101 kB
+#14 70.24 Ôö£ ãÆ /_not-found                            981 B         101 kB
+#14 70.24 Ôö£ ãÆ /admin                                 170 B         101 kB
+#14 70.24 Ôö£ ãÆ /admin/dashboard                       187 B         109 kB
+#14 70.24 Ôö£ ãÆ /admin/leads                           205 B         104 kB
+#14 70.24 Ôö£ ãÆ /admin/properties                      205 B         104 kB
+#14 70.24 Ôö£ ãÆ /admin/properties/[id]                 205 B         104 kB
+#14 70.24 Ôö£ ãÆ /api/auth/login                        170 B         101 kB
+#14 70.24 Ôö£ ãÆ /api/auth/logout                       170 B         101 kB
+#14 70.24 Ôö£ ãÆ /api/auth/me                           170 B         101 kB
+#14 70.24 Ôö£ ãÆ /api/cep                               170 B         101 kB
+#14 70.24 Ôö£ ãÆ /api/draft                             170 B         101 kB
+#14 70.24 Ôö£ ãÆ /api/import-properties                 170 B         101 kB
+#14 70.24 Ôö£ ãÆ /api/leads                             170 B         101 kB
+#14 70.24 Ôö£ ãÆ /api/search                            170 B         101 kB
+#14 70.24 Ôö£ ãÆ /api/settings                          170 B         101 kB
+#14 70.24 Ôö£ ãÆ /conversas                           10.6 kB         121 kB
+#14 70.24 Ôö£ ãÆ /dashboard                             205 B         104 kB
+#14 70.24 Ôö£ ãÆ /empresa/assinaturas                 3.61 kB         122 kB
+#14 70.24 Ôö£ ãÆ /empresa/assinaturas/nova            3.63 kB         122 kB
+#14 70.24 Ôö£ ãÆ /empresa/configuracoes               10.3 kB         127 kB
+#14 70.24 Ôö£ ãÆ /empresa/conversas                   8.62 kB         122 kB
+#14 70.24 Ôö£ ãÆ /empresa/dashboard                   6.84 kB         121 kB
+#14 70.24 Ôö£ ãÆ /empresa/imoveis                        3 kB         114 kB
+#14 70.24 Ôö£ ãÆ /empresa/imoveis/[id]                 4.6 kB         108 kB
+#14 70.24 Ôö£ ãÆ /empresa/imoveis/novo                7.24 kB         111 kB
+#14 70.24 Ôö£ ãÆ /empresa/leads                         205 B         104 kB
+#14 70.24 Ôö£ ãÆ /empresa/leads/[id]                  2.89 kB         109 kB
+#14 70.24 Ôö£ ãÆ /empresa/leads/novo                   4.1 kB         151 kB
+#14 70.24 Ôö£ ãÆ /empresa/pessoas                       205 B         104 kB
+#14 70.24 Ôö£ ãÆ /empresa/pessoas/[id]                  145 B         122 kB
+#14 70.24 Ôö£ ãÆ /empresa/pessoas/novo                  145 B         122 kB
+#14 70.24 Ôö£ ãÆ /empresa/vistorias                   3.56 kB         121 kB
+#14 70.24 Ôö£ ãÆ /empresa/vistorias/nova              2.65 kB         121 kB
+#14 70.24 Ôö£ ãÆ /home                                  205 B         104 kB
+#14 70.24 Ôö£ ãÆ /imoveis/[id]                          205 B         104 kB
+#14 70.24 Ôö£ ãÆ /leads                               11.5 kB         158 kB
+#14 70.24 Ôö£ ãÆ /login                               5.79 kB         112 kB
+#14 70.24 Ôöö ãÆ /vitrine                               205 B         104 kB
+#14 70.24 + First Load JS shared by all             100 kB
+#14 70.24   Ôö£ chunks/1684-b6cd7679b3fca319.js      45.3 kB
+#14 70.24   Ôö£ chunks/4bd1b696-6d431c8d274e4016.js  53.2 kB
+#14 70.24   Ôöö other shared chunks (total)          1.93 kB
+#14 70.24 
+#14 70.24 
+#14 70.24 ãÆ Middleware                             35.2 kB
+#14 70.24 
+#14 70.24 ãÆ  (Dynamic)  server-rendered on demand
+#14 70.24 
+#14 70.36 npm notice
+#14 70.36 npm notice New major version of npm available! 10.9.4 -> 11.7.0
+#14 70.36 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+#14 70.36 npm notice To update run: npm install -g npm@11.7.0
+#14 70.36 npm notice
+#14 DONE 70.7s
+
+#15 [runner 2/8] RUN addgroup --system --gid 1001 nodejs
+#15 CACHED
+
+#16 [runner 3/8] RUN adduser --system --uid 1001 nextjs
+#16 CACHED
+
+#17 [runner 4/8] COPY --from=builder /app/public ./public
+#17 DONE 0.3s
+
+#18 [runner 5/8] RUN mkdir .next
+#18 DONE 0.9s
+
+#19 [runner 6/8] RUN chown nextjs:nodejs .next
+#19 DONE 0.9s
+
+#20 [runner 7/8] COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+#20 DONE 1.0s
+
+#21 [runner 8/8] COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+#21 DONE 0.3s
+
+#22 exporting to image
+#22 exporting layers
+#22 exporting layers 5.5s done
+#22 exporting manifest sha256:e89de7aaee6e10dd4512548e76f0f6e033190b952d6b5c8a5ad290bf425cae76 0.1s done
+#22 exporting config sha256:72f04d2ff678001dcb484d1a9a2335bc89314c16593495390fdda33aa70fe999
+#22 exporting config sha256:72f04d2ff678001dcb484d1a9a2335bc89314c16593495390fdda33aa70fe999 0.1s done
+#22 exporting attestation manifest sha256:ea23de2954b02ae87f85e4cd9b3d7a70c2b8c4009fe40533540573885e2433e4
+#22 exporting attestation manifest sha256:ea23de2954b02ae87f85e4cd9b3d7a70c2b8c4009fe40533540573885e2433e4 0.3s done
+#22 exporting manifest list sha256:a72574ca385f16b89b0129c54302990f27739960f3e4e4851618970c242d6291
+#22 exporting manifest list sha256:a72574ca385f16b89b0129c54302990f27739960f3e4e4851618970c242d6291 0.1s done
+#22 naming to docker.io/library/imobi-frontend:latest
+#22 naming to docker.io/library/imobi-frontend:latest 0.0s done
+#22 unpacking to docker.io/library/imobi-frontend:latest
+#22 unpacking to docker.io/library/imobi-frontend:latest 2.2s done
+#22 DONE 8.7s

@@ -1,0 +1,103 @@
+
+> simple-cms-nextjs@1.0.0 build
+> next build
+
+   Ôû▓ Next.js 15.2.4
+   - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/37) ...
+Error generating sitemap: {
+  message: "You don't have permission to access this.",
+  errors: [
+    {
+      message: "You don't have permission to access this.",
+      extensions: [Object]
+    }
+  ],
+  response: Response {
+    status: 403,
+    statusText: 'Forbidden',
+    headers: Headers {
+      date: 'Mon, 15 Dec 2025 17:40:41 GMT',
+      'content-type': 'application/json; charset=utf-8',
+      'content-length': '102',
+      connection: 'keep-alive',
+      'content-security-policy': "script-src 'self' 'unsafe-eval';worker-src 'self' blob:;child-src 'self' blob:;img-src 'self' data: blob: https://raw.githubusercontent.com https://avatars.githubusercontent.com;media-src 'self';connect-src 'self' https://* wss://*;default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';style-src 'self' https: 'unsafe-inline'",
+      'x-powered-by': 'Directus',
+      'access-control-allow-origin': '*',
+      'access-control-allow-credentials': 'true',
+      'access-control-expose-headers': 'Content-Range',
+      etag: 'W/"66-OPr7zxcJy7+HqVGdrFe1XpeEIao"'
+    },
+    body: ReadableStream { locked: true, state: 'closed', supportsBYOB: true },
+    bodyUsed: true,
+    ok: false,
+    redirected: false,
+    type: 'default',
+    url: 'http://production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com/items/posts?fields=slug%2Cpublished_at&filter=%7B%22status%22%3A%7B%22_eq%22%3A%22published%22%7D%7D&limit=-1'
+  }
+}
+   Generating static pages (9/37) 
+   Generating static pages (18/37) 
+   Generating static pages (27/37) 
+ Ô£ô Generating static pages (37/37)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+Ôöî ãÆ /                                      173 B         101 kB
+Ôö£ ãÆ /_not-found                            981 B         102 kB
+Ôö£ ãÆ /admin                                 173 B         101 kB
+Ôö£ ãÆ /admin/dashboard                       187 B         109 kB
+Ôö£ ãÆ /admin/leads                           205 B         104 kB
+Ôö£ ãÆ /admin/properties                      205 B         104 kB
+Ôö£ ãÆ /admin/properties/[id]                 205 B         104 kB
+Ôö£ ãÆ /api/auth/login                        173 B         101 kB
+Ôö£ ãÆ /api/auth/logout                       173 B         101 kB
+Ôö£ ãÆ /api/auth/me                           173 B         101 kB
+Ôö£ ãÆ /api/cep                               173 B         101 kB
+Ôö£ ãÆ /api/draft                             173 B         101 kB
+Ôö£ ãÆ /api/import-properties                 173 B         101 kB
+Ôö£ ãÆ /api/leads                             173 B         101 kB
+Ôö£ ãÆ /api/search                            173 B         101 kB
+Ôö£ ãÆ /api/settings                          173 B         101 kB
+Ôö£ ãÆ /conversas                           10.6 kB         121 kB
+Ôö£ ãÆ /dashboard                             205 B         104 kB
+Ôö£ ãÆ /empresa/assinaturas                 3.62 kB         122 kB
+Ôö£ ãÆ /empresa/assinaturas/nova            3.63 kB         122 kB
+Ôö£ ãÆ /empresa/configuracoes               10.3 kB         127 kB
+Ôö£ ãÆ /empresa/conversas                   8.64 kB         122 kB
+Ôö£ ãÆ /empresa/dashboard                   6.86 kB         121 kB
+Ôö£ ãÆ /empresa/imoveis                        3 kB         114 kB
+Ôö£ ãÆ /empresa/imoveis/[id]                4.62 kB         108 kB
+Ôö£ ãÆ /empresa/imoveis/novo                7.27 kB         111 kB
+Ôö£ ãÆ /empresa/leads                         205 B         104 kB
+Ôö£ ãÆ /empresa/leads/[id]                   2.9 kB         109 kB
+Ôö£ ãÆ /empresa/leads/novo                  4.09 kB         151 kB
+Ôö£ ãÆ /empresa/pessoas                       205 B         104 kB
+Ôö£ ãÆ /empresa/pessoas/[id]                  145 B         122 kB
+Ôö£ ãÆ /empresa/pessoas/novo                  145 B         122 kB
+Ôö£ ãÆ /empresa/vistorias                   3.56 kB         122 kB
+Ôö£ ãÆ /empresa/vistorias/nova              2.65 kB         121 kB
+Ôö£ ãÆ /home                                  205 B         104 kB
+Ôö£ ãÆ /imoveis/[id]                          205 B         104 kB
+Ôö£ ãÆ /leads                               11.5 kB         158 kB
+Ôö£ ãÆ /login                               6.12 kB         110 kB
+Ôö£ Ôùï /sitemap.xml                           173 B         101 kB
+Ôöö ãÆ /vitrine                               205 B         104 kB
++ First Load JS shared by all             101 kB
+  Ôö£ chunks/1684-b6cd7679b3fca319.js      45.3 kB
+  Ôö£ chunks/4bd1b696-6d431c8d274e4016.js  53.2 kB
+  Ôöö other shared chunks (total)             2 kB
+
+
+ãÆ Middleware                             35.3 kB
+
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+

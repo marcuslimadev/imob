@@ -78,7 +78,7 @@ function ConversasPageContent() {
           fields: [
             '*',
             { lead: ['id', 'name', 'phone', 'email'] },
-          ],
+          ] as any,
           sort: ['-last_message_at'],
           limit: 50,
         })
@@ -129,8 +129,8 @@ function ConversasPageContent() {
       const search = searchTerm.toLowerCase();
 
       return (
-        c.lead_id?.name?.toLowerCase().includes(search) ||
-        c.whatsapp_number?.includes(search)
+        (c as any).lead?.name?.toLowerCase().includes(search) ||
+        (c as any).whatsapp_number?.includes(search)
       );
     });
 
@@ -224,16 +224,16 @@ function ConversasPageContent() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <p className="font-medium text-gray-900 truncate">
-                          {conversa.lead_id?.name || conversa.whatsapp_number}
+                          {(conversa as any).lead_id?.name || (conversa as any).whatsapp_number}
                         </p>
                         <span className="text-xs text-gray-500">
-                          {conversa.last_message_at && formatDate(conversa.last_message_at)}
+                          {(conversa as any).last_message_at && formatDate((conversa as any).last_message_at)}
                         </span>
                       </div>
                       <p className="text-sm text-gray-500 truncate mt-0.5">
-                        {conversa.last_message || 'Sem mensagens'}
+                        {(conversa as any).last_message || 'Sem mensagens'}
                       </p>
-                      {conversa.unread_count > 0 && (
+                      {(conversa as any).unread_count > 0 && (
                         <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-medium text-white bg-green-500 rounded-full mt-1">
                           {conversa.unread_count}
                         </span>
@@ -258,11 +258,11 @@ function ConversasPageContent() {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">
-                      {selectedConversa.lead_id?.name || selectedConversa.whatsapp_number}
+                      {(selectedConversa as any).lead_id?.name || (selectedConversa as any).whatsapp_number}
                     </p>
                     <p className="text-sm text-gray-500 flex items-center gap-1">
                       <Phone className="w-3 h-3" />
-                      {selectedConversa.whatsapp_number}
+                      {(selectedConversa as any).whatsapp_number}
                     </p>
                   </div>
                 </div>
@@ -288,7 +288,7 @@ function ConversasPageContent() {
                       key={msg.id}
                       className={cn(
                         'max-w-[70%] p-3 rounded-lg',
-                        msg.direction === 'outgoing'
+                        (msg as any).direction === 'outgoing' || msg.direction === 'outbound'
                           ? 'ml-auto bg-green-500 text-white'
                           : 'bg-white border border-gray-200'
                       )}
@@ -296,11 +296,11 @@ function ConversasPageContent() {
                       <p className="text-sm">{msg.content}</p>
                       <div className={cn(
                         'flex items-center justify-end gap-1 mt-1',
-                        msg.direction === 'outgoing' ? 'text-green-100' : 'text-gray-400'
+                        (msg as any).direction === 'outgoing' || msg.direction === 'outbound' ? 'text-green-100' : 'text-gray-400'
                       )}>
-                        <span className="text-xs">{formatTime(msg.date_created)}</span>
-                        {msg.direction === 'outgoing' && (
-                          msg.status === 'read' ? (
+                        <span className="text-xs">{formatTime(msg.date_created || '')}</span>
+                        {((msg as any).direction === 'outgoing' || msg.direction === 'outbound') && (
+                          (msg as any).status === 'read' ? (
                             <CheckCheck className="w-4 h-4" />
                           ) : (
                             <Check className="w-4 h-4" />

@@ -1,0 +1,2 @@
+
+An error occurred (ClientException) when calling the RegisterTaskDefinition operation: Role is not valid

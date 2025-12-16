@@ -1,0 +1,27 @@
+[
+    {
+        "id": "4a3de8b4-0c29-4a5e-aaba-51795806fc06",
+        "createdAt": "2025-12-15T10:22:08.883000-03:00",
+        "message": "(service production-imobi-directus, taskSet ecs-svc/8032227224068733938) has begun draining connections on 1 tasks."
+    },
+    {
+        "id": "ef2bd848-5ddf-4488-82cc-b2b4191325e1",
+        "createdAt": "2025-12-15T10:22:08.876000-03:00",
+        "message": "(service production-imobi-directus) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/production-directus-tg/7569a17c56bf2be6)"
+    },
+    {
+        "id": "939092a2-b2b0-4a85-bb17-d357b273f7fc",
+        "createdAt": "2025-12-15T10:21:49.075000-03:00",
+        "message": "(service production-imobi-directus) registered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/production-directus-tg/7569a17c56bf2be6)"
+    },
+    {
+        "id": "3bb53488-ebc1-4864-ba29-38f44ea780c4",
+        "createdAt": "2025-12-15T10:21:07.589000-03:00",
+        "message": "(service production-imobi-directus) has started 1 tasks: (task 4fcd001e52e346109f9cb04fe09e0f0a)."
+    },
+    {
+        "id": "d432a9fd-5f18-44c9-b283-b893cd343d4c",
+        "createdAt": "2025-12-15T10:21:06.631000-03:00",
+        "message": "(service production-imobi-directus, taskSet ecs-svc/8032227224068733938) has begun draining connections on 1 tasks."
+    }
+]

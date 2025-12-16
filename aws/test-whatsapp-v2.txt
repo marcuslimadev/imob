@@ -1,0 +1,7 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   130  100   130    0     0    144      0 --:--:-- --:--:-- --:--:--   144
+{"errors":[{"message":"Route /whatsapp/health doesn't exist.","extensions":{"path":"/whatsapp/health","code":"ROUTE_NOT_FOUND"}}]}

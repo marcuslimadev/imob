@@ -1,0 +1,6 @@
+Não é resposta autoritativa:
+
+Servidor:  dns.google
+Address:  8.8.8.8
+
+_a804f27b5844a90fb48b96ab1f002dd5.lojadaesquina.store	canonical name = _41898a1af78dfcea6f78b025a3bab121.jkddzztszm.acm-validations.aws

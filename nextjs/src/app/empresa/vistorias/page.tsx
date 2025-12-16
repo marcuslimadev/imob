@@ -90,7 +90,7 @@ export default function VistoriasPage() {
       }
 
       const data = await directusClient.request(
-        readItems('vistorias', {
+        readItems('vistorias' as any, {
           filter,
           fields: [
             '*',
@@ -100,10 +100,10 @@ export default function VistoriasPage() {
           ],
           sort: ['-date_created'],
           limit: 100,
-        })
+        } as any)
       );
 
-      setVistorias(data as Vistoria[]);
+      setVistorias(data as unknown as Vistoria[]);
     } catch (err) {
       console.error('Erro ao buscar vistorias:', err);
       setError('Erro ao carregar vistorias');

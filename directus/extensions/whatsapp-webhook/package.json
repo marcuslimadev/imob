@@ -1,0 +1,13 @@
+{
+	"name": "@imobi/whatsapp-webhook",
+	"version": "1.0.0",
+	"description": "WhatsApp Webhook handler for Directus (Twilio)",
+	"type": "module",
+	"directus:extension": {
+		"type": "endpoint",
+		"path": "index.js",
+		"source": "index.js",
+		"host": "^11.0.0"
+	},
+	"dependencies": {}
+}

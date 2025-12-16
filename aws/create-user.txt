@@ -1,0 +1,7 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   237    0     0  100   237      0    222  0:00:01  0:00:01 --:--:--   222
+100   870  100   633  100   237    424    158  0:00:01  0:00:01 --:--:--   584
+{"data":{"id":"a470dc85-b376-4dcb-acac-85148b48507c","first_name":"Alexsandra","last_name":"Fialho","email":"contato@exclusivalarimoveis.com.br","password":"**********","location":null,"title":null,"description":null,"tags":null,"avatar":null,"language":null,"tfa_secret":null,"status":"active","role":"387ce8ab-763e-436b-a798-9c0b9b989aee","token":null,"last_access":null,"last_page":null,"provider":"default","external_identifier":null,"auth_data":null,"email_notifications":true,"appearance":null,"theme_dark":null,"theme_light":null,"theme_light_overrides":null,"theme_dark_overrides":null,"text_direction":"auto","policies":[]}}

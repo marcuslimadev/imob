@@ -1,0 +1,10 @@
+[14:29:41.757] INFO: === WHATSAPP WEBHOOK RECEBIDO ===
+[14:29:41.759] INFO: Body: {}
+[14:29:41.762] INFO: De: , Para: , Mensagem: 
+[14:29:41.774] WARN: Empresa nao encontrada para o numero: 
+[14:29:41] POST /whatsapp/webhook 200 59ms
+[14:30:05.600] INFO: === WHATSAPP WEBHOOK RECEBIDO ===
+[14:30:05.602] INFO: Body: {}
+[14:30:05.602] INFO: De: , Para: , Mensagem: 
+[14:30:05.606] WARN: Empresa nao encontrada para o numero: 
+[14:30:05] POST /whatsapp/webhook 200 23ms

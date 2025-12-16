@@ -1,0 +1,51 @@
+{
+    "logGroups": [
+        {
+            "logGroupName": "/aws/ecs/containerinsights/production-imobi-cluster/performance",
+            "creationTime": 1765563938935,
+            "retentionInDays": 1,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:sa-east-1:575098225472:log-group:/aws/ecs/containerinsights/production-imobi-cluster/performance:*",
+            "storedBytes": 1058397,
+            "logGroupClass": "STANDARD",
+            "logGroupArn": "arn:aws:logs:sa-east-1:575098225472:log-group:/aws/ecs/containerinsights/production-imobi-cluster/performance"
+        },
+        {
+            "logGroupName": "/ecs/imobi-directus",
+            "creationTime": 1765563871033,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-directus:*",
+            "storedBytes": 363456,
+            "logGroupClass": "STANDARD",
+            "logGroupArn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-directus"
+        },
+        {
+            "logGroupName": "/ecs/imobi-directus-pg",
+            "creationTime": 1765629528480,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-directus-pg:*",
+            "storedBytes": 1867,
+            "logGroupClass": "STANDARD",
+            "logGroupArn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-directus-pg"
+        },
+        {
+            "logGroupName": "/ecs/imobi-frontend",
+            "creationTime": 1765823885289,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-frontend:*",
+            "storedBytes": 0,
+            "logGroupClass": "STANDARD",
+            "logGroupArn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-frontend"
+        },
+        {
+            "logGroupName": "/ecs/production-imobi-directus",
+            "creationTime": 1765803826344,
+            "retentionInDays": 30,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/production-imobi-directus:*",
+            "storedBytes": 0,
+            "logGroupClass": "STANDARD",
+            "logGroupArn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/production-imobi-directus"
+        }
+    ]
+}

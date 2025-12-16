@@ -1,0 +1,14 @@
+[
+    {
+        "status": "PRIMARY",
+        "running": 1,
+        "desired": 1,
+        "taskDef": "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:4"
+    },
+    {
+        "status": "ACTIVE",
+        "running": 0,
+        "desired": 0,
+        "taskDef": "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:4"
+    }
+]

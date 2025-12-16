@@ -1,0 +1,20 @@
+   Ôò¡ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔò«
+2025-12-16T14:29:09: PM2 log: App [directus:0] starting in -cluster mode-
+   Ôöé                                                   Ôöé
+   Ôöé                 Update available!                 Ôöé
+   Ôöé                                                   Ôöé
+   Ôöé                 11.12.0 ÔåÆ 11.14.0                 Ôöé
+   Ôöé                 6 versions behind                 Ôöé
+   Ôöé                                                   Ôöé
+2025-12-16T14:29:12: PM2 log: App [directus:0] online
+[14:29:19.363] INFO: Extensions loaded
+[14:29:19.373] INFO: Loaded extensions: @imobi/homepage-endpoint, @imobi/crm-module, @imobi/whatsapp-webhook
+[14:29:19.423] INFO: Watching extensions for changes...
+[14:29:19.597] INFO: GraphQL Subscriptions started at 0.0.0.0:8055/graphql
+[14:29:19.598] INFO: WebSocket Server started at 0.0.0.0:8055/websocket
+[14:29:19.600] INFO: Logs WebSocket Server started at ws://0.0.0.0:8055/websocket/logs
+[14:29:19.632] INFO: Server started at http://0.0.0.0:8055
+   Ôöé                 More information:                 Ôöé
+   Ôöé   https://github.com/directus/directus/releases   Ôöé
+   Ôöé                                                   Ôöé
+   Ôò░ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔò»

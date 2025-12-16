@@ -5,9 +5,9 @@ import Link from 'next/link';
 import FormularioContato from '@/components/forms/FormularioContato';
 
 interface PropertyPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 async function getProperty(id: string) {
@@ -45,7 +45,8 @@ function formatPrice(price: number): string {
   }
 
 export default async function PropertyDetailPage({ params }: PropertyPageProps) {
-  const property = await getProperty(params.id);
+  const { id } = await params;
+  const property = await getProperty(id);
 
   if (!property) {
     notFound();
@@ -85,14 +86,14 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
                     {getPropertyTypeLabel(prop.property_type)}
                   </span>
                   <span className="bauhaus-pill bg-[var(--background-color-muted)] text-[var(--foreground-color)]">
-                    {property.transaction_type === 'sale'
+                    {prop.transaction_type === 'sale'
                       ? 'Venda'
-                      : property.transaction_type === 'rent'
+                      : prop.transaction_type === 'rent'
                         ? 'Aluguel'
                         : 'Venda + Aluguel'}
                   </span>
                   <span className="bauhaus-pill bg-[var(--accent-color-light)] text-[var(--foreground-color)]">
-                    {property.city}, {property.state}
+                    {prop.city}, {prop.state}
                   </span>
                 </div>
                 <h1 className="text-4xl md:text-5xl font-black leading-tight">{prop.title}</h1>
@@ -118,9 +119,9 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
                     />
                   </svg>
                   <span>
-                    {property.address && `${property.address}, `}
-                    {property.neighborhood && `${property.neighborhood}, `}
-                    {property.city}, {property.state}
+                    {prop.address && `${prop.address}, `}
+                    {prop.neighborhood && `${prop.neighborhood}, `}
+                    {prop.city}, {prop.state}
                   </span>
                 </div>
               </div>
@@ -146,7 +147,7 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
                     />
                   </svg>
                 </div>
-                {property.featured && (
+                {prop.featured && (
                   <div className="absolute top-4 right-4 bauhaus-chip bg-[var(--accent-color)] text-white">
                     Destaque
                   </div>
@@ -158,38 +159,38 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bauhaus-card p-6 space-y-4">
                 <p className="uppercase tracking-[0.16em] text-xs font-semibold">Investimento</p>
-                {property.transaction_type === 'sale' && property.price_sale > 0 && (
-                  <p className="text-4xl font-black">{formatPrice(property.price_sale)}</p>
+                {prop.transaction_type === 'sale' && prop.price_sale > 0 && (
+                  <p className="text-4xl font-black">{formatPrice(prop.price_sale)}</p>
                 )}
-                {property.transaction_type === 'rent' && property.price_rent > 0 && (
+                {prop.transaction_type === 'rent' && prop.price_rent > 0 && (
                   <div className="space-y-1">
-                    <p className="text-4xl font-black">{formatPrice(property.price_rent)}</p>
+                    <p className="text-4xl font-black">{formatPrice(prop.price_rent)}</p>
                     <p className="text-sm font-semibold text-[var(--muted-foreground)]">/mês</p>
                   </div>
                 )}
-                {property.transaction_type === 'both' && (
+                {prop.transaction_type === 'both' && (
                   <div className="space-y-2">
-                    {property.price_sale > 0 && (
+                    {prop.price_sale > 0 && (
                       <div>
                         <p className="text-xs uppercase tracking-[0.18em] font-semibold">Venda</p>
-                        <p className="text-3xl font-black">{formatPrice(property.price_sale)}</p>
+                        <p className="text-3xl font-black">{formatPrice(prop.price_sale)}</p>
                       </div>
                     )}
-                    {property.price_rent > 0 && (
+                    {prop.price_rent > 0 && (
                       <div>
                         <p className="text-xs uppercase tracking-[0.18em] font-semibold">Aluguel</p>
-                        <p className="text-2xl font-black">{formatPrice(property.price_rent)}</p>
+                        <p className="text-2xl font-black">{formatPrice(prop.price_rent)}</p>
                         <p className="text-xs font-semibold text-[var(--muted-foreground)]">/mês</p>
                       </div>
                     )}
                   </div>
                 )}
                 <div className="grid grid-cols-2 gap-3 text-sm font-semibold uppercase tracking-[0.14em]">
-                  {property.price_condo > 0 && (
-                    <div className="bauhaus-pill bg-[var(--background-color-muted)] justify-center">Condomínio {formatPrice(property.price_condo)}</div>
+                  {prop.price_condo > 0 && (
+                    <div className="bauhaus-pill bg-[var(--background-color-muted)] justify-center">Condomínio {formatPrice(prop.price_condo)}</div>
                   )}
-                  {property.price_iptu > 0 && (
-                    <div className="bauhaus-pill bg-[var(--background-color-muted)] justify-center">IPTU {formatPrice(property.price_iptu)}</div>
+                  {prop.price_iptu > 0 && (
+                    <div className="bauhaus-pill bg-[var(--background-color-muted)] justify-center">IPTU {formatPrice(prop.price_iptu)}</div>
                   )}
                 </div>
               </div>
@@ -197,39 +198,39 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
               <div className="bauhaus-surface p-6 space-y-4">
                 <p className="uppercase tracking-[0.16em] text-xs font-semibold">Ritmo do espaço</p>
                 <div className="grid grid-cols-2 gap-3 text-center text-sm font-semibold uppercase tracking-[0.14em]">
-                  {property.bedrooms > 0 && (
+                  {prop.bedrooms > 0 && (
                     <div className="p-3 bg-[var(--accent-color-soft)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
-                      <p className="text-2xl font-black">{property.bedrooms}</p>
+                      <p className="text-2xl font-black">{prop.bedrooms}</p>
                       <p>Quartos</p>
                     </div>
                   )}
-                  {property.suites > 0 && (
+                  {prop.suites > 0 && (
                     <div className="p-3 bg-[var(--background-color)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
-                      <p className="text-2xl font-black">{property.suites}</p>
+                      <p className="text-2xl font-black">{prop.suites}</p>
                       <p>Suítes</p>
                     </div>
                   )}
-                  {property.bathrooms > 0 && (
+                  {prop.bathrooms > 0 && (
                     <div className="p-3 bg-[var(--background-color)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
-                      <p className="text-2xl font-black">{property.bathrooms}</p>
+                      <p className="text-2xl font-black">{prop.bathrooms}</p>
                       <p>Banheiros</p>
                     </div>
                   )}
-                  {property.parking_spaces > 0 && (
+                  {prop.parking_spaces > 0 && (
                     <div className="p-3 bg-[var(--accent-color-light)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
-                      <p className="text-2xl font-black">{property.parking_spaces}</p>
+                      <p className="text-2xl font-black">{prop.parking_spaces}</p>
                       <p>Vagas</p>
                     </div>
                   )}
-                  {property.area_total > 0 && (
+                  {prop.area_total > 0 && (
                     <div className="p-3 bg-[var(--background-color-muted)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
-                      <p className="text-2xl font-black">{property.area_total}</p>
+                      <p className="text-2xl font-black">{prop.area_total}</p>
                       <p>m² Total</p>
                     </div>
                   )}
-                  {property.area_built > 0 && (
+                  {prop.area_built > 0 && (
                     <div className="p-3 bg-[var(--background-color)] border-[3px] border-[var(--foreground-color)] shadow-[6px_6px_0_#0c0c0c]">
-                      <p className="text-2xl font-black">{property.area_built}</p>
+                      <p className="text-2xl font-black">{prop.area_built}</p>
                       <p>m² Construída</p>
                     </div>
                   )}
@@ -238,14 +239,14 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
             </div>
 
             {/* Description */}
-            {property.description && (
+            {prop.description && (
               <div className="bauhaus-card p-6 space-y-3">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-black">Descrição detalhada</h2>
                   <div className="h-10 w-10 rounded-full bg-[var(--accent-color)] border-[3px] border-[var(--foreground-color)]" />
                 </div>
                 <p className="text-base leading-relaxed text-[var(--muted-foreground)] whitespace-pre-wrap">
-                  {property.description}
+                  {prop.description}
                 </p>
               </div>
             )}
@@ -315,11 +316,11 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
               <div className="pt-4 border-t-[3px] border-[var(--foreground-color)]">
                 <p className="text-xs uppercase tracking-[0.16em] font-semibold mb-2">Anunciado por</p>
                 <p className="font-black text-lg">
-                  {property.company_id?.name || 'Imobiliária'}
+                  {prop.company_id?.name || 'Imobiliária'}
                 </p>
-                {property.company_id?.phone && (
+                {prop.company_id?.phone && (
                   <p className="text-sm text-[var(--muted-foreground)] mt-1">
-                    {property.company_id.phone}
+                    {prop.company_id.phone}
                   </p>
                 )}
               </div>

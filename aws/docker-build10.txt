@@ -1,0 +1,173 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.prod
+#1 transferring dockerfile: 1.47kB 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 DONE 1.4s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 238B 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [base 1/1] FROM docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f
+#6 resolve docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f 0.1s done
+#6 DONE 0.1s
+
+#5 [internal] load build context
+#5 transferring context: 13.18kB 0.0s done
+#5 DONE 0.1s
+
+#7 [deps 2/4] WORKDIR /app
+#7 CACHED
+
+#8 [deps 4/4] RUN npm ci
+#8 CACHED
+
+#9 [deps 3/4] COPY package.json package-lock.json* ./
+#9 CACHED
+
+#10 [builder 1/4] WORKDIR /app
+#10 CACHED
+
+#11 [deps 1/4] RUN apk add --no-cache libc6-compat
+#11 CACHED
+
+#12 [builder 2/4] COPY --from=deps /app/node_modules ./node_modules
+#12 CACHED
+
+#13 [builder 3/4] COPY . .
+#13 DONE 0.2s
+
+#14 [builder 4/4] RUN npm run build
+#14 1.327 
+#14 1.327 > simple-cms-nextjs@1.0.0 build
+#14 1.327 > next build
+#14 1.327 
+#14 2.919    Ôû▓ Next.js 15.2.4
+#14 2.920 
+#14 2.966    Creating an optimized production build ...
+#14 30.69  Ô£ô Compiled successfully
+#14 30.69    Skipping validation of types
+#14 30.69    Skipping linting
+#14 31.29    Collecting page data ...
+#14 35.02    Generating static pages (0/36) ...
+#14 36.84    Generating static pages (9/36) 
+#14 37.29    Generating static pages (18/36) 
+#14 37.39 Error fetching dashboard stats: TypeError: fetch failed
+#14 37.39     at async Object.request (.next/server/chunks/7730.js:1:7855)
+#14 37.39     at async m (.next/server/app/admin/page.js:1:7556)
+#14 37.39     at async u (.next/server/app/admin/page.js:1:8428) {
+#14 37.39   [cause]: [AggregateError: ] { code: 'ECONNREFUSED' }
+#14 37.39 }
+#14 37.39 Error fetching recent companies: TypeError: fetch failed
+#14 37.39     at async Object.request (.next/server/chunks/7730.js:1:7855)
+#14 37.39     at async h (.next/server/app/admin/page.js:1:8265)
+#14 37.39     at async u (.next/server/app/admin/page.js:1:8440) {
+#14 37.39   [cause]: [AggregateError: ] { code: 'ECONNREFUSED' }
+#14 37.39 }
+#14 38.19    Generating static pages (27/36) 
+#14 39.24  Ô£ô Generating static pages (36/36)
+#14 41.28    Finalizing page optimization ...
+#14 41.28    Collecting build traces ...
+#14 63.65 
+#14 63.67 Route (app)                                 Size  First Load JS
+#14 63.67 Ôöî ãÆ /                                      170 B         101 kB
+#14 63.67 Ôö£ ãÆ /_not-found                            981 B         101 kB
+#14 63.67 Ôö£ ãÆ /admin                                 170 B         101 kB
+#14 63.67 Ôö£ ãÆ /admin/dashboard                       187 B         109 kB
+#14 63.67 Ôö£ ãÆ /admin/leads                           205 B         104 kB
+#14 63.67 Ôö£ ãÆ /admin/properties                      205 B         104 kB
+#14 63.67 Ôö£ ãÆ /admin/properties/[id]                 205 B         104 kB
+#14 63.67 Ôö£ ãÆ /api/auth/login                        170 B         101 kB
+#14 63.67 Ôö£ ãÆ /api/auth/logout                       170 B         101 kB
+#14 63.67 Ôö£ ãÆ /api/auth/me                           170 B         101 kB
+#14 63.67 Ôö£ ãÆ /api/cep                               170 B         101 kB
+#14 63.67 Ôö£ ãÆ /api/draft                             170 B         101 kB
+#14 63.67 Ôö£ ãÆ /api/import-properties                 170 B         101 kB
+#14 63.67 Ôö£ ãÆ /api/leads                             170 B         101 kB
+#14 63.67 Ôö£ ãÆ /api/search                            170 B         101 kB
+#14 63.67 Ôö£ ãÆ /api/settings                          170 B         101 kB
+#14 63.67 Ôö£ ãÆ /conversas                           10.6 kB         121 kB
+#14 63.67 Ôö£ ãÆ /dashboard                             205 B         104 kB
+#14 63.67 Ôö£ ãÆ /empresa/assinaturas                 3.61 kB         122 kB
+#14 63.67 Ôö£ ãÆ /empresa/assinaturas/nova            3.63 kB         122 kB
+#14 63.67 Ôö£ ãÆ /empresa/configuracoes               10.3 kB         127 kB
+#14 63.67 Ôö£ ãÆ /empresa/conversas                   8.62 kB         122 kB
+#14 63.67 Ôö£ ãÆ /empresa/dashboard                   6.84 kB         121 kB
+#14 63.67 Ôö£ ãÆ /empresa/imoveis                        3 kB         114 kB
+#14 63.67 Ôö£ ãÆ /empresa/imoveis/[id]                 4.6 kB         108 kB
+#14 63.67 Ôö£ ãÆ /empresa/imoveis/novo                7.24 kB         111 kB
+#14 63.67 Ôö£ ãÆ /empresa/leads                         205 B         104 kB
+#14 63.67 Ôö£ ãÆ /empresa/leads/[id]                  2.89 kB         109 kB
+#14 63.67 Ôö£ ãÆ /empresa/leads/novo                   4.1 kB         151 kB
+#14 63.67 Ôö£ ãÆ /empresa/pessoas                       205 B         104 kB
+#14 63.67 Ôö£ ãÆ /empresa/pessoas/[id]                  145 B         122 kB
+#14 63.67 Ôö£ ãÆ /empresa/pessoas/novo                  145 B         122 kB
+#14 63.67 Ôö£ ãÆ /empresa/vistorias                   3.56 kB         121 kB
+#14 63.67 Ôö£ ãÆ /empresa/vistorias/nova              2.65 kB         121 kB
+#14 63.67 Ôö£ ãÆ /home                                  205 B         104 kB
+#14 63.67 Ôö£ ãÆ /imoveis/[id]                          205 B         104 kB
+#14 63.67 Ôö£ ãÆ /leads                               11.5 kB         158 kB
+#14 63.67 Ôö£ ãÆ /login                               5.79 kB         112 kB
+#14 63.67 Ôöö ãÆ /vitrine                               205 B         104 kB
+#14 63.67 + First Load JS shared by all             100 kB
+#14 63.67   Ôö£ chunks/1684-b6cd7679b3fca319.js      45.3 kB
+#14 63.67   Ôö£ chunks/4bd1b696-6d431c8d274e4016.js  53.2 kB
+#14 63.67   Ôöö other shared chunks (total)          1.93 kB
+#14 63.67 
+#14 63.67 
+#14 63.67 ãÆ Middleware                             32.5 kB
+#14 63.67 
+#14 63.67 ãÆ  (Dynamic)  server-rendered on demand
+#14 63.67 
+#14 63.78 npm notice
+#14 63.78 npm notice New major version of npm available! 10.9.4 -> 11.7.0
+#14 63.78 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+#14 63.78 npm notice To update run: npm install -g npm@11.7.0
+#14 63.78 npm notice
+#14 DONE 64.0s
+
+#15 [runner 5/8] RUN mkdir .next
+#15 CACHED
+
+#16 [runner 2/8] RUN addgroup --system --gid 1001 nodejs
+#16 CACHED
+
+#17 [runner 3/8] RUN adduser --system --uid 1001 nextjs
+#17 CACHED
+
+#18 [runner 4/8] COPY --from=builder /app/public ./public
+#18 CACHED
+
+#19 [runner 6/8] RUN chown nextjs:nodejs .next
+#19 CACHED
+
+#20 [runner 7/8] COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+#20 DONE 0.7s
+
+#21 [runner 8/8] COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+#21 DONE 0.2s
+
+#22 exporting to image
+#22 exporting layers
+#22 exporting layers 4.8s done
+#22 exporting manifest sha256:6e942542dea2e6d28921dfd6b37a6edd143daa51b2c871454b521d28692a8b3b 0.0s done
+#22 exporting config sha256:27e95fa4ecf3c51e50389dd7871fbe7a9005ad2f2f658dc2538c57e453ba831e 0.0s done
+#22 exporting attestation manifest sha256:afead1abefbc8baa1821681780f3f20771d54dbce808d5291c00f4986e9bac8b 0.1s done
+#22 exporting manifest list sha256:f67af66a2dd93c04f74c0592cc9dadb20c8a09ca621c028c13edd2c53f34dc9b
+#22 exporting manifest list sha256:f67af66a2dd93c04f74c0592cc9dadb20c8a09ca621c028c13edd2c53f34dc9b 0.0s done
+#22 naming to docker.io/library/imobi-frontend:latest done
+#22 unpacking to docker.io/library/imobi-frontend:latest
+#22 unpacking to docker.io/library/imobi-frontend:latest 1.4s done
+#22 DONE 6.5s

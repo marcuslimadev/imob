@@ -1,0 +1,12 @@
+[
+    {
+        "domain": "lojadaesquina.store",
+        "name": "_a804f27b5844a90fb48b96ab1f002dd5.lojadaesquina.store.",
+        "value": "_41898a1af78dfcea6f78b025a3bab121.jkddzztszm.acm-validations.aws."
+    },
+    {
+        "domain": "*.lojadaesquina.store",
+        "name": "_a804f27b5844a90fb48b96ab1f002dd5.lojadaesquina.store.",
+        "value": "_41898a1af78dfcea6f78b025a3bab121.jkddzztszm.acm-validations.aws."
+    }
+]

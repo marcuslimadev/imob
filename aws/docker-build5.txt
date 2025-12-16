@@ -1,0 +1,108 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.prod
+#1 transferring dockerfile: 1.47kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 DONE 0.7s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 238B 0.0s done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 DONE 0.0s
+
+#5 [base 1/1] FROM docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f
+#5 resolve docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f 0.1s done
+#5 DONE 0.1s
+
+#4 [internal] load build context
+#4 transferring context: 12.18kB 0.0s done
+#4 DONE 0.1s
+
+#6 [builder 1/4] WORKDIR /app
+#6 CACHED
+
+#7 [deps 1/4] RUN apk add --no-cache libc6-compat
+#7 CACHED
+
+#8 [deps 2/4] WORKDIR /app
+#8 CACHED
+
+#9 [deps 3/4] COPY package.json package-lock.json* ./
+#9 CACHED
+
+#10 [deps 4/4] RUN npm ci
+#10 CACHED
+
+#11 [builder 2/4] COPY --from=deps /app/node_modules ./node_modules
+#11 CACHED
+
+#12 [builder 3/4] COPY . .
+#12 DONE 0.1s
+
+#13 [builder 4/4] RUN npm run build
+#13 1.244 
+#13 1.244 > simple-cms-nextjs@1.0.0 build
+#13 1.244 > next build
+#13 1.244 
+#13 2.825    Ôû▓ Next.js 15.2.4
+#13 2.825 
+#13 2.877    Creating an optimized production build ...
+#13 32.23  Ô£ô Compiled successfully
+#13 32.24    Skipping validation of types
+#13 32.24    Skipping linting
+#13 33.11    Collecting page data ...
+#13 38.51    Generating static pages (0/37) ...
+#13 39.88 Error fetching dashboard stats: TypeError: fetch failed
+#13 39.88     at async Object.request (.next/server/chunks/7730.js:1:7855)
+#13 39.88     at async m (.next/server/app/admin/page.js:1:7556)
+#13 39.88     at async u (.next/server/app/admin/page.js:1:8428) {
+#13 39.88   [cause]: [AggregateError: ] { code: 'ECONNREFUSED' }
+#13 39.88 }
+#13 39.99    Generating static pages (9/37) 
+#13 40.41 Error fetching recent companies: TypeError: fetch failed
+#13 40.41     at async Object.request (.next/server/chunks/7730.js:1:7855)
+#13 40.41     at async h (.next/server/app/admin/page.js:1:8265)
+#13 40.41     at async u (.next/server/app/admin/page.js:1:8440) {
+#13 40.41   [cause]: [AggregateError: ] { code: 'ECONNREFUSED' }
+#13 40.41 }
+#13 40.64    Generating static pages (18/37) 
+#13 41.60    Generating static pages (27/37) 
+#13 44.18  Ô£ô Generating static pages (37/37)
+#13 45.68    Finalizing page optimization ...
+#13 45.68    Collecting build traces ...
+#13 47.18 
+#13 47.18 > Build error occurred
+#13 47.19 TypeError: Expected a non-empty string
+#13 47.19     at Array.map (<anonymous>)
+#13 47.30 npm notice
+#13 47.30 npm notice New major version of npm available! 10.9.4 -> 11.7.0
+#13 47.30 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+#13 47.30 npm notice To update run: npm install -g npm@11.7.0
+#13 47.30 npm notice
+#13 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+------
+ > [builder 4/4] RUN npm run build:
+45.68    Collecting build traces ...
+47.18 
+47.18 > Build error occurred
+47.19 TypeError: Expected a non-empty string
+47.19     at Array.map (<anonymous>)
+47.30 npm notice
+47.30 npm notice New major version of npm available! 10.9.4 -> 11.7.0
+47.30 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+47.30 npm notice To update run: npm install -g npm@11.7.0
+47.30 npm notice
+------
+Dockerfile.prod:29
+--------------------
+  27 |     ENV NEXT_TELEMETRY_DISABLED=1
+  28 |     
+  29 | >>> RUN npm run build
+  30 |     
+  31 |     # Production image, copy all the files and run next
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1

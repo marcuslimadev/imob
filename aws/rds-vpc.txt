@@ -1,0 +1,4 @@
+[
+    "vpc-0b2b8e9042bff6233",
+    "imobi-postgres.czk0ka4g8s8f.sa-east-1.rds.amazonaws.com"
+]

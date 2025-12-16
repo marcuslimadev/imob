@@ -1,0 +1,404 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'iMOBI - Infraestrutura Core (ALB + ECS) - SEM RDS (usa RDS existente)'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues:
+      - production
+      - staging
+    Description: Environment name
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Default: vpc-0b2b8e9042bff6233
+    Description: VPC ID (usando VPC default existente)
+
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Default: subnet-09996da9ce9a08f16,subnet-05b32a2ccfcba6c5c,subnet-07834e01856131bfc
+    Description: Lista de Subnet IDs para o ALB e ECS
+
+  # Configuracoes do RDS existente
+  DBHost:
+    Type: String
+    Default: imobi-postgres.czk0ka4g8s8f.sa-east-1.rds.amazonaws.com
+    Description: Endpoint do RDS PostgreSQL existente
+
+  DBName:
+    Type: String
+    Default: imobi
+    Description: Nome do banco de dados
+
+  DBUser:
+    Type: String
+    Default: imobi_admin
+    Description: Usuario do banco de dados
+
+  DBPassword:
+    Type: String
+    NoEcho: true
+    Description: Senha do banco de dados (sem mostrar)
+
+  # Configuracoes do Directus
+  DirectusKey:
+    Type: String
+    NoEcho: true
+    Default: directus-secret-key-change-me
+    Description: Directus KEY (secret)
+
+  DirectusSecret:
+    Type: String
+    NoEcho: true
+    Default: directus-secret-change-me
+    Description: Directus SECRET
+
+  DirectusAdminEmail:
+    Type: String
+    Default: admin@imobi.com.br
+    Description: Email do admin do Directus
+
+  DirectusAdminPassword:
+    Type: String
+    NoEcho: true
+    Default: Admin123!
+    Description: Senha do admin do Directus
+
+  # ECR
+  DirectusImageUri:
+    Type: String
+    Default: 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus:latest
+    Description: URI da imagem do Directus no ECR
+
+Resources:
+  #############################################
+  # SECURITY GROUPS
+  #############################################
+  
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${Environment}-imobi-alb-sg
+      GroupDescription: Security Group para o ALB - HTTP/HTTPS
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-imobi-alb-sg
+
+  ECSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${Environment}-imobi-ecs-sg
+      GroupDescription: Security Group para os containers ECS
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8055
+          ToPort: 8055
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-imobi-ecs-sg
+
+  # Permitir ECS acessar RDS (porta 5432)
+  RDSIngressFromECS:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: sg-0173d09c81ac75993  # SG default da VPC (onde o RDS está)
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      SourceSecurityGroupId: !Ref ECSSecurityGroup
+
+  #############################################
+  # ECS CLUSTER
+  #############################################
+  
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub ${Environment}-imobi-cluster
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-imobi-cluster
+
+  #############################################
+  # IAM ROLES
+  #############################################
+  
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Environment}-imobi-ecs-execution-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: ECRPullPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:CreateLogGroup
+                Resource: '*'
+
+  ECSTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Environment}-imobi-ecs-task-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: S3AccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub arn:aws:s3:::${Environment}-imobi-uploads-${AWS::AccountId}
+                  - !Sub arn:aws:s3:::${Environment}-imobi-uploads-${AWS::AccountId}/*
+
+  #############################################
+  # CLOUDWATCH LOGS
+  #############################################
+  
+  DirectusLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /ecs/${Environment}-imobi-directus
+      RetentionInDays: 30
+
+  #############################################
+  # ALB - APPLICATION LOAD BALANCER
+  #############################################
+  
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub ${Environment}-imobi-alb
+      Type: application
+      Scheme: internet-facing
+      SecurityGroups:
+        - !Ref ALBSecurityGroup
+      Subnets: !Ref SubnetIds
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-imobi-alb
+
+  # Target Group para Directus
+  DirectusTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub ${Environment}-directus-tg
+      Port: 8055
+      Protocol: HTTP
+      VpcId: !Ref VpcId
+      TargetType: ip
+      HealthCheckEnabled: true
+      HealthCheckPath: /server/health
+      HealthCheckProtocol: HTTP
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: 200
+      Tags:
+        - Key: Name
+          Value: !Sub ${Environment}-directus-tg
+
+  # Listener HTTP (porta 80)
+  ALBListenerHTTP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref DirectusTargetGroup
+
+  #############################################
+  # ECS TASK DEFINITION - DIRECTUS
+  #############################################
+  
+  DirectusTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub ${Environment}-imobi-directus
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: '512'
+      Memory: '1024'
+      ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn
+      TaskRoleArn: !GetAtt ECSTaskRole.Arn
+      ContainerDefinitions:
+        - Name: directus
+          Image: !Ref DirectusImageUri
+          Essential: true
+          Command:
+            - /bin/sh
+            - -c
+            - npx directus bootstrap && npx directus start
+          PortMappings:
+            - ContainerPort: 8055
+              Protocol: tcp
+          Environment:
+            - Name: KEY
+              Value: !Ref DirectusKey
+            - Name: SECRET
+              Value: !Ref DirectusSecret
+            - Name: DB_CLIENT
+              Value: pg
+            - Name: DB_HOST
+              Value: !Ref DBHost
+            - Name: DB_PORT
+              Value: '5432'
+            - Name: DB_DATABASE
+              Value: !Ref DBName
+            - Name: DB_USER
+              Value: !Ref DBUser
+            - Name: DB_PASSWORD
+              Value: !Ref DBPassword
+            - Name: DB_SSL__REJECT_UNAUTHORIZED
+              Value: 'false'
+            - Name: ADMIN_EMAIL
+              Value: !Ref DirectusAdminEmail
+            - Name: ADMIN_PASSWORD
+              Value: !Ref DirectusAdminPassword
+            - Name: PUBLIC_URL
+              Value: !Sub http://${ApplicationLoadBalancer.DNSName}
+            - Name: CORS_ENABLED
+              Value: 'true'
+            - Name: CORS_ORIGIN
+              Value: '*'
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref DirectusLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: directus
+
+  #############################################
+  # ECS SERVICE - DIRECTUS
+  #############################################
+  
+  DirectusService:
+    Type: AWS::ECS::Service
+    DependsOn: ALBListenerHTTP
+    Properties:
+      ServiceName: !Sub ${Environment}-imobi-directus
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref DirectusTaskDefinition
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - !Ref ECSSecurityGroup
+          Subnets: !Ref SubnetIds
+      LoadBalancers:
+        - ContainerName: directus
+          ContainerPort: 8055
+          TargetGroupArn: !Ref DirectusTargetGroup
+      DeploymentConfiguration:
+        MinimumHealthyPercent: 50
+        MaximumPercent: 200
+
+#############################################
+# OUTPUTS
+#############################################
+
+Outputs:
+  ALBDNSName:
+    Description: DNS do Application Load Balancer
+    Value: !GetAtt ApplicationLoadBalancer.DNSName
+    Export:
+      Name: !Sub ${Environment}-imobi-alb-dns
+
+  DirectusURL:
+    Description: URL do Directus
+    Value: !Sub http://${ApplicationLoadBalancer.DNSName}
+    Export:
+      Name: !Sub ${Environment}-imobi-directus-url
+
+  ECSClusterName:
+    Description: Nome do Cluster ECS
+    Value: !Ref ECSCluster
+    Export:
+      Name: !Sub ${Environment}-imobi-ecs-cluster
+
+  ECSClusterArn:
+    Description: ARN do Cluster ECS
+    Value: !GetAtt ECSCluster.Arn
+    Export:
+      Name: !Sub ${Environment}-imobi-ecs-cluster-arn
+
+  DirectusServiceName:
+    Description: Nome do Service Directus
+    Value: !GetAtt DirectusService.Name
+    Export:
+      Name: !Sub ${Environment}-imobi-directus-service
+
+  DirectusTargetGroupArn:
+    Description: ARN do Target Group do Directus
+    Value: !Ref DirectusTargetGroup
+    Export:
+      Name: !Sub ${Environment}-imobi-directus-tg-arn
+
+  SecurityGroupECS:
+    Description: Security Group do ECS
+    Value: !Ref ECSSecurityGroup
+    Export:
+      Name: !Sub ${Environment}-imobi-ecs-sg
+
+  SecurityGroupALB:
+    Description: Security Group do ALB
+    Value: !Ref ALBSecurityGroup
+    Export:
+      Name: !Sub ${Environment}-imobi-alb-sg

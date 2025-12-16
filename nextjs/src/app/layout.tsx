@@ -62,7 +62,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 	}
 
         const accentColor = globals?.accent_color || '#d90429';
-        const themeCookie = cookies().get('design-theme')?.value;
+        const cookieStore = await cookies();
+        const themeCookie = cookieStore.get('design-theme')?.value;
         const initialDesignTheme = themeCookie || DEFAULT_DESIGN_THEME;
 
 	return (

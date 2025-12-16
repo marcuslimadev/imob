@@ -41,7 +41,7 @@ interface Signatario {
 }
 
 export default function NovaAssinaturaPage() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   
   const [loading, setLoading] = useState(false);
@@ -75,21 +75,21 @@ export default function NovaAssinaturaPage() {
           directusClient.request(
             readItems('properties', {
               filter: { company_id: { _eq: user.company_id } },
-              fields: ['id', 'title'],
+              fields: ['id', 'title'] as any,
               limit: 100,
             })
           ),
           directusClient.request(
             readItems('leads', {
               filter: { company_id: { _eq: user.company_id } },
-              fields: ['id', 'name', 'email'],
+              fields: ['id', 'name', 'email'] as any,
               limit: 100,
             })
           ),
         ]);
 
-        setProperties(propertiesData as Property[]);
-        setLeads(leadsData as Lead[]);
+        setProperties(propertiesData as unknown as Property[]);
+        setLeads(leadsData as unknown as Lead[]);
       } catch (err) {
         console.error('Erro ao buscar opções:', err);
       } finally {
@@ -150,7 +150,7 @@ export default function NovaAssinaturaPage() {
 
       // Cria o documento
       const documento = await directusClient.request(
-        createItem('documentos_assinatura', {
+        createItem('documentos_assinatura' as any, {
           ...formData,
           company_id: user.company_id,
           codigo,
@@ -164,7 +164,7 @@ export default function NovaAssinaturaPage() {
       // Cria os signatários
       for (const signatario of validSignatarios) {
         await directusClient.request(
-          createItem('documentos_signatarios', {
+          createItem('documentos_signatarios' as any, {
             company_id: user.company_id,
             documento_id: (documento as { id: string }).id,
             ...signatario,

@@ -1,18 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { directusClient } from '@/lib/directus/client';
 import { readItem, updateItem, createItem, readItems } from '@directus/sdk';
 import Link from 'next/link';
 
 interface LeadDetailsProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function LeadDetailsPage({ params }: LeadDetailsProps) {
+  const { id } = use(params);
   const router = useRouter();
   const [lead, setLead] = useState<any>(null);
   const [activities, setActivities] = useState<any[]>([]);
@@ -27,19 +28,19 @@ export default function LeadDetailsPage({ params }: LeadDetailsProps) {
   useEffect(() => {
     loadLead();
     loadActivities();
-  }, [params.id]);
+  }, [id]);
 
   async function loadLead() {
     try {
       // @ts-ignore
       const data = await directusClient.request(
-        readItem('leads', params.id, {
+        readItem('leads', id, {
           fields: ['*']
         })
       );
       setLead(data);
-      setStage(data.stage || 'new');
-      setNotes(data.notes || '');
+      setStage((data as any).stage || 'new');
+      setNotes((data as any).notes || '');
     } catch (error) {
       console.error('Error loading lead:', error);
     } finally {
@@ -52,7 +53,7 @@ export default function LeadDetailsPage({ params }: LeadDetailsProps) {
       // @ts-ignore
       const data = await directusClient.request(
         readItems('lead_activities', {
-          filter: { lead_id: { _eq: params.id } },
+          filter: { lead_id: { _eq: id } },
           // @ts-ignore
           sort: ['-created_at'],
           fields: ['*']
@@ -69,7 +70,7 @@ export default function LeadDetailsPage({ params }: LeadDetailsProps) {
     try {
       // @ts-ignore
       await directusClient.request(
-        updateItem('leads', params.id, {
+        updateItem('leads', id, {
           stage,
           notes
         })
@@ -91,12 +92,12 @@ export default function LeadDetailsPage({ params }: LeadDetailsProps) {
     try {
       // @ts-ignore
       await directusClient.request(
-        createItem('lead_activities', {
-          lead_id: params.id,
+        createItem('lead_activities' as any, {
+          lead_id: id,
           activity_type: activityType,
           notes: activityNotes,
           created_at: new Date().toISOString()
-        })
+        } as any)
       );
 
       setActivityNotes('');

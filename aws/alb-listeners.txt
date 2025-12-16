@@ -1,0 +1,50 @@
+{
+    "Listeners": [
+        {
+            "ListenerArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:listener/app/production-imobi-alb/e660a09d23ba7adc/2923eda4a7b31d7a",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:loadbalancer/app/production-imobi-alb/e660a09d23ba7adc",
+            "Port": 3000,
+            "Protocol": "HTTP",
+            "DefaultActions": [
+                {
+                    "Type": "forward",
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e",
+                    "ForwardConfig": {
+                        "TargetGroups": [
+                            {
+                                "TargetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e",
+                                "Weight": 1
+                            }
+                        ],
+                        "TargetGroupStickinessConfig": {
+                            "Enabled": false
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "ListenerArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:listener/app/production-imobi-alb/e660a09d23ba7adc/7e9566af5bbd9e86",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:loadbalancer/app/production-imobi-alb/e660a09d23ba7adc",
+            "Port": 80,
+            "Protocol": "HTTP",
+            "DefaultActions": [
+                {
+                    "Type": "forward",
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/production-directus-tg/7569a17c56bf2be6",
+                    "ForwardConfig": {
+                        "TargetGroups": [
+                            {
+                                "TargetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/production-directus-tg/7569a17c56bf2be6",
+                                "Weight": 1
+                            }
+                        ],
+                        "TargetGroupStickinessConfig": {
+                            "Enabled": false
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

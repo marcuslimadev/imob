@@ -29,7 +29,7 @@
       "secrets": [
         {
           "name": "NEXT_PUBLIC_API_URL",
-          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/public/api-url"
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:imobi/public-api-url"
         }
       ],
       "logConfiguration": {

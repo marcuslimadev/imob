@@ -1,0 +1,60 @@
+[
+    {
+        "id": "ecs-svc/1180244808317999634",
+        "status": "PRIMARY",
+        "taskDefinition": "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:4",
+        "desiredCount": 1,
+        "pendingCount": 0,
+        "runningCount": 1,
+        "failedTasks": 0,
+        "createdAt": "2025-12-16T07:25:11.996000-03:00",
+        "updatedAt": "2025-12-16T07:27:02.610000-03:00",
+        "launchType": "FARGATE",
+        "platformVersion": "1.4.0",
+        "platformFamily": "Linux",
+        "networkConfiguration": {
+            "awsvpcConfiguration": {
+                "subnets": [
+                    "subnet-05b32a2ccfcba6c5c",
+                    "subnet-09996da9ce9a08f16",
+                    "subnet-07834e01856131bfc"
+                ],
+                "securityGroups": [
+                    "sg-0fc7e6e957369daf8"
+                ],
+                "assignPublicIp": "ENABLED"
+            }
+        },
+        "rolloutState": "IN_PROGRESS",
+        "rolloutStateReason": "ECS deployment ecs-svc/1180244808317999634 in progress."
+    },
+    {
+        "id": "ecs-svc/0934785450748927307",
+        "status": "DRAINING",
+        "taskDefinition": "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:4",
+        "desiredCount": 0,
+        "pendingCount": 0,
+        "runningCount": 0,
+        "failedTasks": 0,
+        "createdAt": "2025-12-15T22:59:30.138000-03:00",
+        "updatedAt": "2025-12-16T07:27:44.005000-03:00",
+        "launchType": "FARGATE",
+        "platformVersion": "1.4.0",
+        "platformFamily": "Linux",
+        "networkConfiguration": {
+            "awsvpcConfiguration": {
+                "subnets": [
+                    "subnet-05b32a2ccfcba6c5c",
+                    "subnet-09996da9ce9a08f16",
+                    "subnet-07834e01856131bfc"
+                ],
+                "securityGroups": [
+                    "sg-0fc7e6e957369daf8"
+                ],
+                "assignPublicIp": "ENABLED"
+            }
+        },
+        "rolloutState": "COMPLETED",
+        "rolloutStateReason": "ECS deployment ecs-svc/0934785450748927307 completed."
+    }
+]

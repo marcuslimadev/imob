@@ -1,0 +1,54 @@
+[
+    {
+        "name": "DB_PORT",
+        "value": "5432"
+    },
+    {
+        "name": "DB_USER",
+        "value": "imobi_admin"
+    },
+    {
+        "name": "DB_HOST",
+        "value": "imobi-postgres.czk0ka4g8s8f.sa-east-1.rds.amazonaws.com"
+    },
+    {
+        "name": "CORS_ORIGIN",
+        "value": "*"
+    },
+    {
+        "name": "ADMIN_PASSWORD",
+        "value": "Teste@123"
+    },
+    {
+        "name": "PUBLIC_URL",
+        "value": "http://production-imobi-alb-1870133048.sa-east-1.elb.amazonaws.com"
+    },
+    {
+        "name": "DB_CLIENT",
+        "value": "pg"
+    },
+    {
+        "name": "CORS_ENABLED",
+        "value": "true"
+    },
+    {
+        "name": "ADMIN_EMAIL",
+        "value": "admin@imobi.com.br"
+    },
+    {
+        "name": "SECRET",
+        "value": "PRBqIAFZ9SG7Trhgjdfywm2X6kMoHCQO"
+    },
+    {
+        "name": "KEY",
+        "value": "9jGemQLwJRgHky1Ct2B7dsT5Zir8YM34"
+    },
+    {
+        "name": "DB_DATABASE",
+        "value": "imobi"
+    },
+    {
+        "name": "DB_PASSWORD",
+        "value": "iMobiSecurePass2025!"
+    }
+]

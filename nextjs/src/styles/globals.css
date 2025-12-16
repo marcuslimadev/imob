@@ -489,7 +489,8 @@ body {
         }
 
         .bauhaus-surface {
-                @apply border-[3px] border-[var(--foreground-color)] bg-[var(--background-color)]/90 backdrop-blur shadow-[10px_10px_0_#0c0c0c];
+                @apply border-[3px] border-[var(--foreground-color)] backdrop-blur shadow-[10px_10px_0_#0c0c0c];
+                background-color: rgba(var(--background-color-rgb, 255, 255, 255), 0.9);
         }
 
         .bauhaus-stripe {

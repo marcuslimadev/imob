@@ -1,0 +1,70 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.prod
+#1 transferring dockerfile: 1.56kB 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 DONE 1.9s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 238B 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [base 1/1] FROM docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f
+#6 resolve docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f 0.0s done
+#6 DONE 0.1s
+
+#7 [builder 1/4] WORKDIR /app
+#7 CACHED
+
+#8 [runner 2/8] RUN addgroup --system --gid 1001 nodejs
+#8 CACHED
+
+#9 [runner 3/8] RUN adduser --system --uid 1001 nextjs
+#9 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 717.27kB 0.1s done
+#5 DONE 0.1s
+
+#10 [deps 1/4] RUN apk add --no-cache libc6-compat
+#10 CACHED
+
+#11 [deps 2/4] WORKDIR /app
+#11 CACHED
+
+#12 [deps 3/4] COPY package.json pnpm-lock.yaml* ./
+#12 DONE 0.1s
+
+#13 [deps 4/4] RUN corepack enable pnpm && pnpm i --frozen-lockfile
+#13 1.584 ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.26.0.tgz
+#13 4.774 ÔÇëERR_PNPM_NO_LOCKFILEÔÇë Cannot install with "frozen-lockfile" because pnpm-lock.yaml is absent
+#13 4.774 
+#13 4.774 Note that in CI environments this setting is true by default. If you still need to run install in such cases, use "pnpm install --no-frozen-lockfile"
+#13 ERROR: process "/bin/sh -c corepack enable pnpm && pnpm i --frozen-lockfile" did not complete successfully: exit code: 1
+------
+ > [deps 4/4] RUN corepack enable pnpm && pnpm i --frozen-lockfile:
+1.584 ! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.26.0.tgz
+4.774 ÔÇëERR_PNPM_NO_LOCKFILEÔÇë Cannot install with "frozen-lockfile" because pnpm-lock.yaml is absent
+4.774 
+4.774 Note that in CI environments this setting is true by default. If you still need to run install in such cases, use "pnpm install --no-frozen-lockfile"
+------
+Dockerfile.prod:11
+--------------------
+   9 |     # Install dependencies based on the preferred package manager
+  10 |     COPY package.json pnpm-lock.yaml* ./
+  11 | >>> RUN corepack enable pnpm && pnpm i --frozen-lockfile
+  12 |     
+  13 |     # Rebuild the source code only when needed
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c corepack enable pnpm && pnpm i --frozen-lockfile" did not complete successfully: exit code: 1

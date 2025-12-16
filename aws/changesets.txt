@@ -1,0 +1,15 @@
+{
+    "Summaries": [
+        {
+            "StackId": "arn:aws:cloudformation:sa-east-1:575098225472:stack/imobi-core/beb783b0-d934-11f0-8e61-02c31992d043",
+            "StackName": "imobi-core",
+            "ChangeSetId": "arn:aws:cloudformation:sa-east-1:575098225472:changeSet/awscli-cloudformation-package-deploy-1765748097/0aca7339-e993-4453-9e14-f17b9cdc95c3",
+            "ChangeSetName": "awscli-cloudformation-package-deploy-1765748097",
+            "ExecutionStatus": "AVAILABLE",
+            "Status": "CREATE_COMPLETE",
+            "CreationTime": "2025-12-14T21:35:01.046000+00:00",
+            "Description": "Created by AWS CLI at 2025-12-14T21:34:57.807890 UTC",
+            "IncludeNestedStacks": false
+        }
+    ]
+}

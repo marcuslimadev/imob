@@ -1,0 +1,9 @@
+[
+    true,
+    [
+        {
+            "VpcSecurityGroupId": "sg-0173d09c81ac75993",
+            "Status": "active"
+        }
+    ]
+]

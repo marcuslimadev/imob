@@ -1,0 +1,16 @@
+[
+    "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:6",
+    1,
+    [
+        [
+            "PRIMARY",
+            "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:6",
+            1
+        ],
+        [
+            "DRAINING",
+            "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:5",
+            0
+        ]
+    ]
+]

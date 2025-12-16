@@ -1,0 +1,37 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 541B 0.0s done
+#1 DONE 0.0s
+
+#2 [auth] directus/directus:pull token for registry-1.docker.io
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/directus/directus:11.12.0
+#3 DONE 1.3s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [1/2] FROM docker.io/directus/directus:11.12.0@sha256:4d4ba1596b3cae218a3fc8f5f2a55f2ac9eec93eb3fda68b2c51fe6b18d20040
+#5 resolve docker.io/directus/directus:11.12.0@sha256:4d4ba1596b3cae218a3fc8f5f2a55f2ac9eec93eb3fda68b2c51fe6b18d20040 0.1s done
+#5 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 1.60MB 1.2s done
+#6 DONE 1.3s
+
+#7 [2/2] COPY ./extensions /directus/extensions
+#7 CACHED
+
+#8 exporting to image
+#8 exporting layers done
+#8 exporting manifest sha256:092bd5d0d982487d507181243027b22c2c70c7cedbab72bf47b7308f68812ddf done
+#8 exporting config sha256:7b01f7d19bd26b8c130737c3b01e51064ba0d4fbf948d8167ade32f56201a1c4 done
+#8 exporting attestation manifest sha256:4c7fcd781720906df340bcdea4781312340bfdea43a861f05d79c2db9c6c357e 0.1s done
+#8 exporting manifest list sha256:5dee504fb4eeccb12796506da50041471c86300ddc7c7a6d471dac2adf383cc5
+#8 exporting manifest list sha256:5dee504fb4eeccb12796506da50041471c86300ddc7c7a6d471dac2adf383cc5 0.0s done
+#8 naming to 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus:latest done
+#8 unpacking to 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus:latest 0.0s done
+#8 DONE 0.3s

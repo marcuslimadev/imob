@@ -1,0 +1,54 @@
+Note: Unnecessary use of -X or --request, POST is already inferred.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com:3000 was resolved.
+* IPv6: (none)
+* IPv4: 18.230.133.149, 56.126.20.65, 18.228.252.71
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 18.230.133.149:3000...
+* Established connection to production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com (18.230.133.149 port 3000) from 192.168.0.27 port 58147 
+* using HTTP/1.x
+> POST /api/auth/login HTTP/1.1
+
+> Host: production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com:3000
+
+> User-Agent: curl/8.16.0
+
+> Accept: */*
+
+> Content-Type: application/json
+
+> Content-Length: 53
+
+> 
+
+} [53 bytes data]
+* upload completely sent off: 53 bytes
+< HTTP/1.1 200 OK
+
+< Date: Mon, 15 Dec 2025 21:45:40 GMT
+
+< Content-Type: application/json
+
+< Transfer-Encoding: chunked
+
+< Connection: keep-alive
+
+< Content-Security-Policy: default-src 'self';    script-src 'self' 'unsafe-eval' 'unsafe-inline';    frame-src *;    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;    img-src * blob: data:;    media-src *;    connect-src *;    font-src 'self' data: https://fonts.gstatic.com;    frame-ancestors 'self' http://localhost:3000 ;
+
+< vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch
+
+< set-cookie: directus_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQyNDRhNWIwLTY5NGEtNDE5YS1hZDRlLTBkMzU2MDgwYmU1MCIsInJvbGUiOiJkMDc0N2I1Zi1jYTNhLTRkOWYtODg4YS00MTRkM2Q0YTVkMjAiLCJhcHBfYWNjZXNzIjp0cnVlLCJhZG1pbl9hY2Nlc3MiOnRydWUsImlhdCI6MTc2NTgzNTE0MCwiZXhwIjoxNzY1ODM2MDQwLCJpc3MiOiJkaXJlY3R1cyJ9.mH2D-CyTE-w1GpZmWLhmoTk6HHxYj4TuyPUYqdvA6rg; Path=/; Expires=Mon, 22 Dec 2025 21:45:40 GMT; Max-Age=604800; HttpOnly; SameSite=lax
+
+< set-cookie: directus_refresh_token=SqYIZS4Ou082tQwTeURroPgZKxfOp6no0bDT0wSIjLUV7wVH4xrrzLaZefr85vuz; Path=/; Expires=Wed, 14 Jan 2026 21:45:40 GMT; Max-Age=2592000; HttpOnly; SameSite=lax
+
+< set-cookie: design-theme=ulm; Path=/; Expires=Tue, 15 Dec 2026 21:45:40 GMT; Max-Age=31536000; SameSite=lax
+
+< 
+
+{ [65 bytes data]
+
+100   107    0    54  100    53     57     56 --:--:-- --:--:-- --:--:--   114
+* Connection #0 to host production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com:3000 left intact
+{"success":true,"user":{"email":"admin@imobi.com.br"}}

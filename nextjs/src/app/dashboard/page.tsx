@@ -40,11 +40,11 @@ async function getDashboardMetrics(companyId: string) {
           query: {
             filter: { 
               conversa_id: { 
-                conversas: { company_id: { _eq: companyId } }
+                company_id: { _eq: companyId }
               }
             }
           }
-        })
+        } as any)
       ),
     ]);
 
@@ -52,7 +52,7 @@ async function getDashboardMetrics(companyId: string) {
     const conversas = await directusServer.request(
       readItems('conversas', {
         filter: { company_id: { _eq: companyId } },
-        fields: ['id', 'stage', 'created_at', 'updated_at', 'lead_id.nome'],
+        fields: ['id', 'stage', 'created_at', 'updated_at', 'lead_id.nome'] as any,
         limit: 100
       })
     );
@@ -81,10 +81,10 @@ async function getDashboardMetrics(companyId: string) {
       }));
 
     return {
-      leadsTotal: leadsTotal[0]?.count || 0,
-      propertiesTotal: propertiesTotal[0]?.count || 0,
-      conversasTotal: conversasTotal[0]?.count || 0,
-      mensagensTotal: mensagensTotal[0]?.count || 0,
+      leadsTotal: Number(leadsTotal[0]?.count) || 0,
+      propertiesTotal: Number(propertiesTotal[0]?.count) || 0,
+      conversasTotal: Number(conversasTotal[0]?.count) || 0,
+      mensagensTotal: Number(mensagensTotal[0]?.count) || 0,
       leadsByStage: leadsByStage || [],
       recentActivity: recentActivity || []
     };

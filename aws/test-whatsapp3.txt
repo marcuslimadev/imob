@@ -1,0 +1,6 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   169  100   132  100    37    344     96 --:--:-- --:--:-- --:--:--   444
+{"errors":[{"message":"Route /whatsapp/webhook doesn't exist.","extensions":{"path":"/whatsapp/webhook","code":"ROUTE_NOT_FOUND"}}]}

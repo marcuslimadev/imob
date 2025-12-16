@@ -1,0 +1,7 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100    53    0     0  100    53      0     54 --:--:-- --:--:-- --:--:--    54
+100   107    0    54  100    53     55     54 --:--:-- --:--:-- --:--:--   109
+{"success":true,"user":{"email":"admin@imobi.com.br"}}

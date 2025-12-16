@@ -20,9 +20,10 @@ async function getPerson(companyId: string, id: string) {
   return person;
 }
 
-export default async function EditarPessoaPage({ params }: { params: { id: string } }) {
+export default async function EditarPessoaPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const companyId = await getAuthenticatedCompanyId();
-  const person = await getPerson(companyId, params.id);
+  const person = await getPerson(companyId, id);
 
   return (
     <div className="relative min-h-screen px-4 py-10">

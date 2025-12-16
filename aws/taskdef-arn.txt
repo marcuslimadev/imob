@@ -1,0 +1,1 @@
+arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:4

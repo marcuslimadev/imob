@@ -1,0 +1,1 @@
+STOPPED	Essential container in task exited	0

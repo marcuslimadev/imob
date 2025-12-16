@@ -1,0 +1,39 @@
+{
+    "LoadBalancers": [
+        {
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:loadbalancer/app/production-imobi-alb/e660a09d23ba7adc",
+            "DNSName": "production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com",
+            "CanonicalHostedZoneId": "Z2P70J7HTTTPLU",
+            "CreatedTime": "2025-12-15T13:03:56.666000+00:00",
+            "LoadBalancerName": "production-imobi-alb",
+            "Scheme": "internet-facing",
+            "VpcId": "vpc-0b2b8e9042bff6233",
+            "State": {
+                "Code": "active"
+            },
+            "Type": "application",
+            "AvailabilityZones": [
+                {
+                    "ZoneName": "sa-east-1b",
+                    "SubnetId": "subnet-05b32a2ccfcba6c5c",
+                    "LoadBalancerAddresses": []
+                },
+                {
+                    "ZoneName": "sa-east-1c",
+                    "SubnetId": "subnet-07834e01856131bfc",
+                    "LoadBalancerAddresses": []
+                },
+                {
+                    "ZoneName": "sa-east-1a",
+                    "SubnetId": "subnet-09996da9ce9a08f16",
+                    "LoadBalancerAddresses": []
+                }
+            ],
+            "SecurityGroups": [
+                "sg-06c2b25529eb0517f"
+            ],
+            "IpAddressType": "ipv4",
+            "EnablePrefixForIpv6SourceNat": "off"
+        }
+    ]
+}

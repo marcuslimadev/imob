@@ -1,0 +1,10 @@
+[14:25:52] GET /translations?fields[]=language&fields[]=key&fields[]=value&filter[language][_eq]=pt-BR&limit=-1 403 127ms
+[14:25:52] GET /admin/assets/pt-BR-D3_Jhsng.js 200 8ms
+[14:26:05] POST /auth/refresh 400 42ms
+[14:26:11] GET /whatsapp/webhook 404 40ms
+[14:27:29.929] INFO: === WHATSAPP WEBHOOK RECEBIDO ===
+[14:27:29.968] INFO: Body: {}
+[14:27:29.970] INFO: De: , Para: , Mensagem: 
+[14:27:30.152] WARN: Empresa nao encontrada para o numero: 
+[14:27:30] POST /whatsapp/webhook 200 392ms
+[14:27:37] GET /whatsapp/health 200 38ms

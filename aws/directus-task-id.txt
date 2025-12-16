@@ -1,0 +1,1 @@
+arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/8fbd9143135f40bc92b18c4ed65295b7

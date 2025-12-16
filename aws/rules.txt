@@ -1,0 +1,66 @@
+{
+    "Rules": [
+        {
+            "RuleArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:listener-rule/app/production-imobi-alb/e660a09d23ba7adc/7e9566af5bbd9e86/be997d51aa9bf09c",
+            "Priority": "10",
+            "Conditions": [
+                {
+                    "Field": "host-header",
+                    "Values": [
+                        "lojadaesquina.store",
+                        "www.lojadaesquina.store"
+                    ],
+                    "HostHeaderConfig": {
+                        "Values": [
+                            "lojadaesquina.store",
+                            "www.lojadaesquina.store"
+                        ]
+                    }
+                }
+            ],
+            "Actions": [
+                {
+                    "Type": "forward",
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e",
+                    "ForwardConfig": {
+                        "TargetGroups": [
+                            {
+                                "TargetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e",
+                                "Weight": 1
+                            }
+                        ],
+                        "TargetGroupStickinessConfig": {
+                            "Enabled": false
+                        }
+                    }
+                }
+            ],
+            "IsDefault": false,
+            "Transforms": []
+        },
+        {
+            "RuleArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:listener-rule/app/production-imobi-alb/e660a09d23ba7adc/7e9566af5bbd9e86/e9d60c7f19f81307",
+            "Priority": "default",
+            "Conditions": [],
+            "Actions": [
+                {
+                    "Type": "forward",
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/production-directus-tg/7569a17c56bf2be6",
+                    "ForwardConfig": {
+                        "TargetGroups": [
+                            {
+                                "TargetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/production-directus-tg/7569a17c56bf2be6",
+                                "Weight": 1
+                            }
+                        ],
+                        "TargetGroupStickinessConfig": {
+                            "Enabled": false
+                        }
+                    }
+                }
+            ],
+            "IsDefault": true,
+            "Transforms": []
+        }
+    ]
+}

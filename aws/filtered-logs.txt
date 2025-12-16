@@ -1,0 +1,1 @@
+[13:52:47.268] ERROR: Database doesn't have Directus tables installed.	[13:53:59.204] ERROR: Database doesn't have Directus tables installed.

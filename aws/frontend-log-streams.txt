@@ -1,0 +1,34 @@
+{
+    "logStreams": [
+        {
+            "logStreamName": "frontend/frontend/76493bf04e3f4aa3a2892a3b01add12a",
+            "creationTime": 1765826921341,
+            "firstEventTimestamp": 1765826929050,
+            "lastEventTimestamp": 1765826929453,
+            "lastIngestionTime": 1765826932037,
+            "uploadSequenceToken": "49039859654895037242035468949619485228423688526886444189",
+            "arn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-frontend:log-stream:frontend/frontend/76493bf04e3f4aa3a2892a3b01add12a",
+            "storedBytes": 0
+        },
+        {
+            "logStreamName": "frontend/frontend/2eca6ad840bb4e30a3412974faed65a7",
+            "creationTime": 1765823988909,
+            "firstEventTimestamp": 1765823996742,
+            "lastEventTimestamp": 1765826361538,
+            "lastIngestionTime": 1765826364672,
+            "uploadSequenceToken": "49039859654894283084593640440825256431747467338614152192",
+            "arn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-frontend:log-stream:frontend/frontend/2eca6ad840bb4e30a3412974faed65a7",
+            "storedBytes": 0
+        },
+        {
+            "logStreamName": "frontend/frontend/4f01308db35143d7a367f7224cd4844d",
+            "creationTime": 1765823885332,
+            "firstEventTimestamp": 1765823893907,
+            "lastEventTimestamp": 1765824064380,
+            "lastIngestionTime": 1765824066747,
+            "uploadSequenceToken": "49039859654891228618351426388018014614126568152893070488",
+            "arn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-frontend:log-stream:frontend/frontend/4f01308db35143d7a367f7224cd4844d",
+            "storedBytes": 0
+        }
+    ]
+}

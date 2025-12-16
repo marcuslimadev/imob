@@ -1,0 +1,12 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/1.1 307 Temporary Redirect
+Date: Mon, 15 Dec 2025 19:20:04 GMT
+Connection: keep-alive
+Content-Security-Policy: default-src 'self';    script-src 'self' 'unsafe-eval' 'unsafe-inline';    frame-src *;    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;    img-src * blob: data:;    media-src *;    connect-src *;    font-src 'self' data: https://fonts.gstatic.com;    frame-ancestors 'self' http://localhost:3000 http://production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com;
+location: /login
+

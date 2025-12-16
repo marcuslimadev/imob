@@ -1,0 +1,22 @@
+{
+    "status": "ACTIVE",
+    "desired": 1,
+    "running": 1,
+    "events": [
+        {
+            "id": "1e0a5070-3e11-40ae-9366-1a859cdde319",
+            "createdAt": "2025-12-15T15:41:14.720000-03:00",
+            "message": "(service production-imobi-frontend, taskSet ecs-svc/5610361864266897944) has begun draining connections on 1 tasks."
+        },
+        {
+            "id": "ea991e44-b28f-4374-b534-fe9d4f073a6a",
+            "createdAt": "2025-12-15T15:41:04.351000-03:00",
+            "message": "(service production-imobi-frontend) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+        },
+        {
+            "id": "1a4ae275-cf40-41b3-89c2-4dc8b2ee1ae7",
+            "createdAt": "2025-12-15T15:41:03.825000-03:00",
+            "message": "(service production-imobi-frontend) has stopped 1 running tasks: (task 4f01308db35143d7a367f7224cd4844d)."
+        }
+    ]
+}

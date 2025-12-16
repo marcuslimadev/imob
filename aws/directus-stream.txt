@@ -1,0 +1,15 @@
+{
+    "logStreams": [
+        {
+            "logStreamName": "directus/directus/9b6e34d89dab4eb98a0b90f3e0784742",
+            "creationTime": 1765564886578,
+            "firstEventTimestamp": 1765564936065,
+            "lastEventTimestamp": 1765642300418,
+            "lastIngestionTime": 1765642304378,
+            "uploadSequenceToken": "49039859654649624988896438779043013620409401235699228439",
+            "arn": "arn:aws:logs:sa-east-1:575098225472:log-group:/ecs/imobi-directus:log-stream:directus/directus/9b6e34d89dab4eb98a0b90f3e0784742",
+            "storedBytes": 0
+        }
+    ],
+    "NextToken": "eyJuZXh0VG9rZW4iOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAxfQ=="
+}

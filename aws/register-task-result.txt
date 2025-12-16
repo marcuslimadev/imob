@@ -1,0 +1,135 @@
+{
+    "taskDefinition": {
+        "taskDefinitionArn": "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:3",
+        "containerDefinitions": [
+            {
+                "name": "directus",
+                "image": "575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus:latest",
+                "cpu": 0,
+                "portMappings": [
+                    {
+                        "containerPort": 8055,
+                        "hostPort": 8055,
+                        "protocol": "tcp"
+                    }
+                ],
+                "essential": true,
+                "environment": [
+                    {
+                        "name": "DB_PORT",
+                        "value": "5432"
+                    },
+                    {
+                        "name": "DB_USER",
+                        "value": "imobi_admin"
+                    },
+                    {
+                        "name": "DB_HOST",
+                        "value": "imobi-postgres.czk0ka4g8s8f.sa-east-1.rds.amazonaws.com"
+                    },
+                    {
+                        "name": "CORS_ORIGIN",
+                        "value": "*"
+                    },
+                    {
+                        "name": "DB_SSL__REJECT_UNAUTHORIZED",
+                        "value": "false"
+                    },
+                    {
+                        "name": "ADMIN_PASSWORD",
+                        "value": "Teste@123"
+                    },
+                    {
+                        "name": "PUBLIC_URL",
+                        "value": "http://production-imobi-alb-1870133048.sa-east-1.elb.amazonaws.com"
+                    },
+                    {
+                        "name": "DB_CLIENT",
+                        "value": "pg"
+                    },
+                    {
+                        "name": "ADMIN_EMAIL",
+                        "value": "admin@imobi.com.br"
+                    },
+                    {
+                        "name": "CORS_ENABLED",
+                        "value": "true"
+                    },
+                    {
+                        "name": "DB_DATABASE",
+                        "value": "imobi"
+                    },
+                    {
+                        "name": "KEY",
+                        "value": "9jGemQLwJRgHky1Ct2B7dsT5Zir8YM34"
+                    },
+                    {
+                        "name": "SECRET",
+                        "value": "PRBqIAFZ9SG7Trhgjdfywm2X6kMoHCQO"
+                    },
+                    {
+                        "name": "DB_PASSWORD",
+                        "value": "iMobiSecurePass2025!"
+                    }
+                ],
+                "mountPoints": [],
+                "volumesFrom": [],
+                "logConfiguration": {
+                    "logDriver": "awslogs",
+                    "options": {
+                        "awslogs-group": "/ecs/production-imobi-directus",
+                        "awslogs-region": "sa-east-1",
+                        "awslogs-stream-prefix": "directus"
+                    }
+                },
+                "systemControls": []
+            }
+        ],
+        "family": "production-imobi-directus",
+        "taskRoleArn": "arn:aws:iam::575098225472:role/production-imobi-ecs-task-role",
+        "executionRoleArn": "arn:aws:iam::575098225472:role/production-imobi-ecs-execution-role",
+        "networkMode": "awsvpc",
+        "revision": 3,
+        "volumes": [],
+        "status": "ACTIVE",
+        "requiresAttributes": [
+            {
+                "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+            },
+            {
+                "name": "ecs.capability.execution-role-awslogs"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.ecr-auth"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.task-iam-role"
+            },
+            {
+                "name": "ecs.capability.execution-role-ecr-pull"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+            },
+            {
+                "name": "ecs.capability.task-eni"
+            }
+        ],
+        "placementConstraints": [],
+        "compatibilities": [
+            "EC2",
+            "MANAGED_INSTANCES",
+            "FARGATE"
+        ],
+        "requiresCompatibilities": [
+            "FARGATE"
+        ],
+        "cpu": "512",
+        "memory": "1024",
+        "registeredAt": "2025-12-14T20:01:45.166000-03:00",
+        "registeredBy": "arn:aws:iam::575098225472:root"
+    }
+}

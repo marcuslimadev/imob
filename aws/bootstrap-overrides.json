@@ -1,0 +1,8 @@
+{
+  "containerOverrides": [
+    {
+      "name": "directus",
+      "command": ["/bin/sh", "-c", "npx directus bootstrap"]
+    }
+  ]
+}

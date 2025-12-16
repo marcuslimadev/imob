@@ -1,0 +1,362 @@
+{
+    "service": {
+        "serviceArn": "arn:aws:ecs:sa-east-1:575098225472:service/production-imobi-cluster/production-imobi-frontend",
+        "serviceName": "production-imobi-frontend",
+        "clusterArn": "arn:aws:ecs:sa-east-1:575098225472:cluster/production-imobi-cluster",
+        "loadBalancers": [
+            {
+                "targetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e",
+                "containerName": "frontend",
+                "containerPort": 3000
+            }
+        ],
+        "serviceRegistries": [],
+        "status": "ACTIVE",
+        "desiredCount": 1,
+        "runningCount": 1,
+        "pendingCount": 0,
+        "launchType": "FARGATE",
+        "platformVersion": "LATEST",
+        "platformFamily": "Linux",
+        "taskDefinition": "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:4",
+        "deploymentConfiguration": {
+            "deploymentCircuitBreaker": {
+                "enable": false,
+                "rollback": false
+            },
+            "maximumPercent": 200,
+            "minimumHealthyPercent": 100,
+            "strategy": "ROLLING",
+            "bakeTimeInMinutes": 0
+        },
+        "deployments": [
+            {
+                "id": "ecs-svc/1924694596625728347",
+                "status": "PRIMARY",
+                "taskDefinition": "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:4",
+                "desiredCount": 0,
+                "pendingCount": 0,
+                "runningCount": 0,
+                "failedTasks": 0,
+                "createdAt": "2025-12-15T18:34:49.804000-03:00",
+                "updatedAt": "2025-12-15T18:34:49.804000-03:00",
+                "launchType": "FARGATE",
+                "platformVersion": "1.4.0",
+                "platformFamily": "Linux",
+                "networkConfiguration": {
+                    "awsvpcConfiguration": {
+                        "subnets": [
+                            "subnet-05b32a2ccfcba6c5c",
+                            "subnet-09996da9ce9a08f16",
+                            "subnet-07834e01856131bfc"
+                        ],
+                        "securityGroups": [
+                            "sg-0fc7e6e957369daf8"
+                        ],
+                        "assignPublicIp": "ENABLED"
+                    }
+                },
+                "rolloutState": "IN_PROGRESS",
+                "rolloutStateReason": "ECS deployment ecs-svc/1924694596625728347 in progress."
+            },
+            {
+                "id": "ecs-svc/1034287766611017166",
+                "status": "ACTIVE",
+                "taskDefinition": "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:4",
+                "desiredCount": 1,
+                "pendingCount": 0,
+                "runningCount": 1,
+                "failedTasks": 0,
+                "createdAt": "2025-12-15T18:24:21.225000-03:00",
+                "updatedAt": "2025-12-15T18:27:14.732000-03:00",
+                "launchType": "FARGATE",
+                "platformVersion": "1.4.0",
+                "platformFamily": "Linux",
+                "networkConfiguration": {
+                    "awsvpcConfiguration": {
+                        "subnets": [
+                            "subnet-05b32a2ccfcba6c5c",
+                            "subnet-09996da9ce9a08f16",
+                            "subnet-07834e01856131bfc"
+                        ],
+                        "securityGroups": [
+                            "sg-0fc7e6e957369daf8"
+                        ],
+                        "assignPublicIp": "ENABLED"
+                    }
+                },
+                "rolloutState": "COMPLETED",
+                "rolloutStateReason": "ECS deployment ecs-svc/1034287766611017166 completed."
+            }
+        ],
+        "roleArn": "arn:aws:iam::575098225472:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+        "events": [
+            {
+                "id": "1fd2f26d-a59d-4935-bcda-fbe22df33ff8",
+                "createdAt": "2025-12-15T18:27:14.739000-03:00",
+                "message": "(service production-imobi-frontend) has reached a steady state."
+            },
+            {
+                "id": "dd852c28-bb48-4d17-aad9-cea9b5d1bd2e",
+                "createdAt": "2025-12-15T18:27:14.738000-03:00",
+                "message": "(service production-imobi-frontend) (deployment ecs-svc/1034287766611017166) deployment completed."
+            },
+            {
+                "id": "3a08b185-4afd-4a48-8815-3b8f6b9b2d49",
+                "createdAt": "2025-12-15T18:26:21.913000-03:00",
+                "message": "(service production-imobi-frontend, taskSet ecs-svc/0126164566184212737) has begun draining connections on 1 tasks."
+            },
+            {
+                "id": "17c02843-4325-4fd2-8c36-a694fd796418",
+                "createdAt": "2025-12-15T18:26:21.907000-03:00",
+                "message": "(service production-imobi-frontend) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "8218d335-a226-42a5-a6ca-60f5fa321db8",
+                "createdAt": "2025-12-15T18:26:10.602000-03:00",
+                "message": "(service production-imobi-frontend) has stopped 1 running tasks: (task eaccd87031fd4b779c3ccd1f1129e8c8)."
+            },
+            {
+                "id": "a27dcc0c-de85-452b-9663-7273528b1d3c",
+                "createdAt": "2025-12-15T18:25:20.039000-03:00",
+                "message": "(service production-imobi-frontend) registered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "965d5eb8-148f-4c45-8ef0-5e521fc41680",
+                "createdAt": "2025-12-15T18:24:47.649000-03:00",
+                "message": "(service production-imobi-frontend) has started 1 tasks: (task 2555ab975f224f2c979bd4e1f97f8de6)."
+            },
+            {
+                "id": "c85061da-93e7-4a9a-8e48-706fb6534606",
+                "createdAt": "2025-12-15T18:13:28.735000-03:00",
+                "message": "(service production-imobi-frontend) has reached a steady state."
+            },
+            {
+                "id": "00ddacc8-f2c2-4fd6-9c6c-b8a23bd70ba7",
+                "createdAt": "2025-12-15T18:13:28.734000-03:00",
+                "message": "(service production-imobi-frontend) (deployment ecs-svc/0126164566184212737) deployment completed."
+            },
+            {
+                "id": "b26f7c0c-c23c-4df0-8dcf-c15f447e6569",
+                "createdAt": "2025-12-15T18:12:26.374000-03:00",
+                "message": "(service production-imobi-frontend, taskSet ecs-svc/3188383600161618580) has begun draining connections on 1 tasks."
+            },
+            {
+                "id": "48ecd340-1b2f-47dc-bce0-2467d8cf09aa",
+                "createdAt": "2025-12-15T18:12:26.369000-03:00",
+                "message": "(service production-imobi-frontend) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "ed7a909c-b042-446e-a830-7c84575e52e8",
+                "createdAt": "2025-12-15T18:12:16.311000-03:00",
+                "message": "(service production-imobi-frontend) has stopped 1 running tasks: (task b6788c31af1d43f990668f31b4c3dd6c)."
+            },
+            {
+                "id": "9ffb2684-c62e-4a8b-9336-0788b263a22c",
+                "createdAt": "2025-12-15T18:11:25.111000-03:00",
+                "message": "(service production-imobi-frontend) registered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "d305724b-66e1-4299-ae08-92271b94de60",
+                "createdAt": "2025-12-15T18:10:53.833000-03:00",
+                "message": "(service production-imobi-frontend) has started 1 tasks: (task eaccd87031fd4b779c3ccd1f1129e8c8)."
+            },
+            {
+                "id": "f4399192-ed6a-42d2-b6c9-2691bdedbf4c",
+                "createdAt": "2025-12-15T17:50:03.872000-03:00",
+                "message": "(service production-imobi-frontend) has reached a steady state."
+            },
+            {
+                "id": "acff9627-4641-4eaf-aa76-360de976ac0c",
+                "createdAt": "2025-12-15T17:50:03.871000-03:00",
+                "message": "(service production-imobi-frontend) (deployment ecs-svc/3188383600161618580) deployment completed."
+            },
+            {
+                "id": "772df7b7-30c7-42e3-bd28-99376eba010c",
+                "createdAt": "2025-12-15T17:49:10.592000-03:00",
+                "message": "(service production-imobi-frontend, taskSet ecs-svc/3111519585420281910) has begun draining connections on 1 tasks."
+            },
+            {
+                "id": "19793c1b-2966-4198-a145-df04319cae48",
+                "createdAt": "2025-12-15T17:49:10.586000-03:00",
+                "message": "(service production-imobi-frontend) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "f512e1bb-9401-496d-b0f8-1ac5ec0ebbb9",
+                "createdAt": "2025-12-15T17:49:00.884000-03:00",
+                "message": "(service production-imobi-frontend) has stopped 1 running tasks: (task b92cfe38037341f1891bc7f80ec6c42d)."
+            },
+            {
+                "id": "ad7c2885-402c-480b-b488-3c01cdf0db73",
+                "createdAt": "2025-12-15T17:48:09.453000-03:00",
+                "message": "(service production-imobi-frontend) registered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "ebf325cc-4587-4199-887e-eb0674c03775",
+                "createdAt": "2025-12-15T17:47:38.821000-03:00",
+                "message": "(service production-imobi-frontend) has started 1 tasks: (task b6788c31af1d43f990668f31b4c3dd6c)."
+            },
+            {
+                "id": "082b9d9d-bf1c-42db-9961-ef963b4d0f48",
+                "createdAt": "2025-12-15T17:08:43.851000-03:00",
+                "message": "(service production-imobi-frontend) has reached a steady state."
+            },
+            {
+                "id": "2e259a68-9509-414a-a070-dcc3d1df4861",
+                "createdAt": "2025-12-15T17:08:43.850000-03:00",
+                "message": "(service production-imobi-frontend) (deployment ecs-svc/3111519585420281910) deployment completed."
+            },
+            {
+                "id": "be006bfe-8c9d-475e-9a99-f3cf819b2249",
+                "createdAt": "2025-12-15T17:07:51.094000-03:00",
+                "message": "(service production-imobi-frontend, taskSet ecs-svc/1820356542732224760) has begun draining connections on 1 tasks."
+            },
+            {
+                "id": "d56238fe-89c1-40a6-8b5b-c829febae04c",
+                "createdAt": "2025-12-15T17:07:51.087000-03:00",
+                "message": "(service production-imobi-frontend) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "edc5d577-a4a2-47e6-94fe-52e07a2b296b",
+                "createdAt": "2025-12-15T17:07:40.141000-03:00",
+                "message": "(service production-imobi-frontend) has stopped 1 running tasks: (task 76493bf04e3f4aa3a2892a3b01add12a)."
+            },
+            {
+                "id": "cdf11a63-fb6b-4537-a4cf-836d7f10af71",
+                "createdAt": "2025-12-15T17:06:38.549000-03:00",
+                "message": "(service production-imobi-frontend) registered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "9bca8245-ba81-4f91-bf38-12a47259e3d7",
+                "createdAt": "2025-12-15T17:05:46.548000-03:00",
+                "message": "(service production-imobi-frontend) has started 1 tasks: (task b92cfe38037341f1891bc7f80ec6c42d)."
+            },
+            {
+                "id": "a1327bb9-be34-417c-9233-aed9f16fa949",
+                "createdAt": "2025-12-15T16:31:01.833000-03:00",
+                "message": "(service production-imobi-frontend) has reached a steady state."
+            },
+            {
+                "id": "986e2d89-658e-4354-aabd-bd02f1a14951",
+                "createdAt": "2025-12-15T16:31:01.832000-03:00",
+                "message": "(service production-imobi-frontend) (deployment ecs-svc/1820356542732224760) deployment completed."
+            },
+            {
+                "id": "49fc415f-784d-4185-bb13-993325463b48",
+                "createdAt": "2025-12-15T16:29:59.914000-03:00",
+                "message": "(service production-imobi-frontend, taskSet ecs-svc/5610361864266897944) has begun draining connections on 1 tasks."
+            },
+            {
+                "id": "ed25836e-efff-47a2-9783-bf2d063ac754",
+                "createdAt": "2025-12-15T16:29:59.907000-03:00",
+                "message": "(service production-imobi-frontend) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "51de7f3b-51f0-4b07-a615-cad715c560c2",
+                "createdAt": "2025-12-15T16:29:49.884000-03:00",
+                "message": "(service production-imobi-frontend) has stopped 1 running tasks: (task 2eca6ad840bb4e30a3412974faed65a7)."
+            },
+            {
+                "id": "8eebf7ea-3e89-41ca-afd7-50be049beba7",
+                "createdAt": "2025-12-15T16:28:57.934000-03:00",
+                "message": "(service production-imobi-frontend) registered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "2a00f81e-7ad4-4d74-946d-9a4a9472c64c",
+                "createdAt": "2025-12-15T16:28:26.465000-03:00",
+                "message": "(service production-imobi-frontend) has started 1 tasks: (task 76493bf04e3f4aa3a2892a3b01add12a)."
+            },
+            {
+                "id": "e9973dbe-afd8-4905-8661-e8902709f203",
+                "createdAt": "2025-12-15T15:43:32.302000-03:00",
+                "message": "(service production-imobi-frontend) has reached a steady state."
+            },
+            {
+                "id": "3c110bea-faf5-4149-bd99-c56149c96d45",
+                "createdAt": "2025-12-15T15:43:32.301000-03:00",
+                "message": "(service production-imobi-frontend) (deployment ecs-svc/5610361864266897944) deployment completed."
+            },
+            {
+                "id": "1e0a5070-3e11-40ae-9366-1a859cdde319",
+                "createdAt": "2025-12-15T15:41:14.720000-03:00",
+                "message": "(service production-imobi-frontend, taskSet ecs-svc/5610361864266897944) has begun draining connections on 1 tasks."
+            },
+            {
+                "id": "ea991e44-b28f-4374-b534-fe9d4f073a6a",
+                "createdAt": "2025-12-15T15:41:04.351000-03:00",
+                "message": "(service production-imobi-frontend) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "1a4ae275-cf40-41b3-89c2-4dc8b2ee1ae7",
+                "createdAt": "2025-12-15T15:41:03.825000-03:00",
+                "message": "(service production-imobi-frontend) has stopped 1 running tasks: (task 4f01308db35143d7a367f7224cd4844d)."
+            },
+            {
+                "id": "da465f68-2ae7-474d-9689-243809c33b0b",
+                "createdAt": "2025-12-15T15:41:03.772000-03:00",
+                "message": "(service production-imobi-frontend) (task 4f01308db35143d7a367f7224cd4844d) (port 3000) is unhealthy in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e) due to (reason Health checks failed with these codes: [307])."
+            },
+            {
+                "id": "4a7b9a37-1e55-4d90-932f-0e845ff0a465",
+                "createdAt": "2025-12-15T15:39:59.922000-03:00",
+                "message": "(service production-imobi-frontend) registered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "ee8ad4c2-3419-49e9-97e6-e73c4192ae5d",
+                "createdAt": "2025-12-15T15:39:29.262000-03:00",
+                "message": "(service production-imobi-frontend) has started 1 tasks: (task 2eca6ad840bb4e30a3412974faed65a7). Amazon ECS replaced 1 tasks due to an unhealthy status."
+            },
+            {
+                "id": "8a9686af-e43c-4ffb-a821-7d6104f7851a",
+                "createdAt": "2025-12-15T15:38:25.172000-03:00",
+                "message": "(service production-imobi-frontend) registered 1 targets in (target-group arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e)"
+            },
+            {
+                "id": "11e62e57-07bb-411c-ab9e-86890d03cbf0",
+                "createdAt": "2025-12-15T15:37:53.523000-03:00",
+                "message": "(service production-imobi-frontend) has started 1 tasks: (task 4f01308db35143d7a367f7224cd4844d)."
+            }
+        ],
+        "createdAt": "2025-12-15T15:37:30.095000-03:00",
+        "currentServiceRevisions": [
+            {
+                "arn": "arn:aws:ecs:sa-east-1:575098225472:service-revision/production-imobi-cluster/production-imobi-frontend/1924694596625728347",
+                "requestedTaskCount": 0,
+                "runningTaskCount": 0,
+                "pendingTaskCount": 0
+            },
+            {
+                "arn": "arn:aws:ecs:sa-east-1:575098225472:service-revision/production-imobi-cluster/production-imobi-frontend/1034287766611017166",
+                "requestedTaskCount": 1,
+                "runningTaskCount": 1,
+                "pendingTaskCount": 0
+            }
+        ],
+        "placementConstraints": [],
+        "placementStrategy": [],
+        "networkConfiguration": {
+            "awsvpcConfiguration": {
+                "subnets": [
+                    "subnet-05b32a2ccfcba6c5c",
+                    "subnet-09996da9ce9a08f16",
+                    "subnet-07834e01856131bfc"
+                ],
+                "securityGroups": [
+                    "sg-0fc7e6e957369daf8"
+                ],
+                "assignPublicIp": "ENABLED"
+            }
+        },
+        "healthCheckGracePeriodSeconds": 0,
+        "schedulingStrategy": "REPLICA",
+        "deploymentController": {
+            "type": "ECS"
+        },
+        "createdBy": "arn:aws:iam::575098225472:root",
+        "enableECSManagedTags": false,
+        "propagateTags": "NONE",
+        "enableExecuteCommand": false,
+        "availabilityZoneRebalancing": "ENABLED",
+        "resourceManagementType": "CUSTOMER"
+    }
+}

@@ -96,7 +96,7 @@ export default function NovoLeadPage() {
         readItem('leads', id, {
           fields: ['*']
         })
-      );
+      ) as any;
 
       setFormData({
         name: lead.name || '',
@@ -182,18 +182,18 @@ export default function NovoLeadPage() {
     try {
       const leadData = {
         ...formData,
-        company_id: user.company_id
+        company_id: user?.company_id
       };
 
       if (leadId) {
         // @ts-ignore
         await directusClient.request(
-          updateItem('leads', leadId, leadData)
+          updateItem('leads', leadId, leadData as any)
         );
       } else {
         // @ts-ignore
         await directusClient.request(
-          createItem('leads', leadData)
+          createItem('leads', leadData as any)
         );
       }
 

@@ -1,0 +1,75 @@
+{
+    "SecurityGroups": [
+        {
+            "GroupId": "sg-0a7cc95c8d8310852",
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                }
+            ],
+            "VpcId": "vpc-0b2b8e9042bff6233",
+            "SecurityGroupArn": "arn:aws:ec2:sa-east-1:575098225472:security-group/sg-0a7cc95c8d8310852",
+            "OwnerId": "575098225472",
+            "GroupName": "imobi-directus-sg",
+            "Description": "Security group para Directus - porta 8055",
+            "IpPermissions": [
+                {
+                    "IpProtocol": "tcp",
+                    "FromPort": 8055,
+                    "ToPort": 8055,
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                }
+            ]
+        },
+        {
+            "GroupId": "sg-0173d09c81ac75993",
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                }
+            ],
+            "VpcId": "vpc-0b2b8e9042bff6233",
+            "SecurityGroupArn": "arn:aws:ec2:sa-east-1:575098225472:security-group/sg-0173d09c81ac75993",
+            "OwnerId": "575098225472",
+            "GroupName": "default",
+            "Description": "default VPC security group",
+            "IpPermissions": [
+                {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [
+                        {
+                            "UserId": "575098225472",
+                            "GroupId": "sg-0173d09c81ac75993"
+                        }
+                    ],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                }
+            ]
+        }
+    ]
+}

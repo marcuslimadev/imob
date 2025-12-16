@@ -1,0 +1,43 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host www.lojadaesquina.store:80 was resolved.
+* IPv6: (none)
+* IPv4: 18.228.252.71, 18.230.133.149, 56.126.20.65
+*   Trying 18.228.252.71:80...
+* Established connection to www.lojadaesquina.store (18.228.252.71 port 80) from 192.168.0.27 port 56633 
+* using HTTP/1.x
+> GET /api/auth/me HTTP/1.1
+
+> Host: www.lojadaesquina.store
+
+> User-Agent: curl/8.16.0
+
+> Accept: */*
+
+> Cookie: directus_token=test
+
+> 
+
+* Request completely sent off
+< HTTP/1.1 401 Unauthorized
+
+< Date: Mon, 15 Dec 2025 21:57:53 GMT
+
+< Content-Type: application/json
+
+< Transfer-Encoding: chunked
+
+< Connection: keep-alive
+
+< Content-Security-Policy: default-src 'self';    script-src 'self' 'unsafe-eval' 'unsafe-inline';    frame-src *;    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;    img-src * blob: data:;    media-src *;    connect-src *;    font-src 'self' data: https://fonts.gstatic.com;    frame-ancestors 'self' http://localhost:3000 ;
+
+< vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch
+
+< 
+
+{ [23 bytes data]
+
+100    13    0    13    0     0     76      0 --:--:-- --:--:-- --:--:--    77
+* Connection #0 to host www.lojadaesquina.store:80 left intact
+{"user":null}

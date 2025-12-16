@@ -1,0 +1,50 @@
+[14:18:32.301] INFO: Extensions loaded
+   Ôöé                 Update available!                 Ôöé
+[14:18:32.309] INFO: Loaded extensions: @imobi/homepage-endpoint, @imobi/crm-module, @imobi/whatsapp-webhook
+[14:18:32.317] INFO: Initializing bootstrap...
+[14:18:32.321] INFO: Database already initialized, skipping install
+[14:18:32.322] INFO: Running migrations...
+[14:18:32.442] INFO: Done
+2025-12-16T14:18:33: PM2 log: Launching in no daemon mode
+2025-12-16T14:18:33: PM2 log: App [directus:0] starting in -cluster mode-
+   Ôöé                                                   Ôöé
+   Ôöé                 11.12.0 ÔåÆ 11.14.0                 Ôöé
+   Ôöé                 6 versions behind                 Ôöé
+   Ôöé                                                   Ôöé
+   Ôöé                 More information:                 Ôöé
+   Ôöé   https://github.com/directus/directus/releases   Ôöé
+   Ôöé                                                   Ôöé
+   Ôò░ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔò»
+
+   Ôò¡ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔò«
+   Ôöé                                                   Ôöé
+   Ôöé                 Update available!                 Ôöé
+   Ôöé                                                   Ôöé
+   Ôöé                 11.12.0 ÔåÆ 11.14.0                 Ôöé
+   Ôöé                 6 versions behind                 Ôöé
+2025-12-16T14:18:36: PM2 log: App [directus:0] online
+   Ôöé                                                   Ôöé
+   Ôöé                 More information:                 Ôöé
+   Ôöé   https://github.com/directus/directus/releases   Ôöé
+   Ôöé                                                   Ôöé
+   Ôò░ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔò»
+[14:18:42.394] INFO: Extensions loaded
+[14:18:42.406] INFO: Loaded extensions: @imobi/homepage-endpoint, @imobi/crm-module, @imobi/whatsapp-webhook
+[14:18:42.477] INFO: Watching extensions for changes...
+[14:18:42.645] INFO: GraphQL Subscriptions started at 0.0.0.0:8055/graphql
+[14:18:42.647] INFO: WebSocket Server started at 0.0.0.0:8055/websocket
+[14:18:42.648] INFO: Logs WebSocket Server started at ws://0.0.0.0:8055/websocket/logs
+[14:18:42.677] INFO: Server started at http://0.0.0.0:8055
+[14:18:47.559] WARN: Illegal transport given for email. Check the EMAIL_TRANSPORT env var.
+[14:18:47.580] ERROR: email:connection in ERROR state
+    err: {
+      "type": "TypeError",
+      "message": "Cannot read properties of undefined (reading 'verify')",
+      "stack":
+          TypeError: Cannot read properties of undefined (reading 'verify')
+              at testEmail (file:///directus/node_modules/.pnpm/@directus+api@file+api_@types+node@24.2.0_jiti@2.5.1_typescript@5.8.3/node_modules/@directus/api/dist/services/server.js:369:30)
+              at ServerService.health (file:///directus/node_modules/.pnpm/@directus+api@file+api_@types+node@24.2.0_jiti@2.5.1_typescript@5.8.3/node_modules/@directus/api/dist/services/server.js:132:17)
+              at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+              at async file:///directus/node_modules/.pnpm/@directus+api@file+api_@types+node@24.2.0_jiti@2.5.1_typescript@5.8.3/node_modules/@directus/api/dist/controllers/server.js:49:18
+    }
+[14:18:47] GET /server/health 503 66ms

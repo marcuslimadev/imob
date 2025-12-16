@@ -1,0 +1,20 @@
+{
+    "TargetHealthDescriptions": [
+        {
+            "Target": {
+                "Id": "172.31.8.188",
+                "Port": 8055,
+                "AvailabilityZone": "sa-east-1a"
+            },
+            "HealthCheckPort": "8055",
+            "TargetHealth": {
+                "State": "healthy"
+            },
+            "AdministrativeOverride": {
+                "State": "no_override",
+                "Reason": "AdministrativeOverride.NoOverride",
+                "Description": "No override is currently active on target"
+            }
+        }
+    ]
+}

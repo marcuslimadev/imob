@@ -1,0 +1,5 @@
+[
+    "[18:45:19] GET /extensions/sources/index.js 200 7ms",
+    "[18:46:03] GET /extensions/sources/index.js 200 28ms",
+    "[18:51:53] GET /extensions/sources/index.js 200 6ms"
+]

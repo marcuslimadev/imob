@@ -1,0 +1,2 @@
+
+An error occurred (ValidationError) when calling the UpdateStack operation: Stack:arn:aws:cloudformation:sa-east-1:575098225472:stack/imobi-core/76fad270-d9b6-11f0-aa07-022616f742bb is in CREATE_IN_PROGRESS state and can not be updated.

@@ -1,0 +1,101 @@
+{
+    "service": {
+        "serviceArn": "arn:aws:ecs:sa-east-1:575098225472:service/production-imobi-cluster/production-imobi-frontend",
+        "serviceName": "production-imobi-frontend",
+        "clusterArn": "arn:aws:ecs:sa-east-1:575098225472:cluster/production-imobi-cluster",
+        "loadBalancers": [
+            {
+                "targetGroupArn": "arn:aws:elasticloadbalancing:sa-east-1:575098225472:targetgroup/imobi-frontend-tg/e0562cf1a673b92e",
+                "containerName": "frontend",
+                "containerPort": 3000
+            }
+        ],
+        "serviceRegistries": [],
+        "status": "ACTIVE",
+        "desiredCount": 1,
+        "runningCount": 0,
+        "pendingCount": 0,
+        "launchType": "FARGATE",
+        "platformVersion": "LATEST",
+        "platformFamily": "Linux",
+        "taskDefinition": "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:1",
+        "deploymentConfiguration": {
+            "deploymentCircuitBreaker": {
+                "enable": false,
+                "rollback": false
+            },
+            "maximumPercent": 200,
+            "minimumHealthyPercent": 100,
+            "strategy": "ROLLING",
+            "bakeTimeInMinutes": 0
+        },
+        "deployments": [
+            {
+                "id": "ecs-svc/5610361864266897944",
+                "status": "PRIMARY",
+                "taskDefinition": "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:1",
+                "desiredCount": 0,
+                "pendingCount": 0,
+                "runningCount": 0,
+                "failedTasks": 0,
+                "createdAt": "2025-12-15T15:37:30.095000-03:00",
+                "updatedAt": "2025-12-15T15:37:30.095000-03:00",
+                "launchType": "FARGATE",
+                "platformVersion": "1.4.0",
+                "platformFamily": "Linux",
+                "networkConfiguration": {
+                    "awsvpcConfiguration": {
+                        "subnets": [
+                            "subnet-05b32a2ccfcba6c5c",
+                            "subnet-09996da9ce9a08f16",
+                            "subnet-07834e01856131bfc"
+                        ],
+                        "securityGroups": [
+                            "sg-0fc7e6e957369daf8"
+                        ],
+                        "assignPublicIp": "ENABLED"
+                    }
+                },
+                "rolloutState": "IN_PROGRESS",
+                "rolloutStateReason": "ECS deployment ecs-svc/5610361864266897944 in progress."
+            }
+        ],
+        "roleArn": "arn:aws:iam::575098225472:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+        "events": [],
+        "createdAt": "2025-12-15T15:37:30.095000-03:00",
+        "currentServiceRevisions": [
+            {
+                "arn": "arn:aws:ecs:sa-east-1:575098225472:service-revision/production-imobi-cluster/production-imobi-frontend/5610361864266897944",
+                "requestedTaskCount": 0,
+                "runningTaskCount": 0,
+                "pendingTaskCount": 0
+            }
+        ],
+        "placementConstraints": [],
+        "placementStrategy": [],
+        "networkConfiguration": {
+            "awsvpcConfiguration": {
+                "subnets": [
+                    "subnet-05b32a2ccfcba6c5c",
+                    "subnet-09996da9ce9a08f16",
+                    "subnet-07834e01856131bfc"
+                ],
+                "securityGroups": [
+                    "sg-0fc7e6e957369daf8"
+                ],
+                "assignPublicIp": "ENABLED"
+            }
+        },
+        "healthCheckGracePeriodSeconds": 0,
+        "schedulingStrategy": "REPLICA",
+        "deploymentController": {
+            "type": "ECS"
+        },
+        "createdBy": "arn:aws:iam::575098225472:root",
+        "enableECSManagedTags": false,
+        "propagateTags": "NONE",
+        "enableExecuteCommand": false,
+        "availabilityZoneRebalancing": "ENABLED",
+        "resourceManagementType": "CUSTOMER"
+    }
+}

@@ -111,7 +111,7 @@ export default function NovoImovelPage() {
     try {
       const propertyData = {
         ...formData,
-        company_id: user.company_id,
+        company_id: user?.company_id,
         views_count: 0
       };
 
@@ -127,13 +127,13 @@ export default function NovoImovelPage() {
           // @ts-ignore - Custom schema
           await directusClient.request(
             // @ts-ignore
-            createItem('property_media', {
+            createItem('property_media' as any, {
               property_id: (createdProperty as any).id,
               directus_files_id: uploadedImages[i].id,
               type: 'image',
               sort: i,
               is_cover: i === 0
-            })
+            } as any)
           );
         }
       }

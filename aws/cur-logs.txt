@@ -1,0 +1,20 @@
+[14:29:19.423] INFO: Watching extensions for changes...
+[14:29:19.597] INFO: GraphQL Subscriptions started at 0.0.0.0:8055/graphql
+[14:29:19.598] INFO: WebSocket Server started at 0.0.0.0:8055/websocket
+[14:29:19.600] INFO: Logs WebSocket Server started at ws://0.0.0.0:8055/websocket/logs
+[14:29:19.632] INFO: Server started at http://0.0.0.0:8055
+[14:29:41.757] INFO: === WHATSAPP WEBHOOK RECEBIDO ===
+[14:29:41.759] INFO: Body: {}
+[14:29:41.762] INFO: De: , Para: , Mensagem: 
+[14:29:41.774] WARN: Empresa nao encontrada para o numero: 
+[14:29:41] POST /whatsapp/webhook 200 59ms
+[14:30:05.600] INFO: === WHATSAPP WEBHOOK RECEBIDO ===
+[14:30:05.602] INFO: Body: {}
+[14:30:05.602] INFO: De: , Para: , Mensagem: 
+[14:30:05.606] WARN: Empresa nao encontrada para o numero: 
+[14:30:05] POST /whatsapp/webhook 200 23ms
+[14:30:38.803] INFO: === WHATSAPP WEBHOOK RECEBIDO ===
+[14:30:38.805] INFO: Body: {}
+[14:30:38.805] INFO: De: , Para: , Mensagem: 
+[14:30:38.809] WARN: Empresa nao encontrada para o numero: 
+[14:30:38] POST /whatsapp/webhook 200 17ms

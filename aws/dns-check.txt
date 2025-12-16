@@ -1,0 +1,5 @@
+*** dns.google não encontrou _a804f27b5844a90fb48b96ab1f002dd5.lojadaesquina.store: Non-existent domain
+
+Servidor:  dns.google
+Address:  8.8.8.8
+

@@ -47,7 +47,7 @@ async function getLeadsStats(companyId: string) {
           filter: {
             company_id: { _eq: companyId },
             stage: { _eq: 'new' }
-          }
+          } as any
         }
       })
     );
@@ -60,7 +60,7 @@ async function getLeadsStats(companyId: string) {
           filter: {
             company_id: { _eq: companyId },
             stage: { _eq: 'contacted' }
-          }
+          } as any
         }
       })
     );
@@ -73,7 +73,7 @@ async function getLeadsStats(companyId: string) {
           filter: {
             company_id: { _eq: companyId },
             stage: { _eq: 'won' }
-          }
+          } as any
         }
       })
     );

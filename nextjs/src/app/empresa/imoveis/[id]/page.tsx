@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { directusClient } from '@/lib/directus/client';
 import { readItem, updateItem, createItem, deleteItem } from '@directus/sdk';
@@ -14,12 +14,13 @@ interface UploadedImage {
 }
 
 interface EditImovelPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function EditImovelPage({ params }: EditImovelPageProps) {
+  const { id } = use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -55,13 +56,13 @@ export default function EditImovelPage({ params }: EditImovelPageProps) {
 
   useEffect(() => {
     loadProperty();
-  }, [params.id]);
+  }, [id]);
 
   async function loadProperty() {
     try {
       // @ts-ignore - Custom schema
       const property = await directusClient.request(
-        readItem('properties', params.id, {
+        readItem('properties', id, {
           fields: ['*']
         })
       );
@@ -98,7 +99,7 @@ export default function EditImovelPage({ params }: EditImovelPageProps) {
       const media = await directusClient.request(
         // @ts-ignore
         readItem('property_media', {
-          filter: { property_id: { _eq: params.id } },
+          filter: { property_id: { _eq: id } },
           fields: ['id', 'directus_files_id', 'sort']
         })
       );
@@ -179,7 +180,7 @@ export default function EditImovelPage({ params }: EditImovelPageProps) {
       // Update property
       // @ts-ignore - Custom schema
       await directusClient.request(
-        updateItem('properties', params.id, formData)
+        updateItem('properties', id, formData)
       );
 
       // Delete existing media entries
@@ -197,13 +198,13 @@ export default function EditImovelPage({ params }: EditImovelPageProps) {
         for (let i = 0; i < uploadedImages.length; i++) {
           // @ts-ignore - Custom schema
           await directusClient.request(
-            createItem('property_media', {
-              property_id: params.id,
+            createItem('property_media' as any, {
+              property_id: id,
               directus_files_id: uploadedImages[i].id,
               type: 'image',
               sort: i,
               is_cover: i === 0
-            })
+            } as any)
           );
         }
       }

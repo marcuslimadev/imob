@@ -1,0 +1,5 @@
+{
+    "taskArns": [
+        "arn:aws:ecs:sa-east-1:575098225472:task/production-imobi-cluster/a990062040a647dabc877771549e72a9"
+    ]
+}

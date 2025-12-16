@@ -1,0 +1,80 @@
+{
+    "Parameters": [
+        {
+            "ParameterKey": "DirectusAdminEmail",
+            "DefaultValue": "admin@imobi.com.br",
+            "NoEcho": false,
+            "Description": "Email do admin do Directus"
+        },
+        {
+            "ParameterKey": "DBPassword",
+            "NoEcho": true,
+            "Description": "Senha do banco de dados (sem mostrar)"
+        },
+        {
+            "ParameterKey": "VpcId",
+            "DefaultValue": "vpc-0b2b8e9042bff6233",
+            "NoEcho": false,
+            "Description": "VPC ID (usando VPC default existente)"
+        },
+        {
+            "ParameterKey": "DirectusAdminPassword",
+            "DefaultValue": "Admin123!",
+            "NoEcho": true,
+            "Description": "Senha do admin do Directus"
+        },
+        {
+            "ParameterKey": "DBHost",
+            "DefaultValue": "imobi-postgres.czk0ka4g8s8f.sa-east-1.rds.amazonaws.com",
+            "NoEcho": false,
+            "Description": "Endpoint do RDS PostgreSQL existente"
+        },
+        {
+            "ParameterKey": "DirectusKey",
+            "DefaultValue": "directus-secret-key-change-me",
+            "NoEcho": true,
+            "Description": "Directus KEY (secret)"
+        },
+        {
+            "ParameterKey": "Environment",
+            "DefaultValue": "production",
+            "NoEcho": false,
+            "Description": "Environment name"
+        },
+        {
+            "ParameterKey": "DBName",
+            "DefaultValue": "imobi",
+            "NoEcho": false,
+            "Description": "Nome do banco de dados"
+        },
+        {
+            "ParameterKey": "DBUser",
+            "DefaultValue": "imobi_admin",
+            "NoEcho": false,
+            "Description": "Usuario do banco de dados"
+        },
+        {
+            "ParameterKey": "DirectusSecret",
+            "DefaultValue": "directus-secret-change-me",
+            "NoEcho": true,
+            "Description": "Directus SECRET"
+        },
+        {
+            "ParameterKey": "DirectusImageUri",
+            "DefaultValue": "575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus:latest",
+            "NoEcho": false,
+            "Description": "URI da imagem do Directus no ECR"
+        },
+        {
+            "ParameterKey": "SubnetIds",
+            "DefaultValue": "subnet-09996da9ce9a08f16,subnet-05b32a2ccfcba6c5c,subnet-07834e01856131bfc",
+            "NoEcho": false,
+            "Description": "Lista de Subnet IDs para o ALB e ECS"
+        }
+    ],
+    "Description": "iMOBI - Infraestrutura Core (ALB + ECS) - SEM RDS (usa RDS existente)",
+    "Capabilities": [
+        "CAPABILITY_NAMED_IAM"
+    ],
+    "CapabilitiesReason": "The following resource(s) require capabilities: [AWS::IAM::Role]"
+}

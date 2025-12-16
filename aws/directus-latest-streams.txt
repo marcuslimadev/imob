@@ -1,0 +1,5 @@
+[
+    "directus/directus/9b6e34d89dab4eb98a0b90f3e0784742",
+    "directus/directus/a0fc528738b84daf84af817388fca898",
+    "directus/directus/ba39d889b1bd4f77816906545cf63829"
+]

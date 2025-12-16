@@ -78,15 +78,16 @@ async function getFeaturedProperties({
 export default async function VitrineHomePage({
   searchParams
 }: {
-  searchParams?: Record<string, string | string[]>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const headersList = headers();
+  const headersList = await headers();
+  const resolvedParams = await searchParams;
   const companySlug = headersList.get('x-company-slug') || undefined;
-  const search = typeof searchParams?.q === 'string' ? searchParams?.q : undefined;
-  const propertyType = typeof searchParams?.tipo === 'string' ? searchParams?.tipo : undefined;
-  const transactionType = typeof searchParams?.transacao === 'string' ? searchParams?.transacao : undefined;
-  const city = typeof searchParams?.cidade === 'string' ? searchParams?.cidade : undefined;
-  const state = typeof searchParams?.estado === 'string' ? searchParams?.estado : undefined;
+  const search = typeof resolvedParams?.q === 'string' ? resolvedParams?.q : undefined;
+  const propertyType = typeof resolvedParams?.tipo === 'string' ? resolvedParams?.tipo : undefined;
+  const transactionType = typeof resolvedParams?.transacao === 'string' ? resolvedParams?.transacao : undefined;
+  const city = typeof resolvedParams?.cidade === 'string' ? resolvedParams?.cidade : undefined;
+  const state = typeof resolvedParams?.estado === 'string' ? resolvedParams?.estado : undefined;
 
   const properties = await getFeaturedProperties({
     companySlug,

@@ -31,7 +31,7 @@ interface Lead {
 }
 
 export default function NovaVistoriaPage() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   
   const [loading, setLoading] = useState(false);
@@ -61,21 +61,21 @@ export default function NovaVistoriaPage() {
           directusClient.request(
             readItems('properties', {
               filter: { company_id: { _eq: user.company_id } },
-              fields: ['id', 'title', 'address_street'],
+              fields: ['id', 'title', 'address_street'] as any,
               limit: 100,
             })
           ),
           directusClient.request(
             readItems('leads', {
               filter: { company_id: { _eq: user.company_id } },
-              fields: ['id', 'name', 'email'],
+              fields: ['id', 'name', 'email'] as any,
               limit: 100,
             })
           ),
         ]);
 
-        setProperties(propertiesData as Property[]);
-        setLeads(leadsData as Lead[]);
+        setProperties(propertiesData as unknown as Property[]);
+        setLeads(leadsData as unknown as Lead[]);
       } catch (err) {
         console.error('Erro ao buscar opções:', err);
       } finally {
@@ -109,14 +109,14 @@ export default function NovaVistoriaPage() {
       const codigo = `VIS-${Date.now().toString(36).toUpperCase()}`;
 
       await directusClient.request(
-        createItem('vistorias', {
+        createItem('vistorias' as any, {
           ...formData,
           company_id: user.company_id,
           codigo,
           status: 'solicitada',
           lead_id: formData.lead_id || null,
           data_agendada: formData.data_agendada || null,
-        })
+        } as any)
       );
 
       router.push('/empresa/vistorias');

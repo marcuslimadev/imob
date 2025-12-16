@@ -1,0 +1,7 @@
+[
+    "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:6",
+    "arn:aws:ecs:sa-east-1:575098225472:task-definition/imobi-frontend:7",
+    "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:2",
+    "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:3",
+    "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:4"
+]

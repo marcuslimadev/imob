@@ -1,0 +1,49 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 271B 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 DONE 1.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 238B 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 11.72kB 0.0s done
+#5 DONE 0.1s
+
+#6 [1/5] FROM docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f
+#6 resolve docker.io/library/node:22-alpine@sha256:9632533eda8061fc1e9960cfb3f8762781c07a00ee7317f5dc0e13c05e15166f 0.1s done
+#6 DONE 0.1s
+
+#7 [2/5] WORKDIR /app
+#7 CACHED
+
+#8 [3/5] COPY package*.json ./
+#8 CACHED
+
+#9 [4/5] RUN npm install --legacy-peer-deps --production=false
+#9 CACHED
+
+#10 [5/5] COPY . .
+#10 CACHED
+
+#11 exporting to image
+#11 exporting layers 0.0s done
+#11 exporting manifest sha256:058e043bcfd8186713cfc2acf76f6fa0b7c5607ebedb7f4601cfa7f92197641d done
+#11 exporting config sha256:130c8f6a2f586589033bcc7bd3f2c507352a6f7a40cf6455f1437d96060a6fd6 done
+#11 exporting attestation manifest sha256:fd7be12eaa613edbf138e8538ac25d26c4644623956f6f33128fb40b5e60a2c8
+#11 exporting attestation manifest sha256:fd7be12eaa613edbf138e8538ac25d26c4644623956f6f33128fb40b5e60a2c8 0.1s done
+#11 exporting manifest list sha256:8091fe38666a91d1396399068b2cf7786425afe0e936c92c0f87d124032ebbeb 0.0s done
+#11 naming to 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-frontend:latest
+#11 naming to 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-frontend:latest done
+#11 unpacking to 575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-frontend:latest

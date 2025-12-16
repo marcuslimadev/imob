@@ -1,0 +1,16 @@
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : {"success":true,"user":{"email":"admin@imobi.com.br"}}
+RawContent        : HTTP/1.1 200 OK
+                    Date: Tue, 16 Dec 2025 17:19:21 GMT
+                    Transfer-Encoding: chunked
+                    Connection: keep-alive
+                    Content-Security-Policy: default-src 'self';    script-src 'self' 'unsafe-eval' 'unsafe-inline…
+Headers           : {[Date, System.String[]], [Transfer-Encoding, System.String[]], [Connection, System.String[]], [Content-Security-Policy, System.String[]]…}
+Images            : {}
+InputFields       : {}
+Links             : {}
+RawContentLength  : 54
+RelationLink      : {}
+

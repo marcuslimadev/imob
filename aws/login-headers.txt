@@ -1,0 +1,11 @@
+
+Key                     Value
+---                     -----
+Date                    {Mon, 15 Dec 2025 19:38:44 GMT}
+Transfer-Encoding       {chunked}
+Connection              {keep-alive}
+Content-Security-Policy {default-src 'self';    script-src 'self' …
+Vary                    {RSC, Next-Router-State-Tree, Next-Router-…
+Set-Cookie              {directus_token=eyJhbGciOiJIUzI1NiIsInR5cC…
+Content-Type            {application/json}
+

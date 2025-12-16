@@ -1,0 +1,15 @@
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : {"data":{"expires":900000,"refresh_token":"vr5mbtgT3VgrPmfFUNj4ZONaB6tD4-fCfOrRHuUbvDHm-p1yx-PFub5bweggM8Ph","access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQyNDRhNWIwLTY5NGEtNDE5YS1hZD…
+RawContent        : HTTP/1.1 200 OK
+                    Date: Tue, 16 Dec 2025 17:14:35 GMT
+                    Connection: keep-alive
+                    Content-Security-Policy: script-src 'self' 'unsafe-eval';worker-src 'self' blob:;child-src 'self' blob:;img-src 'self' dat…
+Headers           : {[Date, System.String[]], [Connection, System.String[]], [Content-Security-Policy, System.String[]], [X-Powered-By, System.String[]]…}
+Images            : {}
+InputFields       : {}
+Links             : {}
+RawContentLength  : 449
+RelationLink      : {}
+

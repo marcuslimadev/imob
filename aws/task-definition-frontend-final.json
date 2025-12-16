@@ -35,7 +35,7 @@
         },
         {
           "name": "DIRECTUS_INTERNAL_URL",
-          "value": "http://172.31.3.151:8055"
+          "value": "http://172.31.7.78:8055"
         },
         {
           "name": "DIRECTUS_ADMIN_TOKEN",

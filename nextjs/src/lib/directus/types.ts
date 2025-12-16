@@ -230,8 +230,10 @@ export interface PropertyView {
 export interface Conversa {
   id: string;
   status: 'active' | 'archived';
+  stage?: 'novo' | 'negociando' | 'visitado' | 'proposta' | 'fechado' | 'perdido';
   date_created?: string;
   date_updated?: string;
+  updated_at?: string;
   
   company_id: string;
   company?: Company;
@@ -253,13 +255,14 @@ export interface Conversa {
 export interface Mensagem {
   id: string;
   date_created?: string;
+  created_at?: string; // Alias for date_created used in some queries
   
   conversa_id: string;
   conversa?: Conversa;
   company_id: string;
   
   twilio_sid?: string;
-  direction: 'inbound' | 'outbound';
+  direction: 'inbound' | 'outbound' | 'incoming' | 'outgoing';
   content?: string;
   media_url?: string;
   media_type?: string;

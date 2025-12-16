@@ -1,0 +1,5 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:sa-east-1:575098225472:task-definition/production-imobi-directus:4",
+    "lastStatus": "RUNNING",
+    "startedAt": "2025-12-15T19:05:08.766000-03:00"
+}

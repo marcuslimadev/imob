@@ -1,0 +1,13 @@
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : <?xml version="1.0" encoding="UTF-8"?><Response></Response>
+RawContent        : HTTP/1.1 200 OK
+                    Content-Security-Policy: script-src 'self' 'unsafe-eval' https://cdn.tailwindcss.com;worker-src 'self' blob:;child-src 'self' blob:;img-src 'self' data: blob: https://raw.githubuserco…
+Headers           : {[Content-Security-Policy, System.String[]], [X-Powered-By, System.String[]], [Access-Control-Allow-Origin, System.String[]], [Vary, System.String[]]…}
+Images            : {}
+InputFields       : {}
+Links             : {}
+RawContentLength  : 59
+RelationLink      : {}
+

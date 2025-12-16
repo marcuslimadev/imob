@@ -1,0 +1,14 @@
+[
+    [
+        "sg-0a7cc95c8d8310852",
+        "imobi-directus-sg"
+    ],
+    [
+        "sg-06c2b25529eb0517f",
+        "production-imobi-alb-sg"
+    ],
+    [
+        "sg-0fc7e6e957369daf8",
+        "production-imobi-ecs-sg"
+    ]
+]

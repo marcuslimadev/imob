@@ -1,687 +1,551 @@
 /**
  * Directus Extension: WhatsApp Webhook Endpoint (Multi-Tenant)
- * Migrado de: backend/app/Http/Controllers/WebhookController.php
- * 
- * Endpoints disponíveis:
- * - POST /whatsapp - Receber webhooks do Twilio/Evolution API
- * - POST /whatsapp/status - Status callbacks do Twilio
- * 
- * Multi-Tenant:
- * - Identifica empresa pelo campo 'To' (número WhatsApp da empresa)
- * - Busca configurações em app_settings
- * - Isola dados por company_id
+ * Baseado no WhatsAppService do projeto /imobi/backend
+ * Implementa o funil de atendimento conforme FUNIL_STAGES.md
  */
 
-import { getCompanySettingsByWhatsApp } from '../../shared/company-settings.js';
-import {
-	calculateNextStage,
-	detectHumanRequestKeywords,
-	getStageMessage,
-	isValidTransition
-} from '../../shared/pipeline-stages.js';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 
-export default (router, { services, logger, database }) => {
-	const { ItemsService } = services;
-
-	/**
-	 * POST /whatsapp
-	 * Receber mensagens do WhatsApp (Twilio ou Evolution API)
-	 */
-	router.post('/', async (req, res) => {
-		try {
-			const webhookData = req.body;
-
-			// Detectar origem do webhook
-			const source = detectWebhookSource(webhookData);
-
-			logger.info('╔════════════════════════════════════════════════════════════════╗');
-			logger.info('║           🔔 WEBHOOK RECEBIDO - ' + source.toUpperCase() + '                    ║');
-			logger.info('╚════════════════════════════════════════════════════════════════╝');
-
-			// Normalizar dados
-			const normalizedData = normalizeWebhookData(webhookData, source);
-
-			logger.info('📱 De:', normalizedData.from || 'N/A');
-			logger.info('📱 Para:', normalizedData.to || 'N/A');
-			logger.info('👤 Nome:', normalizedData.profile_name || 'N/A');
-			logger.info('💬 Mensagem:', normalizedData.message || '[mídia]');
-			logger.info('🆔 Message ID:', normalizedData.message_id || 'N/A');
-			logger.info('🔖 Origem:', source);
-			logger.info('─────────────────────────────────────────────────────────────────');
-
-			// 🏢 MULTI-TENANT: Identificar empresa pelo número WhatsApp
-			let companySettings = null;
-			if (normalizedData.to) {
-				try {
-					companySettings = await getCompanySettingsByWhatsApp({ database }, normalizedData.to);
-					logger.info('🏢 Empresa identificada:', {
-						company_id: companySettings.company_id,
-						ai_assistant: companySettings.ai_assistant_name
-					});
-				} catch (error) {
-					logger.warn('⚠️  Empresa não encontrada para número:', normalizedData.to);
-					logger.warn('💡 Configure app_settings para este número WhatsApp');
-					// Continua sem empresa (modo fallback)
-				}
-			}
-
-			// Processar mensagem via WhatsApp Service
-			const result = await processIncomingMessage(normalizedData, companySettings, { services, logger, database, req });
-
-			logger.info('╔════════════════════════════════════════════════════════════════╗');
-			logger.info('║           ✅ WEBHOOK PROCESSADO COM SUCESSO                   ║');
-			logger.info('╚════════════════════════════════════════════════════════════════╝');
-			logger.info('📊 Resultado:', result);
-			logger.info('═════════════════════════════════════════════════════════════════');
-
-			return res.json({
-				success: true,
-				message: 'Processado',
-				result
-			});
-
-		} catch (error) {
-			logger.error('ERRO NO WEBHOOK', {
-				error: error.message,
-				stack: error.stack,
-				payload: req.body
-			});
-
-			// Retornar 200 para evitar reenvio do Twilio
-			return res.json({
-				success: false,
-				error: 'Falha ao processar webhook: ' + error.message
-			});
+/**
+ * Baixar mídia da Twilio (com autenticação)
+ */
+async function downloadTwilioMedia(mediaUrl, accountSid, authToken, logger) {
+	try {
+		logger.info('🎤 Baixando áudio de: ' + mediaUrl);
+		
+		const auth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
+		
+		const response = await fetch(mediaUrl, {
+			headers: {
+				'Authorization': `Basic ${auth}`
+			},
+			redirect: 'follow'
+		});
+		
+		if (!response.ok) {
+			logger.error('Erro ao baixar mídia: HTTP ' + response.status);
+			return { success: false, error: 'HTTP ' + response.status };
 		}
-	});
-
-	/**
-	 * POST /whatsapp/status
-	 * Status callback do Twilio
-	 */
-	router.post('/status', async (req, res) => {
-		try {
-			const statusData = req.body;
-
-			logger.info('Status callback recebido', statusData);
-
-			// Atualizar status da mensagem no banco
-			if (statusData.MessageSid && statusData.MessageStatus) {
-				const mensagensService = new ItemsService('mensagens', { schema: req.schema, accountability: req.accountability });
-				
-				const mensagens = await mensagensService.readByQuery({
-					filter: {
-						message_sid: { _eq: statusData.MessageSid }
-					}
-				});
-
-				if (mensagens.length > 0) {
-					await mensagensService.updateOne(mensagens[0].id, {
-						status: statusData.MessageStatus
-					});
-
-					logger.info('✅ Status da mensagem atualizado', {
-						message_sid: statusData.MessageSid,
-						status: statusData.MessageStatus
-					});
-				}
-			}
-
-			return res.send('OK');
-
-		} catch (error) {
-			logger.error('❌ Erro ao processar status callback', {
-				error: error.message,
-				stack: error.stack
-			});
-
-			return res.send('OK'); // Sempre retornar OK para Twilio
-		}
-	});
-
-	/**
-	 * Detectar origem do webhook (Twilio ou Evolution API)
-	 */
-	function detectWebhookSource(data) {
-		// Twilio tem campos específicos como MessageSid, AccountSid
-		if (data.MessageSid || data.AccountSid) {
-			return 'twilio';
-		}
-
-		// Evolution API tem campos como event, instance, data
-		if (data.event || data.instance || data.data) {
-			return 'evolution';
-		}
-
-		return 'unknown';
+		
+		const arrayBuffer = await response.arrayBuffer();
+		const data = Buffer.from(arrayBuffer);
+		
+		logger.info('✅ Áudio baixado: ' + data.length + ' bytes');
+		return { success: true, data };
+	} catch (error) {
+		logger.error('Erro ao baixar mídia: ' + error.message);
+		return { success: false, error: error.message };
 	}
+}
+
+/**
+ * Transcrever áudio usando OpenAI Whisper API
+ */
+async function transcribeAudio(audioBuffer, openaiApiKey, logger) {
+	try {
+		logger.info('🎙️ Iniciando transcrição com Whisper...');
+		
+		// Salvar temporariamente
+		const tempPath = path.join(os.tmpdir(), `audio_${Date.now()}_${Math.random().toString(36).substring(7)}.ogg`);
+		fs.writeFileSync(tempPath, audioBuffer);
+		logger.info('💾 Áudio salvo em: ' + tempPath);
+		
+		// Criar FormData para Whisper API
+		const formData = new FormData();
+		const audioBlob = new Blob([audioBuffer], { type: 'audio/ogg' });
+		formData.append('file', audioBlob, 'audio.ogg');
+		formData.append('model', 'whisper-1');
+		formData.append('language', 'pt');
+		
+		const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${openaiApiKey}`
+			},
+			body: formData
+		});
+		
+		// Limpar arquivo temporário
+		try { fs.unlinkSync(tempPath); } catch (e) {}
+		
+		if (!response.ok) {
+			const errorText = await response.text();
+			logger.error('Erro Whisper API: ' + response.status + ' - ' + errorText);
+			return { success: false, error: 'Whisper API error: ' + response.status };
+		}
+		
+		const result = await response.json();
+		logger.info('✅ Transcrição concluída: "' + (result.text || '').substring(0, 100) + '..."');
+		
+		return { success: true, text: result.text || '' };
+	} catch (error) {
+		logger.error('Erro na transcrição: ' + error.message);
+		return { success: false, error: error.message };
+	}
+}
+
+/**
+ * Buscar empresa pelo numero WhatsApp
+ */
+async function getCompanyByWhatsAppNumber(database, whatsappNumber) {
+	try {
+		const normalizedNumber = whatsappNumber
+			.replace('whatsapp:', '')
+			.replace(/\s/g, '')
+			.replace(/[^+\d]/g, '');
+
+		const company = await database
+			.select('*')
+			.from('companies')
+			.where('twilio_whatsapp_number', 'like', `%${normalizedNumber.slice(-8)}%`)
+			.first();
+
+		return company || null;
+	} catch (error) {
+		console.error('Erro ao buscar company por WhatsApp', error.message);
+		return null;
+	}
+}
+
+/**
+ * Parser simples de application/x-www-form-urlencoded
+ */
+function parseUrlEncoded(str) {
+	const result = {};
+	if (!str) return result;
+	str.split('&').forEach(pair => {
+		const [key, value] = pair.split('=').map(s => decodeURIComponent(s.replace(/\+/g, ' ')));
+		if (key) result[key] = value || '';
+	});
+	return result;
+}
+
+/**
+ * Extrair primeiro nome do cliente
+ */
+function extractPreferredName(nome) {
+	if (!nome) return null;
+	const partes = nome.trim().split(/\s+/);
+	return partes[0] || nome;
+}
+
+/**
+ * Gerar mensagem de boas-vindas (primeira mensagem)
+ */
+function buildWelcomeMessage(assistantName, preferredName, companyName) {
+	const saudacao = preferredName ? `Oi, *${preferredName}*!` : 'Olá!';
+	const nomePergunta = preferredName 
+		? `Posso te chamar de ${preferredName}? Se preferir outro nome, é só me avisar.`
+		: 'Como posso te chamar para registrar direitinho no nosso atendimento?';
+
+	return `${saudacao} Eu sou a ${assistantName}, da *${companyName}*. Vou te ajudar a encontrar o imóvel ideal. ${nomePergunta}
+
+Me conta um pouco sobre o que você procura:
+• Qual o valor que você tem em mente?
+• Qual região você prefere?
+• Quantos quartos você precisa?
+
+Pode mandar texto ou áudio, como preferir. 😊`;
+}
+
+/**
+ * Enviar mensagem via Twilio API
+ */
+async function sendTwilioMessage(company, toPhone, message, logger) {
+	try {
+		if (!company.twilio_account_sid || !company.twilio_auth_token) {
+			logger.warn('Twilio nao configurado para empresa: ' + company.id);
+			return { success: false, error: 'Twilio nao configurado' };
+		}
+
+		const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${company.twilio_account_sid}/Messages.json`;
+		const auth = Buffer.from(`${company.twilio_account_sid}:${company.twilio_auth_token}`).toString('base64');
+
+		const formData = new URLSearchParams();
+		formData.append('From', `whatsapp:${company.twilio_whatsapp_number}`);
+		formData.append('To', `whatsapp:+${toPhone}`);
+		formData.append('Body', message);
+
+		logger.info('Enviando mensagem Twilio para: +' + toPhone);
+
+		const response = await fetch(twilioUrl, {
+			method: 'POST',
+			headers: {
+				'Authorization': `Basic ${auth}`,
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: formData.toString()
+		});
+
+		const result = await response.json();
+		
+		if (!response.ok) {
+			logger.error('Erro Twilio: ' + JSON.stringify(result));
+			return { success: false, error: result.message || 'Erro Twilio' };
+		}
+
+		logger.info('Mensagem enviada! SID: ' + result.sid);
+		return { success: true, message_sid: result.sid };
+	} catch (error) {
+		logger.error('Erro ao enviar Twilio: ' + error.message);
+		return { success: false, error: error.message };
+	}
+}
+
+export default {
+	id: 'whatsapp',
+	handler: (router, { services, logger, database, getSchema }) => {
+		const { ItemsService } = services;
+
+		// Health check
+		router.get('/health', (req, res) => {
+			res.json({ status: 'ok', endpoint: 'whatsapp', timestamp: new Date().toISOString() });
+		});
+
+		/**
+		 * Detectar origem do webhook (Twilio ou Evolution API)
+		 */
+		function detectWebhookSource(data) {
+			if (data.MessageSid || data.AccountSid) return 'twilio';
+			if (data.event || data.instance || data.data) return 'evolution';
+			return 'unknown';
+		}
 
 	/**
 	 * Normalizar dados do webhook para formato padrão
 	 */
 	function normalizeWebhookData(data, source) {
 		if (source === 'twilio') {
+			const numMedia = parseInt(data.NumMedia || '0', 10);
+			const mediaUrl = numMedia > 0 ? (data.MediaUrl0 || null) : null;
+			const mediaType = numMedia > 0 ? (data.MediaContentType0 || null) : null;
+			
+			// Detectar tipo de mensagem
+			let messageType = 'text';
+			if (mediaType) {
+				if (mediaType.startsWith('audio/')) messageType = 'audio';
+				else if (mediaType.startsWith('image/')) messageType = 'image';
+				else if (mediaType.startsWith('video/')) messageType = 'video';
+				else if (mediaType.includes('pdf') || mediaType.includes('document')) messageType = 'document';
+			}
+			
 			return {
 				from: data.From || null,
 				to: data.To || null,
 				message: data.Body || null,
 				message_id: data.MessageSid || null,
-				profile_name: data.ProfileName || null,
-				media_url: data.MediaUrl0 || null,
-				media_type: data.MediaContentType0 || null,
-				location: {
-					city: data.FromCity || null,
-					state: data.FromState || null,
-					country: data.FromCountry || null,
-					latitude: data.Latitude || null,
-					longitude: data.Longitude || null
-				},
-				source: 'twilio',
-				raw: data
+				profile_name: data.ProfileName || 'Cliente',
+				media_url: mediaUrl,
+				media_type: mediaType,
+				message_type: messageType,
+				num_media: numMedia,
+				source: 'twilio'
 			};
 		}
-
+		
 		if (source === 'evolution') {
 			const messageData = data.data || {};
 			const key = messageData.key || {};
 			const message = messageData.message || {};
 			const pushName = messageData.pushName || null;
-
-			// Extrair texto da mensagem
+			
 			const messageText = message.conversation 
-				|| message.extendedTextMessage?.text
-				|| message.imageMessage?.caption
-				|| message.videoMessage?.caption
+				|| (message.extendedTextMessage && message.extendedTextMessage.text)
+				|| (message.imageMessage && message.imageMessage.caption)
 				|| null;
-
+			
+			const remoteJid = key.remoteJid || '';
+			const phone = remoteJid.replace(/[^0-9]/g, '');
+			
 			return {
-				from: 'whatsapp:+' + (key.remoteJid || '').replace(/[^0-9]/g, ''),
+				from: phone ? `whatsapp:+${phone}` : null,
 				to: null,
 				message: messageText,
 				message_id: key.id || null,
-				profile_name: pushName,
+				profile_name: pushName || 'Cliente',
 				media_url: null,
-				media_type: null,
-				location: null,
-				source: 'evolution',
-				raw: data
+				source: 'evolution'
 			};
 		}
-
-		// Formato desconhecido
+		
 		return {
 			from: data.from || data.From || null,
 			to: data.to || data.To || null,
 			message: data.message || data.Body || data.text || null,
 			message_id: data.id || data.MessageSid || null,
-			profile_name: data.name || data.ProfileName || null,
+			profile_name: data.name || data.ProfileName || 'Cliente',
 			media_url: null,
-			media_type: null,
-			location: null,
-			source: 'unknown',
-			raw: data
+			source: 'unknown'
 		};
 	}
 
-	/**
-	 * Processar mensagem recebida (Multi-Tenant)
-	 * @param {Object} webhookData - Dados normalizados do webhook
-	 * @param {Object} companySettings - Configurações da empresa (app_settings)
-	 * @param {Object} context - { services, logger, database, req }
-	 */
-	async function processIncomingMessage(webhookData, companySettings, { services, logger, database, req }) {
-		const { ItemsService } = services;
-
+	// Webhook principal do Twilio
+	router.post('/webhook', async (req, res) => {
 		try {
-			logger.info('🔄 Processando mensagem...');
-
-			// Extrair dados normalizados
-			const from = webhookData.from;
-			const body = webhookData.message || '';
-			const messageSid = webhookData.message_id;
-			const mediaUrl = webhookData.media_url;
-			const mediaType = webhookData.media_type;
-			const profileName = webhookData.profile_name;
-			const location = webhookData.location || {};
-			const companyId = companySettings?.company_id || null;
-
-			if (!from) {
-				return { success: false, error: 'Número de origem não identificado' };
-			}
-
-			// Limpar telefone
-			const telefone = from.replace('whatsapp:', '');
-
-			// 1. Obter ou criar conversa (COM FILTRO POR EMPRESA)
-			const conversasService = new ItemsService('conversas', { schema: req.schema });
+			logger.info('=== WEBHOOK RECEBIDO v2.0 ===');
+			logger.info('Content-Type: ' + (req.headers['content-type'] || 'NONE'));
+			logger.info('req.body type: ' + typeof req.body);
+			logger.info('req.body: ' + JSON.stringify(req.body || {}));
 			
-			const conversaFilter = {
-				telefone: { _eq: telefone },
-				status: { _neq: 'finalizada' }
-			};
-			
-			// Se temos empresa, filtrar por ela
-			if (companyId) {
-				conversaFilter.company_id = { _eq: companyId };
+			// Tentar parsear body se vier vazio (Twilio manda x-www-form-urlencoded)
+			let webhookData = req.body || {};
+			if (Object.keys(webhookData).length === 0) {
+				// Tentar ler raw body e parsear
+				let rawBody = '';
+				for await (const chunk of req) {
+					rawBody += chunk.toString();
+				}
+				logger.info('Raw body: ' + rawBody.substring(0, 300));
+				if (rawBody) {
+					webhookData = parseUrlEncoded(rawBody);
+				}
 			}
 			
-			let conversa = await conversasService.readByQuery({
-				filter: conversaFilter,
+			const source = detectWebhookSource(webhookData);
+			
+			logger.info('Source: ' + source);
+			logger.info('Payload: ' + JSON.stringify(webhookData));
+			
+			const normalized = normalizeWebhookData(webhookData, source);
+			
+			logger.info('De: ' + normalized.from);
+			logger.info('Nome: ' + normalized.profile_name);
+			logger.info('Mensagem: ' + normalized.message);
+			logger.info('Tipo: ' + normalized.message_type);
+			logger.info('Mídia: ' + (normalized.media_url ? 'Sim' : 'Não'));
+			
+			// === TRANSCRIÇÃO DE ÁUDIO ===
+			let transcription = null;
+			if (normalized.message_type === 'audio' && normalized.media_url) {
+				logger.info('🎤 Áudio detectado! Iniciando transcrição...');
+				
+				// Precisamos das credenciais da empresa para baixar mídia e transcrever
+				const tempCompany = await getCompanyByWhatsAppNumber(database, normalized.to);
+				if (tempCompany && tempCompany.openai_api_key) {
+					// Baixar áudio da Twilio
+					const audioData = await downloadTwilioMedia(
+						normalized.media_url,
+						tempCompany.twilio_account_sid,
+						tempCompany.twilio_auth_token,
+						logger
+					);
+					
+					if (audioData.success) {
+						// Transcrever com Whisper
+						const transcriptionResult = await transcribeAudio(
+							audioData.data,
+							tempCompany.openai_api_key,
+							logger
+						);
+						
+						if (transcriptionResult.success) {
+							transcription = transcriptionResult.text;
+							logger.info('✅ Transcrição: "' + transcription + '"');
+							
+							// Usar transcrição como mensagem se não tiver texto
+							if (!normalized.message && transcription) {
+								normalized.message = transcription;
+							}
+						} else {
+							logger.warn('⚠️ Transcrição falhou: ' + transcriptionResult.error);
+							transcription = '[Áudio não pôde ser transcrito]';
+						}
+					} else {
+						logger.warn('⚠️ Download de áudio falhou: ' + audioData.error);
+						transcription = '[Áudio não pôde ser baixado]';
+					}
+				} else {
+					logger.warn('⚠️ OpenAI API Key não configurada para empresa');
+					transcription = '[Transcrição indisponível - API Key não configurada]';
+				}
+			}
+
+			if (!normalized.to && !normalized.from) {
+				logger.warn('Dados insuficientes no webhook');
+				return res.type('text/xml').send('<?xml version="1.0" encoding="UTF-8"?><Response></Response>');
+			}
+
+			// Buscar empresa pelo numero WhatsApp
+			const company = await getCompanyByWhatsAppNumber(database, normalized.to);
+			if (!company) {
+				logger.warn('Empresa nao encontrada para: ' + normalized.to);
+				return res.type('text/xml').send('<?xml version="1.0" encoding="UTF-8"?><Response></Response>');
+			}
+
+			logger.info('Empresa: ' + (company.nome_fantasia || company.slug));
+
+			const clientPhone = (normalized.from || '').replace('whatsapp:', '').replace(/\D/g, '');
+			const schema = await getSchema();
+
+			// Buscar ou criar conversa
+			const conversasService = new ItemsService('conversas', { 
+				schema, 
+				accountability: { admin: true } 
+			});
+
+			const existingConversas = await conversasService.readByQuery({
+				filter: {
+					company_id: { _eq: company.id },
+					telefone: { _eq: clientPhone },
+					status: { _neq: 'finalizada' }
+				},
 				limit: 1
 			});
 
-			if (!conversa || conversa.length === 0) {
-				// Criar nova conversa (COM company_id)
-				const conversaData = {
-					telefone,
-					whatsapp_name: profileName,
+			let conversa;
+			let isNewConversation = false;
+			
+			if (existingConversas.length > 0) {
+				conversa = existingConversas[0];
+				logger.info('Conversa existente: ' + conversa.id);
+			} else {
+				isNewConversation = true;
+				const conversaId = await conversasService.createOne({
+					company_id: company.id,
+					telefone: clientPhone,
+					whatsapp_name: normalized.profile_name,
+					canal: 'whatsapp',
 					status: 'ativa',
 					stage: 'boas_vindas',
-					iniciada_em: new Date()
-				};
-				
-				// Adicionar company_id se disponível
-				if (companyId) {
-					conversaData.company_id = companyId;
-				}
-				
-				const novaConversa = await conversasService.createOne(conversaData);
-
-				conversa = [novaConversa];
-				logger.info('✅ Nova conversa criada', { 
-					id: novaConversa.id, 
-					telefone,
-					company_id: companyId || 'sem empresa'
+					ultima_mensagem: normalized.message
 				});
-			} else {
-				conversa = conversa[0];
-				
-				// Atualizar whatsapp_name se mudou
-				if (profileName && conversa.whatsapp_name !== profileName) {
-					await conversasService.updateOne(conversa.id, {
-						whatsapp_name: profileName,
-						ultima_atividade: new Date()
-					});
-				}
+				conversa = await conversasService.readOne(conversaId);
+				logger.info('Nova conversa criada: ' + conversaId);
 			}
 
-			const conversaId = Array.isArray(conversa) ? conversa[0].id : conversa.id;
-
-			// 2. Detectar tipo de mensagem
-			let messageType = 'text';
-			if (mediaUrl) {
-				if (mediaType?.includes('audio')) messageType = 'audio';
-				else if (mediaType?.includes('image')) messageType = 'image';
-				else if (mediaType?.includes('video')) messageType = 'video';
-				else messageType = 'document';
-			}
-
-			// 3. Salvar mensagem recebida
-			const mensagensService = new ItemsService('mensagens', { schema: req.schema });
-			
-			const mensagem = await mensagensService.createOne({
-				conversa_id: conversaId,
-				message_sid: messageSid,
-				direction: 'incoming',
-				message_type: messageType,
-				content: body,
-				media_url: mediaUrl,
-				status: 'received',
-				sent_at: new Date()
+			// Salvar mensagem recebida
+			const mensagensService = new ItemsService('mensagens', { 
+				schema, 
+				accountability: { admin: true } 
 			});
 
-			logger.info('✅ Mensagem salva no banco', { id: mensagem.id, type: messageType });
-
-			// 4. Se for áudio, enviar feedback e processar
-			let finalBody = body;
-			if (messageType === 'audio' && mediaUrl) {
-				logger.info('🎤 Áudio detectado, enviando feedback...');
-				
-				// TODO: Implementar transcrição via OpenAI endpoint
-				// Por enquanto, apenas feedback
-				const feedbackMsg = "🎤 Recebi seu áudio! Vou ouvir agora e já te respondo... ⏳";
-				
-				// Enviar via Twilio endpoint
-				await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						to: telefone,
-						message: feedbackMsg
-					})
-				});
-
-				// Salvar feedback
-				await mensagensService.createOne({
-					conversa_id: conversaId,
-					direction: 'outgoing',
-					message_type: 'text',
-					content: feedbackMsg,
-					status: 'sent',
-					sent_at: new Date()
-				});
-
-				// TODO: Transcrever áudio
-				finalBody = '[Áudio - transcrição em desenvolvimento]';
-			}
-
-			// 5. Verificar se é primeira mensagem
-			const totalMensagens = await mensagensService.readByQuery({
-				filter: { conversa_id: { _eq: conversaId } },
-				aggregate: { count: '*' }
-			});
-
-			const count = totalMensagens[0]?.count || 0;
-			const isFirstMessage = count <= (messageType === 'audio' ? 2 : 1);
-
-			if (isFirstMessage) {
-				logger.info('👋 Primeira mensagem detectada, enviando boas-vindas...');
-				
-				const assistantName = companySettings.assistant_name || 'Teresa';
-				const preferredName = profileName?.split(' ')[0] || 'visitante';
-				const welcomeMessage = buildGenericWelcomeMessage(assistantName, preferredName);
-
-				// Enviar via Twilio
-				await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						to: telefone,
-						message: welcomeMessage
-					})
-				});
-
-				// Salvar mensagem
-				await mensagensService.createOne({
-					conversa_id: conversaId,
-					direction: 'outgoing',
-					message_type: 'text',
-					content: welcomeMessage,
-					status: 'sent',
-					sent_at: new Date()
-				});
-
-				// Criar lead
-				const leadsService = new ItemsService('leads', { schema: req.schema });
-				const lead = await leadsService.createOne({
-					company_id: company.id,
-					nome: profileName || 'Visitante',
-					telefone,
-					whatsapp_name: profileName,
-					localizacao: location.city ? `${location.city}, ${location.state}` : null,
-					status: 'novo',
-					origem: 'whatsapp',
-					primeira_interacao: new Date(),
-					ultima_interacao: new Date()
-				});
-
-				// Vincular lead à conversa
-				await conversasService.updateOne(conversaId, {
-					lead_id: lead.id,
-					stage: 'coleta_dados'
-				});
-
-				return {
-					success: true,
-					message: 'Primeira mensagem processada',
-					lead_id: lead.id
-				};
-			}
-
-			// 6. Extrair dados do lead
-			logger.info('📊 Extraindo dados da mensagem...');
-			
-			const leadsService = new ItemsService('leads', { schema: req.schema });
-			const conversaAtual = await conversasService.readOne(conversaId, {
-				fields: ['lead_id', 'stage']
-			});
-
-			if (conversaAtual?.lead_id) {
-				const leadAtual = await leadsService.readOne(conversaAtual.lead_id);
-				const updates = {};
-
-				// Extrair CPF
-				if (!leadAtual.cpf) {
-					const cpf = extractCpfFromMessage(finalBody);
-					if (cpf) updates.cpf = cpf;
-				}
-
-				// Extrair email
-				if (!leadAtual.email) {
-					const email = extractEmailFromMessage(finalBody);
-					if (email) updates.email = email;
-				}
-
-				// Extrair orçamento
-				if (!leadAtual.orcamento_min || !leadAtual.orcamento_max) {
-					const orcamento = extractOrcamentoFromMessage(finalBody);
-					if (orcamento) {
-						if (orcamento.min) updates.orcamento_min = orcamento.min;
-						if (orcamento.max) updates.orcamento_max = orcamento.max;
-					}
-				}
-
-				// Extrair renda mensal
-				if (!leadAtual.renda_mensal) {
-					const renda = extractRendaMensalFromMessage(finalBody);
-					if (renda) updates.renda_mensal = renda;
-				}
-
-				// Atualizar última interação
-				updates.ultima_interacao = new Date();
-
-				// Aplicar updates
-				if (Object.keys(updates).length > 1) {
-					await leadsService.updateOne(conversaAtual.lead_id, updates);
-					logger.info(`✅ Lead atualizado com ${Object.keys(updates).length} campos`);
-				}
-
-				// Recarregar lead com dados atualizados
-				const leadAtualizado = await leadsService.readOne(conversaAtual.lead_id);
-
-				// 7. Verificar se pode fazer matching de imóveis
-				if (hasEnoughDataForMatching(leadAtualizado)) {
-					logger.info('🏠 Critérios suficientes, buscando imóveis...');
-
-					const propertiesService = new ItemsService('properties', { schema: req.schema });
-					const matchQuery = buildPropertyMatchQuery(leadAtualizado);
-					
-					// Adicionar filtro de company_id
-					matchQuery._and.push({ company_id: { _eq: company.id } });
-
-					const properties = await propertiesService.readByQuery({
-						filter: matchQuery,
-						limit: 5,
-						fields: ['id', 'titulo', 'tipo', 'preco', 'quartos', 'banheiros', 'area_total', 'cidade', 'bairro', 'descricao']
-					});
-
-					if (properties.length > 0) {
-						// Calcular scores e ordenar
-						const scoredProperties = properties
-							.map(prop => ({
-								...prop,
-								score: calculateMatchScore(prop, leadAtualizado)
-							}))
-							.sort((a, b) => b.score - a.score);
-
-						// Enviar top 3
-						const topProperties = scoredProperties.slice(0, 3);
-						logger.info(`📤 Enviando ${topProperties.length} imóveis compatíveis`);
-
-						for (const property of topProperties) {
-							const propertyMessage = buildPropertyPreviewMessage(property);
-
-							await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
-								method: 'POST',
-								headers: { 'Content-Type': 'application/json' },
-								body: JSON.stringify({
-									to: telefone,
-									message: propertyMessage,
-									company_id: company.id
-								})
-							});
-
-							await mensagensService.createOne({
-								conversa_id: conversaId,
-								direction: 'outgoing',
-								message_type: 'text',
-								content: propertyMessage,
-								status: 'sent',
-								sent_at: new Date()
-							});
-
-							// Pequeno delay entre mensagens
-							await new Promise(resolve => setTimeout(resolve, 1000));
-						}
-
-						// Atualizar stage para apresentacao
-						await conversasService.updateOne(conversaId, {
-							stage: 'apresentacao'
-						});
-					} else {
-						// Nenhum imóvel encontrado
-						const noMatchMsg = buildNoMatchMessage(leadAtualizado);
-
-						await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({
-								to: telefone,
-								message: noMatchMsg,
-								company_id: company.id
-							})
-						});
-
-						await mensagensService.createOne({
-							conversa_id: conversaId,
-							direction: 'outgoing',
-							message_type: 'text',
-							content: noMatchMsg,
-							status: 'sent',
-							sent_at: new Date()
-						});
-
-						// Atualizar stage para sem_match
-						await conversasService.updateOne(conversaId, {
-							stage: 'sem_match'
-						});
-					}
-				} else {
-					// Ainda coletando dados
-					logger.info('📝 Ainda coletando informações do lead...');
-					
-					// TODO: Resposta com IA solicitando mais informações
-					const collectingResponse = `Entendi! Pode me contar mais sobre o que você procura? Por exemplo:\n\n• Qual o seu orçamento?\n• Prefere alguma região específica?\n• Quantos quartos precisa?`;
-
-					await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							to: telefone,
-							message: collectingResponse,
-							company_id: company.id
-						})
-					});
-
-					await mensagensService.createOne({
-						conversa_id: conversaId,
-						direction: 'outgoing',
-						message_type: 'text',
-						content: collectingResponse,
-						status: 'sent',
-						sent_at: new Date()
-					});
-				}
-
-				// 8. Verificar se lead solicitou atendimento humano
-				if (detectHumanRequestKeywords(finalBody)) {
-					logger.info('👤 Lead solicitou atendimento humano!');
-
-					await conversasService.updateOne(conversaId, {
-						stage: 'atendimento_humano',
-						requires_human_attention: true
-					});
-
-					const humanRequestMsg = `Entendi! Vou transferir você para um de nossos corretores.\n\nEm breve alguém entrará em contato. 😊`;
-
-					await fetch(`${process.env.PUBLIC_URL}/twilio/send-message`, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							to: telefone,
-							message: humanRequestMsg,
-							company_id: company.id
-						})
-					});
-
-					await mensagensService.createOne({
-						conversa_id: conversaId,
-						direction: 'outgoing',
-						message_type: 'text',
-						content: humanRequestMsg,
-						status: 'sent',
-						sent_at: new Date()
-					});
-
-					// TODO: Notificar corretores via email/webhook
-					logger.info('📧 [TODO] Enviar notificação para corretores');
-				}
-
-				// 9. Progressão automática de stage
-				const conversaFinal = await conversasService.readOne(conversaId, {
-					fields: ['stage', 'lead_id']
-				});
-
-				if (conversaFinal.stage !== 'atendimento_humano') {
-					// Contar mensagens
-					const totalMsgs = await mensagensService.readByQuery({
-						filter: { conversa_id: { _eq: conversaId } },
-						aggregate: { count: '*' }
-					});
-					const msgCount = totalMsgs[0]?.count || 0;
-
-					// Obter última mensagem
-					const lastMsg = await mensagensService.readByQuery({
-						filter: { conversa_id: { _eq: conversaId } },
-						sort: ['-created_at'],
-						limit: 1
-					});
-
-					const nextStage = calculateNextStage(
-						conversaFinal.stage,
-						leadAtualizado || {},
-						lastMsg[0] || null,
-						msgCount,
-						null // matchedProperties já foram tratados acima
-					);
-
-					if (nextStage && nextStage !== conversaFinal.stage) {
-						await conversasService.updateOne(conversaId, {
-							stage: nextStage
-						});
-
-						logger.info(`🔄 Stage atualizado: ${conversaFinal.stage} → ${nextStage}`);
-						logger.info(`   ${getStageMessage(nextStage)}`);
-					}
-				}
-			}
-
-			return {
-				success: true,
-				message: 'Mensagem processada',
-				ai_response: simpleResponse
+			// Preparar dados da mensagem
+			const messageData = {
+				company_id: company.id,
+				conversa_id: conversa.id,
+				direction: 'inbound',
+				content: normalized.message || transcription || '[Mídia sem texto]',
+				message_type: normalized.message_type || 'text',
+				message_sid: normalized.message_id,
+				status: 'received'
 			};
+			
+			// Adicionar campos de mídia se presentes
+			if (normalized.media_url) {
+				messageData.media_url = normalized.media_url;
+			}
+			if (transcription) {
+				messageData.transcription = transcription;
+			}
+			
+			await mensagensService.createOne(messageData);
+			
+			// Atualizar conversa
+			const conversationMessage = transcription || normalized.message || '[Áudio]';
+			await conversasService.updateOne(conversa.id, { 
+				ultima_mensagem: conversationMessage,
+				ultima_atividade: new Date().toISOString()
+			});
+
+			logger.info('Mensagem recebida salva! Tipo: ' + messageData.message_type);
+
+			// === RESPOSTA AUTOMÁTICA ===
+			// Se for nova conversa, enviar boas-vindas
+			if (isNewConversation) {
+				const assistantName = company.ai_assistant_name || 'Teresa';
+				const companyName = company.nome_fantasia || 'Exclusiva Lar Imóveis';
+				const preferredName = extractPreferredName(normalized.profile_name);
+				
+				const welcomeMessage = buildWelcomeMessage(assistantName, preferredName, companyName);
+				
+				// Enviar mensagem de boas-vindas
+				const sendResult = await sendTwilioMessage(company, clientPhone, welcomeMessage, logger);
+				
+				if (sendResult.success) {
+					// Salvar mensagem enviada
+					await mensagensService.createOne({
+						company_id: company.id,
+						conversa_id: conversa.id,
+						direction: 'outbound',
+						content: welcomeMessage,
+						message_type: 'text',
+						message_sid: sendResult.message_sid,
+						status: 'sent'
+					});
+					
+					// Atualizar stage da conversa
+					await conversasService.updateOne(conversa.id, {
+						stage: 'coleta_dados',
+						ultima_mensagem: welcomeMessage
+					});
+					
+					logger.info('Boas-vindas enviadas com sucesso!');
+				}
+			}
+
+			logger.info('Webhook processado com sucesso!');
+			res.type('text/xml').send('<?xml version="1.0" encoding="UTF-8"?><Response></Response>');
 
 		} catch (error) {
-			logger.error('❌ Erro ao processar mensagem', {
-				error: error.message,
-				stack: error.stack
+			logger.error('❌ Erro webhook:', error.message);
+			logger.error(error.stack);
+			res.type('text/xml').send('<?xml version="1.0" encoding="UTF-8"?><Response></Response>');
+		}
+	});
+
+	// Status callback
+	router.post('/status', (req, res) => {
+		logger.info('Status callback:', JSON.stringify(req.body));
+		res.json({ ok: true });
+	});
+
+	// Enviar mensagem
+	router.post('/send', async (req, res) => {
+		try {
+			const { company_id, to, message } = req.body;
+			if (!company_id || !to || !message) {
+				return res.status(400).json({ error: 'company_id, to e message obrigatorios' });
+			}
+
+			const company = await database
+				.select('twilio_account_sid', 'twilio_auth_token', 'twilio_whatsapp_number')
+				.from('companies')
+				.where({ id: company_id })
+				.first();
+
+			if (!company?.twilio_account_sid) {
+				return res.status(400).json({ error: 'Twilio nao configurado' });
+			}
+
+			const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${company.twilio_account_sid}/Messages.json`;
+			const auth = Buffer.from(`${company.twilio_account_sid}:${company.twilio_auth_token}`).toString('base64');
+
+			const formData = new URLSearchParams();
+			formData.append('From', `whatsapp:${company.twilio_whatsapp_number}`);
+			formData.append('To', `whatsapp:${to}`);
+			formData.append('Body', message);
+
+			const response = await fetch(twilioUrl, {
+				method: 'POST',
+				headers: {
+					'Authorization': `Basic ${auth}`,
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: formData.toString()
 			});
 
-			return {
-				success: false,
-				error: 'Falha ao processar mensagem: ' + error.message
-			};
+			const result = await response.json();
+			if (!response.ok) {
+				return res.status(400).json({ error: result.message });
+			}
+
+			res.json({ success: true, sid: result.sid });
+		} catch (error) {
+			res.status(500).json({ error: error.message });
 		}
+	});
 	}
 };
+
