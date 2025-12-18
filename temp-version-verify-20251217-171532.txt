@@ -1,0 +1,5 @@
+ts=20251217-171532
+home=200
+dashboard=200
+foundVers=True
+foundUnicode=False

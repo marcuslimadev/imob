@@ -33,8 +33,6 @@ export default function VisualEditingLayout({
 		pathname === route || pathname?.startsWith(route + '/')
 	);
 
-	console.log('[VisualEditingLayout]', { pathname, shouldHideLayout });
-
 	useEffect(() => {
 		if (isVisualEditingEnabled && !shouldHideLayout) {
 			// Apply visual editing for the navigation bar if its ref is set.

@@ -1,0 +1,221 @@
+TAIL
+#14 10.69 
+#14 19.56    Ôû▓ Next.js 15.2.4
+#14 19.56 
+#14 19.88    Creating an optimized production 
+build ...
+#14 68.78  Ô£ô Compiled successfully
+#14 68.79    Skipping validation of types
+#14 68.79    Skipping linting
+#14 70.81    Collecting page data ...
+#14 79.95    Generating static pages (0/40) ...
+#14 85.19    Generating static pages (10/40) 
+#14 86.04    Generating static pages (20/40) 
+#14 88.63    Generating static pages (30/40) 
+#14 91.03 Error fetching dashboard stats: 
+TypeError: fetch failed
+#14 91.03     at async Object.request 
+(.next/server/chunks/7730.js:1:7855)
+#14 91.03     at async m 
+(.next/server/app/admin/page.js:1:7826)
+#14 91.03     at async p 
+(.next/server/app/admin/page.js:1:8698) {
+#14 91.03   [cause]: [AggregateError: ] { code: 
+'ECONNREFUSED' }
+#14 91.03 }
+#14 91.03 Error fetching recent companies: 
+TypeError: fetch failed
+#14 91.03     at async Object.request 
+(.next/server/chunks/7730.js:1:7855)
+#14 91.03     at async h 
+(.next/server/app/admin/page.js:1:8535)
+#14 91.03     at async p 
+(.next/server/app/admin/page.js:1:8710) {
+#14 91.03   [cause]: [AggregateError: ] { code: 
+'ECONNREFUSED' }
+#14 91.03 }
+#14 93.64  Ô£ô Generating static pages (40/40)
+#14 96.49    Finalizing page optimization ...
+#14 96.49    Collecting build traces ...
+#14 112.1  ÔÜá Failed to copy traced files for 
+/app/.next/server/app/(landing)/page.js [Error: 
+ENOENT: no such file or directory, copyfile '/app/.
+next/server/app/(landing)/page_client-reference-man
+ifest.js' -> '/app/.next/standalone/.next/server/ap
+p/(landing)/page_client-reference-manifest.js'] {
+#14 112.1   errno: -2,
+#14 112.1   code: 'ENOENT',
+#14 112.1   syscall: 'copyfile',
+#14 112.1   path: '/app/.next/server/app/(landing)/
+page_client-reference-manifest.js',
+#14 112.1   dest: '/app/.next/standalone/.next/serv
+er/app/(landing)/page_client-reference-manifest.js'
+#14 112.1 }
+#14 113.0 
+#14 113.0 Route (app)                              
+   Size  First Load JS
+#14 113.0 Ôöî ãÆ /                                 
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /_not-found                       
+     981 B         101 kB
+#14 113.0 Ôö£ ãÆ /admin                            
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /admin/dashboard                  
+     187 B         109 kB
+#14 113.0 Ôö£ ãÆ /admin/leads                      
+     205 B         104 kB
+#14 113.0 Ôö£ ãÆ /admin/properties                 
+     205 B         104 kB
+#14 113.0 Ôö£ ãÆ /admin/properties/[id]            
+     205 B         104 kB
+#14 113.0 Ôö£ ãÆ /api/auth/login                   
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/auth/logout                  
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/auth/me                      
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/cep                          
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/conversas                    
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/dashboard/stats              
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/draft                        
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/import-properties            
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/leads                        
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/mensagens                    
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/search                       
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /api/settings                     
+     179 B         101 kB
+#14 113.0 Ôö£ ãÆ /conversas                        
+   10.7 kB         121 kB
+#14 113.0 Ôö£ ãÆ /dashboard                        
+     205 B         104 kB
+#14 113.0 Ôö£ ãÆ /empresa/assinaturas              
+   3.61 kB         122 kB
+#14 113.0 Ôö£ ãÆ /empresa/assinaturas/nova         
+   3.63 kB         122 kB
+#14 113.0 Ôö£ ãÆ /empresa/configuracoes            
+   10.3 kB         127 kB
+#14 113.0 Ôö£ ãÆ /empresa/conversas                
+   8.48 kB         119 kB
+#14 113.0 Ôö£ ãÆ /empresa/dashboard                
+   6.52 kB         117 kB
+#14 113.0 Ôö£ ãÆ /empresa/imoveis                  
+      3 kB         114 kB
+#14 113.0 Ôö£ ãÆ /empresa/imoveis/[id]             
+    4.6 kB         108 kB
+#14 113.0 Ôö£ ãÆ /empresa/imoveis/novo             
+    7.3 kB         111 kB
+#14 113.0 Ôö£ ãÆ /empresa/leads                    
+     205 B         104 kB
+#14 113.0 Ôö£ ãÆ /empresa/leads/[id]               
+   2.89 kB         109 kB
+#14 113.0 Ôö£ ãÆ /empresa/leads/novo               
+    4.1 kB         151 kB
+#14 113.0 Ôö£ ãÆ /empresa/pessoas                  
+     205 B         104 kB
+#14 113.0 Ôö£ ãÆ /empresa/pessoas/[id]             
+     145 B         122 kB
+#14 113.0 Ôö£ ãÆ /empresa/pessoas/novo             
+     145 B         122 kB
+#14 113.0 Ôö£ ãÆ /empresa/vistorias                
+   3.56 kB         122 kB
+#14 113.0 Ôö£ ãÆ /empresa/vistorias/nova           
+   2.65 kB         121 kB
+#14 113.0 Ôö£ ãÆ /home                             
+     205 B         104 kB
+#14 113.0 Ôö£ Ôùï /icon.png                        
+        0 B            0 B
+#14 113.0 Ôö£ ãÆ /imoveis/[id]                     
+     205 B         104 kB
+#14 113.0 Ôö£ ãÆ /leads                            
+   11.5 kB         158 kB
+#14 113.0 Ôö£ ãÆ /login                            
+    5.9 kB         112 kB
+#14 113.0 Ôöö ãÆ /vitrine                          
+     205 B         104 kB
+#14 113.0 + First Load JS shared by all            
+ 100 kB
+#14 113.0   Ôö£ chunks/1684-b6cd7679b3fca319.js    
+  45.3 kB
+#14 113.0   Ôö£ 
+chunks/4bd1b696-6d431c8d274e4016.js  53.2 kB
+#14 113.0   Ôöö other shared chunks (total)        
+  1.93 kB
+#14 113.0 
+#14 113.0 
+#14 113.0 ãÆ Middleware                            
+ 32.6 kB
+#14 113.0 
+#14 113.0 Ôùï  (Static)   prerendered as static 
+content
+#14 113.0 ãÆ  (Dynamic)  server-rendered on demand
+#14 113.0 
+#14 113.2 npm notice
+#14 113.2 npm notice New major version of npm 
+available! 10.9.4 -> 11.7.0
+#14 113.2 npm notice Changelog: 
+https://github.com/npm/cli/releases/tag/v11.7.0
+#14 113.2 npm notice To update run: npm install -g 
+npm@11.7.0
+#14 113.2 npm notice
+#14 DONE 113.6s
+
+#15 [runner 5/8] RUN mkdir .next
+#15 CACHED
+
+#16 [runner 2/8] RUN addgroup --system --gid 1001 
+nodejs
+#16 CACHED
+
+#17 [runner 3/8] RUN adduser --system --uid 1001 
+nextjs
+#17 CACHED
+
+#18 [runner 4/8] COPY --from=builder /app/public 
+./public
+#18 CACHED
+
+#19 [runner 6/8] RUN chown nextjs:nodejs .next
+#19 CACHED
+
+#20 [runner 7/8] COPY --from=builder 
+--chown=nextjs:nodejs /app/.next/standalone ./
+#20 DONE 1.5s
+
+#21 [runner 8/8] COPY --from=builder 
+--chown=nextjs:nodejs /app/.next/static 
+./.next/static
+#21 DONE 0.3s
+
+#22 exporting to image
+#22 exporting layers
+#22 exporting layers 4.2s done
+#22 exporting manifest sha256:650b735c180035cb158dd
+2959fcb514ec341f3f35091f9db06af9760236c3bed 0.1s 
+done
+#22 exporting config sha256:a04f4a3c89edfaf7182c4db
+778889cd96187d87f9579f16965b6a667c53691cc 0.1s done
+#22 exporting attestation manifest sha256:87c1254a9
+51c643402094faca58aaf767fa7a9dcdbf21ae287fce7ef65c6
+9f88
+#22 exporting attestation manifest sha256:87c1254a9
+51c643402094faca58aaf767fa7a9dcdbf21ae287fce7ef65c6
+9f88 0.2s done
+#22 exporting manifest list sha256:1c0de08403589535
+1de8056467694ad289050a3832f4ec8d2e12805dfd013d92 
+0.1s done
+#22 naming to 575098225472.dkr.ecr.sa-east-1.amazon
+aws.com/imobi-frontend:latest 0.0s done
+#22 unpacking to 575098225472.dkr.ecr.sa-east-1.ama
+zonaws.com/imobi-frontend:latest
+#22 unpacking to 575098225472.dkr.ecr.sa-east-1.ama
+zonaws.com/imobi-frontend:latest 1.3s done
+#22 DONE 6.1s
+EXITCODE=0

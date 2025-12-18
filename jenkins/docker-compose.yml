@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      # Persistência de dados do Jenkins
+      - jenkins_home:/var/jenkins_home
+      # Docker socket para Docker-in-Docker
+      - /var/run/docker.sock:/var/run/docker.sock
+      # AWS credentials (opcional)
+      - ~/.aws:/root/.aws:ro
+    environment:
+      - JENKINS_OPTS=--prefix=/jenkins
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    networks:
+      - jenkins
+
+  # Docker DinD (Docker-in-Docker) - alternativa mais segura
+  docker-dind:
+    image: docker:dind
+    container_name: jenkins-docker
+    privileged: true
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - jenkins_docker_certs:/certs/client
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - jenkins
+    command: --storage-driver=overlay2
+
+volumes:
+  jenkins_home:
+    driver: local
+  jenkins_docker_certs:
+    driver: local
+
+networks:
+  jenkins:
+    driver: bridge

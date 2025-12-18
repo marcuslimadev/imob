@@ -1,0 +1,2 @@
+﻿{"errors":[{"message":"Invalid payload. Expected property name or '}' in JSON at position 1 (line 1 column 2).","extensions":{"reason":"Expected property name or '}' in JSON at position 1 (line 1 column 2)","code":"INVALID_PAYLOAD"}}]}
+EXITCODE=0

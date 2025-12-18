@@ -4,6 +4,11 @@ import type { NextRequest } from 'next/server';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
+  // Redirect root to /home
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL('/home', request.url));
+  }
+  
   // Ignorar arquivos estáticos e API routes
   if (
     pathname.startsWith('/_next') ||
@@ -14,17 +19,19 @@ export async function middleware(request: NextRequest) {
   }
 
   // Rotas públicas que não requerem autenticação
-  const publicRoutes = ['/', '/login', '/vitrine', '/imoveis'];
+  const publicRoutes = ['/login', '/vitrine', '/imoveis', '/home'];
   const isPublicRoute = publicRoutes.some(route => 
-    pathname === route || pathname.startsWith('/imoveis/')
+    pathname === route || 
+    pathname.startsWith('/imoveis/') ||
+    pathname.startsWith('/empresa/')  // Todas as rotas /empresa/* são públicas
   );
 
   if (isPublicRoute) {
     return NextResponse.next();
   }
 
-  // Verificar autenticação para rotas protegidas
-  const protectedRoutes = ['/empresa', '/admin', '/leads', '/conversas'];
+  // Verificar autenticação apenas para rotas administrativas específicas
+  const protectedRoutes = ['/admin'];
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
   const response = NextResponse.next();

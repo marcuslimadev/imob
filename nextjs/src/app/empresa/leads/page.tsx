@@ -1,93 +1,90 @@
 import { directusServer } from '@/lib/directus/client';
 import { readItems, aggregate } from '@directus/sdk';
 import { getAuthenticatedCompanyId } from '@/lib/auth/server';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { BauhausPageHeader } from '@/components/layout/BauhausPageHeader';
 import { BauhausCard, BauhausStatCard } from '@/components/layout/BauhausCard';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 
-async function getCompanyLeads(companyId: string) {
+const directusUrl =
+  process.env.DIRECTUS_INTERNAL_URL ||
+  process.env.NEXT_PUBLIC_DIRECTUS_URL ||
+  'http://localhost:8055';
+
+async function getCompanyLeads(companyId: string | null) {
   try {
-    // @ts-ignore - Custom schema
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('directus_token')?.value;
     
-    return await directusServer.request(
-      readItems('leads', {
-        filter: {
-          company_id: { _eq: companyId }
-        },
-        // @ts-ignore
-        sort: ['-created_at'],
-        fields: ['*']
-      })
-    );
+    if (!authToken) {
+      redirect('/login');
+    }
+
+    // Admin (companyId null) vê todos os leads
+    const params: any = {
+      fields: '*',
+      sort: '-created_at'
+    };
+    
+    if (companyId) {
+      params['filter[company_id][_eq]'] = companyId;
+    }
+    
+    const response = await fetch(`${directusUrl}/items/leads?${new URLSearchParams(params)}`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    });
+
+    if (!response.ok) {
+      console.error('Error fetching leads, status:', response.status);
+      return [];
+    }
+
+    const result = await response.json();
+    return result.data || [];
   } catch (error) {
     console.error('Error fetching leads:', error);
-    
     return [];
   }
 }
 
-async function getLeadsStats(companyId: string) {
+async function getLeadsStats(companyId: string | null) {
   try {
-    // @ts-ignore - Custom schema
-    const total = await directusServer.request(
-      aggregate('leads', {
-        aggregate: { count: '*' },
-        query: {
-          filter: { company_id: { _eq: companyId } }
-        }
-      })
-    );
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('directus_token')?.value;
+    
+    if (!authToken) {
+      return { total: 0, new: 0, contacted: 0, won: 0 };
+    }
 
-    // @ts-ignore
-    const newLeads = await directusServer.request(
-      aggregate('leads', {
-        aggregate: { count: '*' },
-        query: {
-          filter: {
-            company_id: { _eq: companyId },
-            stage: { _eq: 'new' }
-          } as any
-        }
-      })
-    );
-
-    // @ts-ignore
-    const contacted = await directusServer.request(
-      aggregate('leads', {
-        aggregate: { count: '*' },
-        query: {
-          filter: {
-            company_id: { _eq: companyId },
-            stage: { _eq: 'contacted' }
-          } as any
-        }
-      })
-    );
-
-    // @ts-ignore
-    const won = await directusServer.request(
-      aggregate('leads', {
-        aggregate: { count: '*' },
-        query: {
-          filter: {
-            company_id: { _eq: companyId },
-            stage: { _eq: 'won' }
-          } as any
-        }
-      })
-    );
-
+    const headers = { 'Authorization': `Bearer ${authToken}` };
+    
+    // Contadores simples - buscar todos e contar no código
+    const params: any = { fields: 'id,status' };
+    if (companyId) {
+      params['filter[company_id][_eq]'] = companyId;
+    }
+    
+    const response = await fetch(`${directusUrl}/items/leads?${new URLSearchParams(params)}`, { headers });
+    
+    if (!response.ok) {
+      return { total: 0, new: 0, contacted: 0, won: 0 };
+    }
+    
+    const result = await response.json();
+    const leads = result.data || [];
     
     return {
-      total: Number(total[0]?.count || 0),
-      new: Number(newLeads[0]?.count || 0),
-      contacted: Number(contacted[0]?.count || 0),
-      won: Number(won[0]?.count || 0)
+      total: leads.length,
+      new: leads.filter((l: any) => l.status === 'novo').length,
+      contacted: leads.filter((l: any) => l.status === 'contatado').length,
+      won: leads.filter((l: any) => l.status === 'ganho').length
     };
   } catch (error) {
     console.error('Error fetching leads stats:', error);
-    
     return { total: 0, new: 0, contacted: 0, won: 0 };
   }
 }

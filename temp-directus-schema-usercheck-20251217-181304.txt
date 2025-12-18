@@ -1,0 +1,5 @@
+﻿BaseURL: http://production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com
+Email: contato@exclisivalarimoveis.com.br
+Erro ao consultar /fields/directus_users: O servidor remoto retornou um erro: (403) Proibido.
+Erro ao consultar /users: O servidor remoto retornou um erro: (403) Proibido.
+EXITCODE=0

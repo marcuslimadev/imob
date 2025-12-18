@@ -6,8 +6,8 @@
 const axios = require('axios');
 
 const DIRECTUS_URL = process.env.DIRECTUS_URL || 'http://localhost:8055';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'marcus@admin.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Teste@123';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'd1r3ctu5';
 
 let accessToken = '';
 

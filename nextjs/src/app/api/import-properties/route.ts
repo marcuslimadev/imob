@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'http://localhost:8055';
+const DIRECTUS_URL =
+  process.env.DIRECTUS_INTERNAL_URL ||
+  process.env.NEXT_PUBLIC_DIRECTUS_URL ||
+  'http://localhost:8055';
+
+async function safeJson(response: Response) {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,15 +24,29 @@ export async function POST(request: NextRequest) {
     }
 
     // Buscar dados do usuário para pegar company_id
-    const userResponse = await fetch(`${DIRECTUS_URL}/users/me?fields=id,email,company_id`, {
+    const userResponse = await fetch(`${DIRECTUS_URL}/users/me?fields=id,email,company_id,role`, {
       headers: { 'Authorization': `Bearer ${authToken}` }
     });
 
     if (!userResponse.ok) {
-      return NextResponse.json({ error: 'Falha ao autenticar' }, { status: 401 });
+      const body = await safeJson(userResponse);
+      const directusMessage = body?.errors?.[0]?.message;
+
+      // 401/403 aqui normalmente indica token inválido ou role sem acesso
+      return NextResponse.json(
+        {
+          error: 'Falha ao autenticar',
+          status: userResponse.status,
+          details: directusMessage
+        },
+        { status: userResponse.status === 403 ? 403 : 401 }
+      );
     }
 
-    const userData = await userResponse.json();
+    const userData = await safeJson(userResponse);
+    if (!userData?.data) {
+      return NextResponse.json({ error: 'Resposta inválida do Directus (users/me)' }, { status: 502 });
+    }
     const companyId = userData.data.company_id;
 
     if (!companyId) {
@@ -35,7 +60,33 @@ export async function POST(request: NextRequest) {
       headers: { 'Authorization': `Bearer ${authToken}` }
     });
 
-    const settingsData = await settingsResponse.json();
+    if (!settingsResponse.ok) {
+      const body = await safeJson(settingsResponse);
+      const directusMessage = body?.errors?.[0]?.message;
+
+      if (settingsResponse.status === 403) {
+        return NextResponse.json(
+          {
+            error: 'Sem permissão para ler as configurações da empresa (app_settings)',
+            details: directusMessage || 'Verifique a role/permissões do usuário no Directus.'
+          },
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json({
+        error: 'Falha ao buscar configurações da empresa',
+        status: settingsResponse.status,
+        details: directusMessage
+      }, { status: 502 });
+    }
+
+    const settingsData = await safeJson(settingsResponse);
+    if (!settingsData?.data) {
+      return NextResponse.json({
+        error: 'Resposta inválida do Directus (app_settings)'
+      }, { status: 502 });
+    }
     const settings = settingsData.data?.[0];
 
     if (!settings?.external_api_url || !settings?.external_api_token) {
@@ -53,7 +104,6 @@ export async function POST(request: NextRequest) {
     const apiUrl = `${baseUrl}/api/v1/imovel/lista`;
     
     console.log('[API /import-properties] URL construída:', apiUrl);
-    console.log('[API /import-properties] Token:', settings.external_api_token.substring(0, 20) + '...');
     
     const externalResponse = await fetch(apiUrl, {
       method: 'POST',
@@ -77,7 +127,12 @@ export async function POST(request: NextRequest) {
       }, { status: 502 });
     }
 
-    const externalData = await externalResponse.json();
+    const externalData = await safeJson(externalResponse);
+    if (!externalData) {
+      return NextResponse.json({
+        error: 'Falha ao ler resposta JSON da API externa'
+      }, { status: 502 });
+    }
     const properties = externalData.data || externalData.imoveis || externalData;
 
     if (!Array.isArray(properties)) {
@@ -103,7 +158,29 @@ export async function POST(request: NextRequest) {
           { headers: { 'Authorization': `Bearer ${authToken}` } }
         );
 
-        const existingData = await existingResponse.json();
+        if (!existingResponse.ok) {
+          const body = await safeJson(existingResponse);
+          const directusMessage = body?.errors?.[0]?.message;
+
+          if (existingResponse.status === 403) {
+            return NextResponse.json(
+              {
+                error: 'Sem permissão para consultar imóveis (properties)',
+                details: directusMessage || 'Verifique a role/permissões do usuário no Directus.'
+              },
+              { status: 403 }
+            );
+          }
+
+          throw new Error(
+            `Falha ao consultar imóveis no Directus (status ${existingResponse.status})${directusMessage ? `: ${directusMessage}` : ''}`
+          );
+        }
+
+        const existingData = await safeJson(existingResponse);
+        if (!existingData) {
+          throw new Error('Falha ao ler resposta do Directus (properties lookup)');
+        }
         const existing = existingData.data?.[0];
 
         const propertyData = {
@@ -135,7 +212,7 @@ export async function POST(request: NextRequest) {
 
         if (existing) {
           // Atualizar imóvel existente
-          await fetch(`${DIRECTUS_URL}/items/properties/${existing.id}`, {
+          const updateResponse = await fetch(`${DIRECTUS_URL}/items/properties/${existing.id}`, {
             method: 'PATCH',
             headers: {
               'Authorization': `Bearer ${authToken}`,
@@ -143,10 +220,29 @@ export async function POST(request: NextRequest) {
             },
             body: JSON.stringify(propertyData)
           });
+
+          if (!updateResponse.ok) {
+            const body = await safeJson(updateResponse);
+            const directusMessage = body?.errors?.[0]?.message;
+
+            if (updateResponse.status === 403) {
+              return NextResponse.json(
+                {
+                  error: 'Sem permissão para atualizar imóveis (properties)',
+                  details: directusMessage || 'Verifique a role/permissões do usuário no Directus.'
+                },
+                { status: 403 }
+              );
+            }
+
+            throw new Error(
+              `Falha ao atualizar imóvel no Directus (status ${updateResponse.status})${directusMessage ? `: ${directusMessage}` : ''}`
+            );
+          }
           updated++;
         } else {
           // Criar novo imóvel
-          await fetch(`${DIRECTUS_URL}/items/properties`, {
+          const createResponse = await fetch(`${DIRECTUS_URL}/items/properties`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${authToken}`,
@@ -154,6 +250,25 @@ export async function POST(request: NextRequest) {
             },
             body: JSON.stringify(propertyData)
           });
+
+          if (!createResponse.ok) {
+            const body = await safeJson(createResponse);
+            const directusMessage = body?.errors?.[0]?.message;
+
+            if (createResponse.status === 403) {
+              return NextResponse.json(
+                {
+                  error: 'Sem permissão para criar imóveis (properties)',
+                  details: directusMessage || 'Verifique a role/permissões do usuário no Directus.'
+                },
+                { status: 403 }
+              );
+            }
+
+            throw new Error(
+              `Falha ao criar imóvel no Directus (status ${createResponse.status})${directusMessage ? `: ${directusMessage}` : ''}`
+            );
+          }
           imported++;
         }
       } catch (error) {

@@ -1,0 +1,80 @@
+﻿{
+    "family":  "imobi-frontend",
+    "containerDefinitions":  [
+                                 {
+                                     "name":  "frontend",
+                                     "image":  "575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-frontend:latest",
+                                     "cpu":  0,
+                                     "portMappings":  [
+                                                          {
+                                                              "containerPort":  3000,
+                                                              "hostPort":  3000,
+                                                              "protocol":  "tcp"
+                                                          }
+                                                      ],
+                                     "essential":  true,
+                                     "environment":  [
+                                                         {
+                                                             "name":  "DIRECTUS_ADMIN_TOKEN",
+                                                             "value":  "admin-static-token-imobi-2025"
+                                                         },
+                                                         {
+                                                             "name":  "DIRECTUS_URL",
+                                                             "value":  "https://lojadaesquina.store"
+                                                         },
+                                                         {
+                                                             "name":  "PORT",
+                                                             "value":  "3000"
+                                                         },
+                                                         {
+                                                             "name":  "NEXT_PUBLIC_DIRECTUS_URL",
+                                                             "value":  "https://lojadaesquina.store"
+                                                         },
+                                                         {
+                                                             "name":  "NODE_ENV",
+                                                             "value":  "production"
+                                                         },
+                                                         {
+                                                             "name":  "DIRECTUS_INTERNAL_URL",
+                                                             "value":  "http://production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com"
+                                                         },
+                                                         {
+                                                             "name":  "NEXT_PUBLIC_API_URL",
+                                                             "value":  "https://lojadaesquina.store"
+                                                         }
+                                                     ],
+                                     "mountPoints":  [
+
+                                                     ],
+                                     "volumesFrom":  [
+
+                                                     ],
+                                     "logConfiguration":  {
+                                                              "logDriver":  "awslogs",
+                                                              "options":  {
+                                                                              "awslogs-group":  "/ecs/imobi-frontend",
+                                                                              "awslogs-create-group":  "true",
+                                                                              "awslogs-region":  "sa-east-1",
+                                                                              "awslogs-stream-prefix":  "frontend"
+                                                                          }
+                                                          },
+                                     "systemControls":  [
+
+                                                        ]
+                                 }
+                             ],
+    "taskRoleArn":  null,
+    "executionRoleArn":  "arn:aws:iam::575098225472:role/ecsTaskExecutionRole",
+    "networkMode":  "awsvpc",
+    "volumes":  [
+
+                ],
+    "placementConstraints":  [
+
+                             ],
+    "requiresCompatibilities":  [
+                                    "FARGATE"
+                                ],
+    "cpu":  "256",
+    "memory":  "512"
+}

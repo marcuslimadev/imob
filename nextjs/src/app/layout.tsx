@@ -13,6 +13,8 @@ import SuppressConsoleErrors from '@/components/SuppressConsoleErrors';
 import { fetchSiteData } from '@/lib/directus/fetchers';
 import { getDirectusAssetURL } from '@/lib/directus/directus-utils';
 import { DEFAULT_DESIGN_THEME } from '@/lib/design-themes';
+import pkg from '../../package.json';
+import { VersionBadge } from '@/components/version-badge';
 
 export async function generateMetadata(): Promise<Metadata> {
 	try {
@@ -35,8 +37,8 @@ export async function generateMetadata(): Promise<Metadata> {
 		// Fallback metadata when Directus is not available
 		return {
 			title: {
-				default: 'iMOBI - CRM Inteligente',
-				template: '%s | iMOBI',
+			default: 'SOCIMOB - CRM Inteligente',
+			template: '%s | SOCIMOB',
 			},
 			description: 'CRM completo para imobiliárias com WhatsApp IA e automação de vendas.',
 			icons: {
@@ -64,6 +66,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 	const cookieStore = await cookies();
 	const themeCookie = cookieStore.get('design-theme')?.value;
 	const initialDesignTheme = themeCookie || DEFAULT_DESIGN_THEME;
+	const appVersion = process.env.NEXT_PUBLIC_APP_VERSION || pkg.version;
+	const buildTime = process.env.NEXT_PUBLIC_BUILD_TIME;
 
 	return (
 		<html
@@ -90,6 +94,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 						>
 							<main className="flex-grow">{children}</main>
 						</VisualEditingLayout>
+							<VersionBadge version={appVersion} buildTime={buildTime} />
 					</AuthProvider>
 				</ThemeProvider>
 			</body>

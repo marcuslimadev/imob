@@ -2,25 +2,47 @@ import { directusServer } from '@/lib/directus/client';
 import { readItems, createItem } from '@directus/sdk';
 import { redirect } from 'next/navigation';
 import { getAuthenticatedCompanyId } from '@/lib/auth/server';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { ImportPropertiesButton } from '@/components/properties/ImportPropertiesButton';
 import { BauhausPageHeader } from '@/components/layout/BauhausPageHeader';
 import { BauhausCard, BauhausStatCard } from '@/components/layout/BauhausCard';
 import { Plus } from 'lucide-react';
 
-async function getCompanyProperties(companyId: string) {
+const directusUrl =
+  process.env.DIRECTUS_INTERNAL_URL ||
+  process.env.NEXT_PUBLIC_DIRECTUS_URL ||
+  'http://localhost:8055';
+
+async function getCompanyProperties(companyId: string | null) {
   try {
-    // @ts-ignore - Custom schema
-    return await directusServer.request(
-      readItems('properties', {
-        filter: {
-          company_id: { _eq: companyId }
-        },
-        // @ts-ignore
-        sort: ['-created_at'],
-        fields: ['*']
-      })
-    );
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get('directus_token')?.value;
+    
+    if (!authToken) {
+      redirect('/login');
+    }
+
+    // Admin (companyId null) vê todas as propriedades
+    const filter = companyId ? { company_id: { _eq: companyId } } : {};
+    
+    const response = await fetch(`${directusUrl}/items/properties?${new URLSearchParams({
+      fields: '*',
+      ...(companyId && { 'filter[company_id][_eq]': companyId }),
+      sort: '-created_at'
+    })}`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    });
+
+    if (!response.ok) {
+      console.error('Error fetching properties, status:', response.status);
+      return [];
+    }
+
+    const result = await response.json();
+    return result.data || [];
   } catch (error) {
     console.error('Error fetching properties:', error);
     return [];

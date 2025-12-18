@@ -41,7 +41,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function checkAuth() {
     try {
-      const response = await fetch('/api/auth/me');
+      // Don't set loading true again if we already have a user (backgroud check)
+      if (!user) setLoading(true);
+      
+      const response = await fetch('/api/auth/me', {
+        headers: { 'Cache-Control': 'no-cache' } // Avoid stale cache
+      });
+      
       if (response.ok) {
         const data = await response.json();
         const company = data.user?.company_id && typeof data.user.company_id === 'object'
@@ -60,10 +66,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setThemeKey(company.theme_key);
         }
       } else {
-        setUser(null);
+        // Only clear user if strictly unauthorized to prevent flashing on temporary network errors
+        if (response.status === 401 || response.status === 403) {
+            setUser(null);
+        }
       }
     } catch (error) {
-      setUser(null);
+       console.error('Auth check failed:', error);
+       // Don't clear user immediately on network error, keep state or retry
     } finally {
       setLoading(false);
     }

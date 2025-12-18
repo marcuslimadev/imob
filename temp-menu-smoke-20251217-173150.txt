@@ -1,0 +1,8 @@
+ts=20251217-173150
+/empresa/dashboard=200
+/empresa/leads=200
+/empresa/conversas=200
+/empresa/imoveis=200
+/empresa/vistorias=200
+/empresa/assinaturas=200
+/empresa/configuracoes=200

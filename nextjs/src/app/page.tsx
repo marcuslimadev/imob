@@ -1,2 +1,3 @@
-// Re-exporta a landing page como página raiz
-export { default } from './(landing)/page';
+export default function RootPage() {
+  return null;
+}

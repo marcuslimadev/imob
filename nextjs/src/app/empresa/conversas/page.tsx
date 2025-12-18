@@ -67,44 +67,43 @@ function ConversasPageContent() {
   const [sending, setSending] = useState(false);
 
   const fetchConversas = useCallback(async () => {
-    if (!user?.company_id) return;
+    if (!user) return;
 
     try {
       setLoading(true);
 
-      const data = await directusClient.request(
-        readItems('conversas', {
-          filter: { company_id: { _eq: user.company_id } },
-          fields: [
-            '*',
-            { lead: ['id', 'name', 'phone', 'email'] },
-          ] as any,
-          sort: ['-last_message_at'],
-          limit: 50,
-        })
-      );
+      const params = new URLSearchParams();
+      if (user.company_id) {
+        params.append('company_id', user.company_id);
+      }
 
-      setConversas(data as unknown as Conversa[]);
+      const response = await fetch(`/api/conversas?${params}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch conversas');
+      }
+
+      const data = await response.json();
+      setConversas(data);
     } catch (err) {
       console.error('Erro ao buscar conversas:', err);
     } finally {
       setLoading(false);
     }
-  }, [user?.company_id]);
+  }, [user]);
 
   const fetchMensagens = useCallback(async (conversaId: string) => {
     try {
       setLoadingMessages(true);
 
-      const data = await directusClient.request(
-        readItems('mensagens', {
-          filter: { conversa_id: { _eq: conversaId } },
-          sort: ['date_created'],
-          limit: 100,
-        })
-      );
+      const response = await fetch(`/api/mensagens?conversa_id=${conversaId}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch mensagens');
+      }
 
-      setMensagens(data as unknown as Mensagem[]);
+      const data = await response.json();
+      setMensagens(data);
     } catch (err) {
       console.error('Erro ao buscar mensagens:', err);
     } finally {
@@ -113,10 +112,10 @@ function ConversasPageContent() {
   }, []);
 
   useEffect(() => {
-    if (user?.company_id) {
+    if (user) {
       fetchConversas();
     }
-  }, [user?.company_id, fetchConversas]);
+  }, [user, fetchConversas]);
 
   useEffect(() => {
     if (selectedConversa) {

@@ -1,0 +1,3 @@
+﻿{"errors":[{"message":"Invalid payload. \"email\" is required.","extensions":{"reason":"\"email\" is required","code":"INVALID_PAYLOAD"}}]}
+EXITCODE=0
+BODYFILE=d:\Saas\imob\temp-directus-login-body-20251217-181114.json

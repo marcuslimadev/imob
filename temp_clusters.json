@@ -1,0 +1,5 @@
+﻿{
+    "clusterArns": [
+        "arn:aws:ecs:sa-east-1:575098225472:cluster/production-imobi-cluster"
+    ]
+}

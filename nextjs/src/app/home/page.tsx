@@ -70,7 +70,7 @@ export default function HomePage() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted-foreground)]">bauhaus release</p>
-              <p className="text-xl font-extrabold">IMOBI CRM</p>
+              <p className="text-xl font-extrabold">SOCIMOB CRM</p>
             </div>
           </div>
 

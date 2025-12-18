@@ -1,18 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@imobi.com.br');
+  const [password, setPassword] = useState('Teste@123');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -21,18 +26,8 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      await login(email, password);
       await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Check for redirect param
-      const searchParams = new URLSearchParams(window.location.search);
-      const redirectRel = searchParams.get('redirect');
-
-      if (redirectRel) {
-        window.location.href = redirectRel;
-      } else {
-        window.location.href = '/empresa/dashboard';
-      }
+      window.location.href = '/empresa/dashboard';
     } catch (err: any) {
       setError(err.message || 'Email ou senha inválidos');
     } finally {
@@ -40,124 +35,99 @@ export default function LoginPage() {
     }
   }
 
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen flex">
-      {/* Lado esquerdo - Decorativo Bauhaus */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#0c0c0c] relative overflow-hidden">
-        {/* Formas geométricas Bauhaus */}
-        <div className="absolute top-0 left-0 w-64 h-64 bg-[#d90429] rounded-full -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute top-1/4 right-0 w-48 h-48 bg-[#fcbf49]" />
-        <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-[#00a8e8] rounded-full translate-y-1/3" />
-        <div className="absolute top-1/2 left-1/2 w-32 h-32 border-8 border-white rotate-45 -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-[#fcbf49] rounded-full" />
-
-        {/* Logo centralizada */}
-        <div className="relative z-10 flex items-center justify-center w-full">
-          <Image
-            src="/images/logo-imobi.png"
-            alt="iMOBI"
-            width={320}
-            height={120}
-            className="drop-shadow-2xl"
-          />
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      {/* Bauhaus geometric background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-20 w-64 h-64 bg-[var(--color-primary)] opacity-10" style={{ borderRadius: 0 }} />
+        <div className="absolute bottom-32 right-32 w-80 h-80 border-[3px] border-black/5" style={{ borderRadius: 0 }} />
+        <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-black/5" style={{ borderRadius: 0, transform: 'rotate(45deg)' }} />
       </div>
+      
+      {/* Login Card - Bauhaus style */}
+      <div className="w-full max-w-md p-10 bg-white border-[3px] border-black relative z-10 mx-4" style={{ borderRadius: 0 }}>
+        
+        {/* Logo Area - Geometric */}
+        <div className="flex flex-col items-center mb-10">
+          <div className="w-32 h-32 flex items-center justify-center mb-4 border-[3px] border-black bg-white" style={{ borderRadius: 0 }}>
+            <Image 
+              src="/logo.png" 
+              alt="iMOBI Logo" 
+              width={120} 
+              height={120}
+              className="object-contain"
+              priority
+            />
+          </div>
+          <h1 className="text-5xl font-black text-black tracking-tight uppercase">
+            SOCIMOB
+          </h1>
+          <p className="text-gray-600 text-sm mt-2 font-bold tracking-wider uppercase">Gestão Imobiliária</p>
+        </div>
 
-      {/* Lado direito - Formulário */}
-      <div className="flex-1 flex items-center justify-center px-8 py-12 bg-white">
-        <div className="w-full max-w-md space-y-8">
-          {/* Logo mobile */}
-          <div className="lg:hidden flex justify-center mb-8">
-            <Image
-              src="/images/logo-imobi.png"
-              alt="iMOBI"
-              width={200}
-              height={75}
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border-[2px] border-red-500 text-red-700 px-4 py-3 text-sm mb-6 font-bold" style={{ borderRadius: 0 }}>
+            {error}
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-wider font-bold text-black">Email Corporativo</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 bg-white border-[2px] border-black focus:outline-none focus:border-[var(--color-primary)] text-black placeholder-gray-400 transition-colors font-medium"
+              style={{ borderRadius: 0 }}
+              placeholder="seu@imobiliaria.com"
             />
           </div>
 
-          {/* Header */}
-          <div className="text-center lg:text-left">
-            <h1 className="text-3xl font-black text-[#0c0c0c] tracking-tight">
-              Bem-vindo de volta
-            </h1>
-            <p className="mt-2 text-gray-600">
-              Entre com suas credenciais para acessar o painel
-            </p>
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-wider font-bold text-black">Senha de Acesso</label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 bg-white border-[2px] border-black focus:outline-none focus:border-[var(--color-primary)] text-black placeholder-gray-400 transition-colors font-medium"
+              style={{ borderRadius: 0 }}
+              placeholder="••••••••"
+            />
           </div>
 
-          {/* Erro */}
-          {error && (
-            <div className="bg-[#d90429] text-white px-4 py-3 rounded-lg text-sm font-medium">
-              {error}
-            </div>
-          )}
-
-          {/* Formulário */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-[#0c0c0c] mb-2">
-                E-mail
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-[#0c0c0c] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00a8e8] focus:border-transparent transition-all"
-                placeholder="seu@email.com"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-[#0c0c0c] mb-2">
-                Senha
-              </label>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-[#0c0c0c] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00a8e8] focus:border-transparent transition-all"
-                placeholder="••••••••"
-              />
-            </div>
-
+          <div className="pt-4">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#0c0c0c] text-white font-bold py-4 rounded-lg hover:bg-[#d90429] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-[var(--color-primary)] hover:bg-black text-white font-black py-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-[3px] border-black uppercase tracking-wider"
+              style={{ borderRadius: 0 }}
             >
               {loading ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  Entrando...
+                  <span>Autenticando...</span>
                 </>
               ) : (
-                'Entrar'
+                <>
+                  <span>Acessar Painel</span>
+                  <ArrowRight className="h-5 w-5" strokeWidth={3} />
+                </>
               )}
             </button>
-          </form>
-
-          {/* Links */}
-          <div className="flex justify-between text-sm">
-            <a href="#" className="text-gray-600 hover:text-[#d90429] transition-colors">
-              Esqueceu a senha?
-            </a>
-            <a href="#" className="text-[#00a8e8] font-semibold hover:text-[#d90429] transition-colors">
-              Criar conta
-            </a>
           </div>
+        </form>
 
-          {/* Decoração bottom */}
-          <div className="flex justify-center gap-3 pt-8">
-            <div className="w-4 h-4 bg-[#d90429] rounded-full" />
-            <div className="w-4 h-4 bg-[#fcbf49]" />
-            <div className="w-4 h-4 bg-[#00a8e8] rounded-full" />
-            <div className="w-4 h-4 bg-[#0c0c0c]" />
-          </div>
+        <div className="mt-8 text-center border-t-[2px] border-black pt-6">
+          <p className="text-xs text-gray-600 font-bold uppercase tracking-wider">
+            &copy; 2025 iMOBI Systems
+          </p>
         </div>
       </div>
     </div>

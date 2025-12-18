@@ -31,7 +31,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { directusClient } from '@/lib/directus/client';
 import { readItems } from '@directus/sdk';
-import { VersionBadge } from '@/components/version-badge';
 
 const navigation = [
   { name: 'Dashboard', href: '/empresa/dashboard', icon: LayoutDashboard },
@@ -79,9 +78,6 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
     window.location.href = '/login';
   };
 
-  // Debug: log auth state
-  console.log('EmpresaLayout - Auth state:', { user, loading });
-
   // Redirect if not authenticated
   if (!loading && !user) {
     window.location.href = '/login';
@@ -113,21 +109,22 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-50 w-64 bg-white border-r-[3px] border-[var(--color-border)] transform transition-transform duration-200 ease-in-out lg:translate-x-0',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
+        style={{ borderRadius: 0 }}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+        <div className="flex items-center justify-between h-16 px-6 border-b-[3px] border-[var(--color-border)]">
           <Link href="/empresa/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-[var(--color-primary)] flex items-center justify-center" style={{ borderRadius: 0 }}>
+              <Building2 className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">iMOBI</span>
+            <span className="text-xl font-bold text-[var(--color-text)]">SOCIMOB</span>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-2 text-gray-500 hover:text-gray-700"
+            className="lg:hidden p-2 text-[var(--color-text)] hover:bg-[var(--color-bg)]"
             aria-label="Fechar menu"
           >
             <X className="w-5 h-5" />
@@ -135,7 +132,7 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           {navigation.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
             return (
@@ -143,13 +140,14 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                  'flex items-center gap-3 px-4 py-3 text-sm font-bold transition-colors border-2',
                   isActive
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-[var(--color-primary)] text-white border-[var(--color-border)]'
+                    : 'text-[var(--color-text)] hover:bg-[var(--color-primary-soft)] border-transparent hover:border-[var(--color-border)]'
                 )}
+                style={{ borderRadius: 0 }}
               >
-                <item.icon className={cn('w-5 h-5', isActive ? 'text-blue-600' : 'text-gray-400')} />
+                <item.icon className={cn('w-5 h-5', isActive ? 'text-white' : 'text-[var(--color-text-muted)]')} />
                 {item.name}
               </Link>
             );
@@ -157,16 +155,16 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* User section */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-gray-600" />
+        <div className="p-4 border-t-[3px] border-[var(--color-border)]">
+          <div className="flex items-center gap-3 px-3 py-2 border-2 border-[var(--color-border)]" style={{ borderRadius: 0 }}>
+            <div className="w-10 h-10 bg-[var(--color-accent)] flex items-center justify-center" style={{ borderRadius: 0 }}>
+              <User className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-bold text-[var(--color-text)] truncate">
                 {user?.first_name || 'Usuário'}
               </p>
-              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+              <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
             </div>
           </div>
         </div>
@@ -175,11 +173,12 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200 lg:px-8">
+        <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 bg-white border-b-[3px] border-[var(--color-border)] lg:px-8">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 text-gray-500 hover:text-gray-700 lg:hidden"
+            className="p-2 text-[var(--color-text)] hover:bg-[var(--color-bg)] lg:hidden border-2 border-transparent hover:border-[var(--color-border)]"
             aria-label="Abrir menu"
+            style={{ borderRadius: 0 }}
           >
             <Menu className="w-6 h-6" />
           </button>
@@ -188,40 +187,48 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
 
           <div className="flex items-center gap-4">
             {/* Notifications */}
-            <button className="p-2 text-gray-500 hover:text-gray-700 relative" aria-label="Notificações">
+            <button 
+              className="p-2 text-[var(--color-text)] hover:bg-[var(--color-primary-soft)] relative border-2 border-transparent hover:border-[var(--color-border)]" 
+              aria-label="Notificações"
+              style={{ borderRadius: 0 }}
+            >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+              <span className="absolute top-0 right-0 w-3 h-3 bg-[var(--color-primary)]" style={{ borderRadius: 0 }} />
             </button>
 
             {/* User dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-blue-600" />
+                <Button 
+                  variant="ghost" 
+                  className="flex items-center gap-2 border-2 border-[var(--color-border)] hover:bg-[var(--color-primary-soft)]"
+                  style={{ borderRadius: 0 }}
+                >
+                  <div className="w-8 h-8 bg-[var(--color-primary)] flex items-center justify-center" style={{ borderRadius: 0 }}>
+                    <User className="w-4 h-4 text-white" />
                   </div>
-                  <span className="hidden md:block text-sm font-medium">
+                  <span className="hidden md:block text-sm font-bold">
                     {user?.first_name || 'Usuário'}
                   </span>
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                  <ChevronDown className="w-4 h-4 text-[var(--color-text)]" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 border-2 border-[var(--color-border)]" style={{ borderRadius: 0 }}>
                 <DropdownMenuLabel>
                   <div>
-                    <p className="font-medium">{user?.first_name} {user?.last_name}</p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
+                    <p className="font-bold">{user?.first_name} {user?.last_name}</p>
+                    <p className="text-xs text-[var(--color-text-muted)]">{user?.email}</p>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-[var(--color-border)] h-[2px]" />
                 <DropdownMenuItem asChild>
-                  <Link href="/empresa/configuracoes">
+                  <Link href="/empresa/configuracoes" className="font-medium">
                     <Settings className="w-4 h-4 mr-2" />
                     Configurações
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                <DropdownMenuSeparator className="bg-[var(--color-border)] h-[2px]" />
+                <DropdownMenuItem onClick={handleLogout} className="text-[var(--color-danger)] font-bold">
                   <LogOut className="w-4 h-4 mr-2" />
                   Sair
                 </DropdownMenuItem>
@@ -231,10 +238,9 @@ export default function EmpresaLayout({ children }: { children: ReactNode }) {
         </header>
 
         {/* Page content */}
-        <main className="p-4 lg:p-8">{children}</main>
+        <main className="p-4 lg:p-8 bg-[var(--color-bg)]">{children}</main>
         
         {/* Version badge */}
-        <VersionBadge />
       </div>
     </div>
   );

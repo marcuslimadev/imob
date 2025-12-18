@@ -1,0 +1,81 @@
+TAIL
+     205 B         104 kB
+#14 113.0 + First Load JS shared by all            
+ 100 kB
+#14 113.0   Ôö£ chunks/1684-b6cd7679b3fca319.js    
+  45.3 kB
+#14 113.0   Ôö£ 
+chunks/4bd1b696-6d431c8d274e4016.js  53.2 kB
+#14 113.0   Ôöö other shared chunks (total)        
+  1.93 kB
+#14 113.0 
+#14 113.0 
+#14 113.0 ãÆ Middleware                            
+ 32.6 kB
+#14 113.0 
+#14 113.0 Ôùï  (Static)   prerendered as static 
+content
+#14 113.0 ãÆ  (Dynamic)  server-rendered on demand
+#14 113.0 
+#14 113.2 npm notice
+#14 113.2 npm notice New major version of npm 
+available! 10.9.4 -> 11.7.0
+#14 113.2 npm notice Changelog: 
+https://github.com/npm/cli/releases/tag/v11.7.0
+#14 113.2 npm notice To update run: npm install -g 
+npm@11.7.0
+#14 113.2 npm notice
+#14 DONE 113.6s
+
+#15 [runner 5/8] RUN mkdir .next
+#15 CACHED
+
+#16 [runner 2/8] RUN addgroup --system --gid 1001 
+nodejs
+#16 CACHED
+
+#17 [runner 3/8] RUN adduser --system --uid 1001 
+nextjs
+#17 CACHED
+
+#18 [runner 4/8] COPY --from=builder /app/public 
+./public
+#18 CACHED
+
+#19 [runner 6/8] RUN chown nextjs:nodejs .next
+#19 CACHED
+
+#20 [runner 7/8] COPY --from=builder 
+--chown=nextjs:nodejs /app/.next/standalone ./
+#20 DONE 1.5s
+
+#21 [runner 8/8] COPY --from=builder 
+--chown=nextjs:nodejs /app/.next/static 
+./.next/static
+#21 DONE 0.3s
+
+#22 exporting to image
+#22 exporting layers
+#22 exporting layers 4.2s done
+#22 exporting manifest sha256:650b735c180035cb158dd
+2959fcb514ec341f3f35091f9db06af9760236c3bed 0.1s 
+done
+#22 exporting config sha256:a04f4a3c89edfaf7182c4db
+778889cd96187d87f9579f16965b6a667c53691cc 0.1s done
+#22 exporting attestation manifest sha256:87c1254a9
+51c643402094faca58aaf767fa7a9dcdbf21ae287fce7ef65c6
+9f88
+#22 exporting attestation manifest sha256:87c1254a9
+51c643402094faca58aaf767fa7a9dcdbf21ae287fce7ef65c6
+9f88 0.2s done
+#22 exporting manifest list sha256:1c0de08403589535
+1de8056467694ad289050a3832f4ec8d2e12805dfd013d92 
+0.1s done
+#22 naming to 575098225472.dkr.ecr.sa-east-1.amazon
+aws.com/imobi-frontend:latest 0.0s done
+#22 unpacking to 575098225472.dkr.ecr.sa-east-1.ama
+zonaws.com/imobi-frontend:latest
+#22 unpacking to 575098225472.dkr.ecr.sa-east-1.ama
+zonaws.com/imobi-frontend:latest 1.3s done
+#22 DONE 6.1s
+EXITCODE=0

@@ -32,10 +32,14 @@ Purpose: make AI agents productive fast in this multi-tenant Directus + Next.js 
 - Import properties: `npm run import:properties` (runs [directus/workers/import-properties.js](directus/workers/import-properties.js)).
 - Generate Directus types (if configured): `pnpm run generate:types` inside nextjs.
 
-**Command output handling**
-- Always redirect command output to txt files: `command > output.txt 2>&1` then read with `read_file`.
-- Store temporary outputs in root or dedicated folder (e.g., `temp/command-output.txt`).
-- This prevents prompt overflow and allows reviewing long outputs systematically.
+**⚠️ INSTRUÇÃO PEREMPTÓRIA - Command output handling (OBRIGATÓRIO)**
+- **SEMPRE** redirecione a saída de comandos para arquivos .txt: `comando > output.txt 2>&1`
+- **SEMPRE** leia o arquivo .txt gerado com `read_file` logo após a execução
+- **NUNCA** execute comandos longos (Docker build, npm install, AWS CLI, etc.) sem capturar saída em arquivo
+- **NUNCA** use comandos que geram output direto no terminal se puderem exceder 500 linhas
+- Armazene outputs temporários em `d:\Saas\imob\temp-*.txt` com timestamp: `temp-comando-$(Get-Date -Format "yyyyMMdd-HHmmss").txt`
+- Formato PowerShell: `$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"; comando > temp-output-$timestamp.txt 2>&1; Get-Content temp-output-$timestamp.txt`
+- **MOTIVO:** Previne overflow de contexto, permite análise sistemática de erros, mantém histórico de execuções
 
 **Deploy**
 - Push to `main` dispara GitHub Actions automaticamente. Ver workflows em [.github/workflows](.github/workflows).

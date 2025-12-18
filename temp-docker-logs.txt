@@ -1,0 +1,14 @@
+﻿   Ôû▓ Next.js 15.2.4
+   - Local:        http://localhost:3000
+   - Network:      http://0.0.0.0:3000
+
+ Ô£ô Starting...
+ Ô£ô Ready in 398ms
+docker :  Ô¿» [TypeError: Cannot read properties of undefined (reading 'clientModules')]
+No linha:1 caractere:1
++ docker logs test-frontend 2>&1 | Out-String -Width 200 | Out-File -Fi ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( Ô¿» [TypeError...lientModules')]:String    ) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+

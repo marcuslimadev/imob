@@ -1,0 +1,12 @@
+﻿DIRECTUS=http://production-imobi-alb-1837293727.sa-east-1.elb.amazonaws.com
+LOGIN=OK
+TOKEN_LEN=321
+\nFIELD_CHECK
+company_id field endpoint: FAIL
+O servidor remoto retornou um erro: (403) Proibido.
+
+\nCOMPANY_SEARCH
+LOGIN=FAIL
+O servidor remoto retornou um erro: (403) Proibido.
+
+

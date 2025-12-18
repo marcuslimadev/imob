@@ -7,8 +7,8 @@ const axios = require('axios');
 require('dotenv').config();
 
 const DIRECTUS_URL = process.env.DIRECTUS_URL || 'http://localhost:8055';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'marcus@admin.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Teste@123';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'd1r3ctu5';
 
 async function login() {
   console.log('🔑 Fazendo login...');
@@ -120,7 +120,7 @@ async function main() {
       description: 'Administrador da imobiliária',
       icon: 'business',
       admin_access: false,
-      app_access: false
+      app_access: true
     });
     
     // 2. Criar/obter policy para a role

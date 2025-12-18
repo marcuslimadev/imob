@@ -42,67 +42,27 @@ export default function DashboardPage() {
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
 
   const fetchStats = useCallback(async () => {
-    if (!user?.company_id) return;
+    if (!user) return;
 
     try {
       setLoading(true);
       setError(null);
 
-      const companyFilter = { company_id: { _eq: user.company_id } };
+      const response = await fetch('/api/dashboard/stats');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch stats');
+      }
 
-      const results = await Promise.allSettled([
-        directusClient.request(
-          aggregate('properties', {
-            query: { filter: companyFilter },
-            aggregate: { count: '*' },
-          })
-        ),
-        directusClient.request(
-          aggregate('leads', {
-            query: { filter: companyFilter },
-            aggregate: { count: '*' },
-          })
-        ),
-        directusClient.request(
-          aggregate('leads', {
-            query: {
-              filter: {
-                _and: [
-                  companyFilter,
-                  { date_created: { _gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString() } }
-                ]
-              } as any
-            },
-            aggregate: { count: '*' },
-          })
-        ),
-        directusClient.request(
-          aggregate('conversas', {
-            query: { filter: companyFilter },
-            aggregate: { count: '*' },
-          })
-        ),
-        directusClient.request(
-          aggregate('vistorias' as any, {
-            query: { filter: companyFilter },
-            aggregate: { count: '*' },
-          })
-        ),
-        directusClient.request(
-          aggregate('documentos_assinatura' as any, {
-            query: { filter: companyFilter },
-            aggregate: { count: '*' },
-          })
-        ),
-      ]);
-
+      const data = await response.json();
+      
       setStats({
-        properties: results[0].status === 'fulfilled' ? Number(results[0].value[0]?.count) || 0 : 0,
-        leads: results[1].status === 'fulfilled' ? Number(results[1].value[0]?.count) || 0 : 0,
-        leadsThisMonth: results[2].status === 'fulfilled' ? Number(results[2].value[0]?.count) || 0 : 0,
-        conversations: results[3].status === 'fulfilled' ? Number(results[3].value[0]?.count) || 0 : 0,
-        vistorias: results[4].status === 'fulfilled' ? Number(results[4].value[0]?.count) || 0 : 0,
-        documentos: results[5].status === 'fulfilled' ? Number(results[5].value[0]?.count) || 0 : 0,
+        properties: data.properties || 0,
+        leads: data.leads || 0,
+        leadsThisMonth: data.leadsThisMonth || 0,
+        conversations: data.conversations || 0,
+        vistorias: data.vistorias || 0,
+        documentos: data.documentos || 0,
       });
 
       setLastUpdate(new Date());
@@ -112,7 +72,7 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [user?.company_id]);
+  }, [user]);
 
   useEffect(() => {
     if (user?.company_id) {

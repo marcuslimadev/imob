@@ -1,0 +1,32 @@
+﻿{
+    "repositories": [
+        {
+            "repositoryArn": "arn:aws:ecr:sa-east-1:575098225472:repository/imobi-directus",
+            "registryId": "575098225472",
+            "repositoryName": "imobi-directus",
+            "repositoryUri": "575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-directus",
+            "createdAt": "2025-12-12T13:08:45.986000-03:00",
+            "imageTagMutability": "MUTABLE",
+            "imageScanningConfiguration": {
+                "scanOnPush": true
+            },
+            "encryptionConfiguration": {
+                "encryptionType": "AES256"
+            }
+        },
+        {
+            "repositoryArn": "arn:aws:ecr:sa-east-1:575098225472:repository/imobi-frontend",
+            "registryId": "575098225472",
+            "repositoryName": "imobi-frontend",
+            "repositoryUri": "575098225472.dkr.ecr.sa-east-1.amazonaws.com/imobi-frontend",
+            "createdAt": "2025-12-15T11:36:44.287000-03:00",
+            "imageTagMutability": "MUTABLE",
+            "imageScanningConfiguration": {
+                "scanOnPush": false
+            },
+            "encryptionConfiguration": {
+                "encryptionType": "AES256"
+            }
+        }
+    ]
+}
